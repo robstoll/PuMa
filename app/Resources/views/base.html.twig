@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>{% block title %}Purchase v. 0.0.1{% endblock %}</title>
+        {% block stylesheets %}{% endblock %}
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    </head>
+    <body>
+        <div id="menu">
+            {% block sidebar %}
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    {% if app.user and is_granted('ROLE_ADMIN') %}
+                        <li><a href="{{ path('admin_user') }}">User</a></li>
+                        <li><a href="{{ path('admin_category') }}">Category</a></li>
+                    {% endif %}
+                    {% if app.user and is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                        <li><a href="{{ path('logout') }}">Logout</a></li>
+                    {% endif %}
+                </ul>
+            {% endblock %}
+        </div>
+
+        <div id="content">
+            {% block content %}{% endblock %}  
+        </div>
+        {% block javascripts %}{% endblock %}
+    </body>
+</html>

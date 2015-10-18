@@ -1,0 +1,14 @@
+tutteli_purchase:
+    resource: "@TutteliPurchaseBundle/Resources/config/routing.yml"
+    prefix:   /
+
+login:
+    path:   /login
+    defaults: { _controller: TutteliAppBundle:Security:login}
+
+login_check:
+    path:   /login_check
+    defaults: { _controller: TutteliAppBundle:Security:loginCheck}    
+    
+logout:
+    path: /logout
