@@ -37,6 +37,9 @@ security:
                 login_path: /login
                 check_path: /login_check
                 provider: db_provider
+                csrf_provider: security.csrf.token_manager
+                username_parameter: form[username]
+                password_parameter: form[password]
             # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
             
             logout:

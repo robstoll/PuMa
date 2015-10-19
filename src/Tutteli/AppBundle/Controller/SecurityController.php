@@ -10,33 +10,40 @@ namespace Tutteli\AppBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormError;
 
-class SecurityController extends Controller
-{
+class SecurityController extends Controller {
 
-    public function loginAction(Request $request)
-    {
+    public function loginAction(Request $request) {
         $authenticationUtils = $this->get('security.authentication_utils');
 
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
+        $form = $this->createFormBuilder(array(
+                // last username entered by the user
+                'username' => $authenticationUtils->getLastUsername(),
+            ))
+            ->add('username', 'text', array('label' => 'login.username'))
+            ->add('password', 'password', array('label' => 'login.password'))
+            ->add('login', 'submit', array('label' => 'login.submit'))
+            ->setAction($this->generateUrl('login_check'))
+            ->getForm();
 
-        // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
+        $error = $authenticationUtils->getLastAuthenticationError();
+        if ($error) {
+            $msg = $this->get('translator')->trans($error->getMessage(), [],'security');
+            $form->addError(new FormError($msg));
+            
+        }
 
         return $this->render(
-            'TutteliAppBundle:Security:login.html.twig',
-            array(
-                // last username entered by the user
-                'last_username' => $lastUsername,
-                'error'         => $error,
-            )
+                'TutteliAppBundle:Security:login.html.twig', array(
+                'form' => $form->createView(),
+                )
         );
     }
 
-    public function loginCheckAction()
-    {
+    public function loginCheckAction() {
         // this controller will not be executed,
         // as the route is handled by the Security system
     }
+
 }
