@@ -1,3 +1,8 @@
+{#
+ * This file is part of the project tutteli/purchase published under the Apache License 2.0
+ * For the full copyright and license information, please have a look at LICENSE in the
+ * root folder or visit https://github.com/robstoll/purchase
+ #}
 <!DOCTYPE html>
 <html>
     <head>
@@ -10,10 +15,10 @@
         <div id="menu">
             {% block sidebar %}
                 <ul>
-                    <li><a href="/">Home</a></li>
+                    <li><a href="{{ path('tutteli_purchase_homepage') }}">Home</a></li>
                     {% if app.user and is_granted('ROLE_ADMIN') %}
                         <li><a href="{{ path('admin_user') }}">User</a></li>
-                        <li><a href="{{ path('admin_category') }}">Category</a></li>
+                        {# <li><a href="{{ path('admin_category') }}">Category</a></li> #}
                     {% endif %}
                     {% if app.user and is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                         <li><a href="{{ path('logout') }}">Logout</a></li>

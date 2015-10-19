@@ -1,4 +1,9 @@
 <?php
+/*
+ * This file is part of the project tutteli/purchase published under the Apache License 2.0
+ * For the full copyright and license information, please have a look at LICENSE in the
+ * root folder or visit https://github.com/robstoll/purchase
+ */
 
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -19,6 +24,8 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new Tutteli\AppBundle\TutteliAppBundle(),
             new Tutteli\PurchaseBundle\TutteliPurchaseBundle(),
+            new FOS\RestBundle\FOSRestBundle(),
+            new JMS\SerializerBundle\JMSSerializerBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
