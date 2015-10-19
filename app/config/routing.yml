@@ -18,7 +18,8 @@ login_check:
     
 logout:
     path: /logout
-    
-admin_user:
-    path: /admin/user
-    default: { _controller: TutteliAppBundle:AdminUser:index }
+
+admin_users:
+    type: rest
+    prefix: admin
+    resource: Tutteli\AppBundle\Controller\UserController
