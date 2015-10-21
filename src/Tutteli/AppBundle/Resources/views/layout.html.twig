@@ -33,19 +33,21 @@
 {% endblock %}    
 
 {% block body %}
-    {% if app.user and is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-        <!-- Fixed navbar -->
-        <nav class="navbar navbar-inverse navbar-fixed-top">
-            <div class="container">
-                <div class="navbar-header">
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                {% if app.user and is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                         <span class="sr-only">Toggle navigation</span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="{{ path('tutteli_purchase_homepage') }}"> {{ 'nav.purchase'|trans }}</a>
-                </div>
+                {% endif %}
+                <a class="navbar-brand" href="{{ path('tutteli_purchase_homepage') }}"> {{ 'nav.purchase'|trans }}</a>
+            </div>
+            {% if app.user and is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         {% if app.user and is_granted('ROLE_ADMIN') %}
@@ -64,10 +66,10 @@
                             </ul>
                         </li>
                     </ul>
-                </div><!--/.nav-collapse -->
-            </div>
-        </nav>
-    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </nav>
     <div class="container" role="main" ng-view>
     {% block content %}{% endblock %}  
 </div>
@@ -78,7 +80,7 @@
     	'../bower_components/jquery/dist/jquery.js'
     	'../bower_components/angular/angular.js'
     	'../bower_components/angular-cookies/angular-cookies.js'
-    	'../bower_components/angular-route/angular-route.js'
+    	'../bower_components/angular-route/angular-ui-router.js'
     	'../bower_components/bootstrap/dist/js/bootstrap.js' 
     	'@TutteliAppBundle/Resources/js/app.js'
     	'@TutteliAppBundle/Resources/js/controllers.js' %}

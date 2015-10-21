@@ -16,7 +16,8 @@
     "angular-mocks": "~1.4.7",
     "bootstrap": "~3.3.5",
     "angular-cookies": "~1.4.7",
-    "angular-route": "~1.4.7"
+    "angular-ui-router": "~0.2.15",
+    "angular-resource": "~1.4.7"
   },
   "moduleType": [
     "globals"
