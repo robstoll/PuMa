@@ -3,16 +3,20 @@
  * For the full copyright and license information, please have a look at LICENSE in the
  * root folder or visit https://github.com/robstoll/purchase
  #}
-{% extends 'TutteliAppBundle:Default:layout.html.twig' %}
+{% extends 'TutteliAppBundle::layout.html.twig' %}
 
 {% block title %} Login | {{ parent() }}{% endblock %}
 
 {% block content %}
-    {{ form_start(form) }}
-       {# {% if error %}
-            <div class="help-block">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-        {% endif %}#}
-        {{ form_widget(form) }}
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-    {{ form_end(form) }}
+    {% include 'TutteliAppBundle:Security:login.html.par.twig' %}
 {% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script type="text/javascript">
+		var tutteliPurchase = angular.module('tutteli-purchase');
+		tutteliPurchase.run(function($templateCache) {
+  			$templateCache.put('partial/login.html', $('#_tpl_login').html());
+		});
+	</script>
+{%  endblock %}

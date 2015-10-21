@@ -34,8 +34,8 @@ security:
             # http://symfony.com/doc/current/book/security.html#a-configuring-how-your-users-will-authenticate
 
             form_login:
-                login_path: /login
-                check_path: /login_check
+                login_path: login
+                check_path: login_check
                 provider: db_provider
                 csrf_provider: security.csrf.token_manager
                 username_parameter: form[username]

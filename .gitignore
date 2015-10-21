@@ -10,4 +10,10 @@
 /vendor/
 /web/bundles/
 /web/config.php
-/nbproject/
+/web/js
+/bower_components
+/node_modules
+/.buildpath
+/.project
+/.settings
+*.php~

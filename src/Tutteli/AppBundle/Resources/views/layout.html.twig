@@ -6,6 +6,7 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
+	
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <style class="cp-pen-styles">
         body{
@@ -67,13 +68,20 @@
             </div>
         </nav>
     {% endif %}
-    <div class="container" role="main">
+    <div class="container" role="main" ng-view>
     {% block content %}{% endblock %}  
 </div>
 {% endblock %}    
 
 {% block javascripts %}
-    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-{#    <script scr="https://code.jquery.com/jquery-1.11.3.min.js"></script>#}
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    {% javascripts filter="?jsqueeze" output="js/app.js" 
+    	'../bower_components/jquery/dist/jquery.js'
+    	'../bower_components/angular/angular.js'
+    	'../bower_components/angular-cookies/angular-cookies.js'
+    	'../bower_components/angular-route/angular-route.js'
+    	'../bower_components/bootstrap/dist/js/bootstrap.js' 
+    	'@TutteliAppBundle/Resources/js/app.js'
+    	'@TutteliAppBundle/Resources/js/controllers.js' %}
+        <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
 {% endblock %}
