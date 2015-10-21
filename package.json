@@ -1,0 +1,31 @@
+{
+  "name": "tutteli-purchase",
+  "version": "0.0.1",
+  "description": "Small web app to manage purchases among multiple persons",
+  "keywords": [
+    "purchase"
+  ],
+  "author": "Robert Stoll <rstoll@tutteli.ch>",
+  "license": "Apache-2.0",
+  "repository": "https://robstoll@github.com/robstoll/purchase.git",
+  "bugs": {
+    "url": "https://github.com/robstoll/purchase/issues"
+  },
+  "homepage": "https://github.com/robstoll/purchase#readme",
+  "dependencies": {
+    "uglify-js": "^2.5.0"
+  },
+  "devDependencies": {
+    "bower": "^1.6.3",
+    "jasmine-core": "^2.3.4",
+    "karma": "^0.13.11",
+    "karma-chrome-launcher": "^0.2.1",
+    "karma-jasmine": "^0.3.6",
+    "protractor": "^2.5.1"
+  },
+  "scripts": {
+    "postinstall": "bower install",
+    "test": "node node_modules/karma/bin/karma start devconfig/karma.conf.js",
+    "protractor": "protractor devconfig/protractor-conf.js"
+  }
+}

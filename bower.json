@@ -1,0 +1,36 @@
+{
+  "name": "tutteli-purchase",
+  "homepage": "https://github.com/robstoll/purchase",
+  "authors": [
+    "Robert Stoll <rstoll@tutteli.ch>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/robstoll/purchase"
+  },
+  "description": "Small web app to manage purchases among multiple persons",
+  "main": "",
+  "dependencies": {
+    "jquery": "~2.1.4",
+    "angular": "~1.4.7",
+    "angular-mocks": "~1.4.7",
+    "bootstrap": "~3.3.5",
+    "angular-cookies": "~1.4.7",
+    "angular-route": "~1.4.7"
+  },
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "purchase"
+  ],
+  "license": "Apache-2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "private": true
+}
