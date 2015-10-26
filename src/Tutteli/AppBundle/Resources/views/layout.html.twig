@@ -8,28 +8,7 @@
 {% block stylesheets %}
 	
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <style class="cp-pen-styles">
-        body{
-            padding-top: 70px;
-        }
-       {# .navbar, .navbar-inverse {
-            border-radius: 0;
-            border: none;
-            margin-bottom: 0;
-            /*min-height: 80px;*/
-        }
-
-        .nav li {
-            display: inline;
-            color: white;
-        }
-
-        .navbar-inverse .navbar-nav li a:hover {
-            background-color: #444444;
-            transition: 0.5s all linear;
-            height: 100%;
-        }    #}      
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/main.css') }}">
 {% endblock %}    
 
 {% block body %}
@@ -45,24 +24,24 @@
                         <span class="icon-bar"></span>
                     </button>
                 {% endif %}
-                <a class="navbar-brand" href="{{ path('tutteli_purchase_homepage') }}"> {{ 'nav.purchase'|trans }}</a>
+                <a class="navbar-brand" ui-sref="home" href="{{ path('tutteli_purchase_homepage') }}"> {{ 'nav.purchase'|trans }}</a>
             </div>
             {% if app.user and is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         {% if app.user and is_granted('ROLE_ADMIN') %}
                             <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ 'nav.settings'|trans }} <span class="caret"></span></a>
+                                <a  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ 'nav.settings'|trans }} <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="{{ path('get_users') }}">{{ 'nav.users'|trans }}</a></li>
+                                    <li><a ui-sref="users" {# href="{{ path('get_users') }}" #}>{{ 'nav.users'|trans }}</a></li>
                                 </ul>
                             </li>
                         {% endif %}
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{app.user.username}} <span class="caret"></span></a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{app.user.username}} <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                {#                      <li role="separator" class="divider"></li>#}
-                                <li><a href="{{ path('logout') }}">{{ 'nav.logout'|trans }}</a></li>
+                                {# <li role="separator" class="divider"></li>#}
+                                <li><a target="_self" href="{{ path('logout') }}" >{{ 'nav.logout'|trans }}</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -71,19 +50,25 @@
         </div>
     </nav>
     <div class="container" role="main" ng-view>
-    {% block content %}{% endblock %}  
-</div>
+        {% block content %}{% endblock %}  
+	</div>
 {% endblock %}    
 
 {% block javascripts %}
-    {% javascripts filter="?jsqueeze" output="js/app.js" 
+    {# 
+        filter="?jsqueeze"
+     #}
+    {% javascripts  output="js/app.js" 
     	'../bower_components/jquery/dist/jquery.js'
+        '../bower_components/bootstrap/dist/js/bootstrap.js' 
     	'../bower_components/angular/angular.js'
+    	'../bower_components/angular-resource/angular-resource.js'
     	'../bower_components/angular-cookies/angular-cookies.js'
-    	'../bower_components/angular-route/angular-ui-router.js'
-    	'../bower_components/bootstrap/dist/js/bootstrap.js' 
+    	'../bower_components/angular-ui-router/release/angular-ui-router.js'
+    	'../bower_components/angular-bootstrap/ui-bootstrap-tpls.js'
     	'@TutteliAppBundle/Resources/js/app.js'
-    	'@TutteliAppBundle/Resources/js/controllers.js' %}
+    	'@TutteliAppBundle/Resources/js/controllers.js'
+        '@TutteliAppBundle/Resources/js/services.js' %}
         <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
 {% endblock %}

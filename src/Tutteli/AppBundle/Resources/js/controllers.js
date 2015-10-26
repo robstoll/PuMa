@@ -4,8 +4,16 @@
  * root folder or visit https://github.com/robstoll/purchase
  */
 
-var tutteliPurchaseCtrls = angular.module('tutteli-purchase-ctrls', []);
+var tutteliPurchaseCtrls = angular.module('tutteli-purchase.ctrls', []);
 
-tutteliPurchaseCtrls.controller('LoginCtrl', ['$scope', '$http', function($scope, $http) {
-	
-}]);
+tutteliPurchaseCtrls.controller('tutteliLoginModalCtrl', function ($scope, tutteliLoginApi) {
+
+    this.cancel = $scope.$dismiss;
+
+    this.submit = function (username, password) {
+      tutteliLoginApi.login(username, password).then(function (user) {
+        $scope.$close(user);
+      });
+    };
+
+});

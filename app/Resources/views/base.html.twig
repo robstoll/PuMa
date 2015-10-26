@@ -12,6 +12,7 @@
         <title>{% block title %}Purchase v. 0.0.1{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        <base href="{{ baseUrl }}">
     </head>
     <body role="document" ng-app="tutteli-purchase">
         {% block body %} {% endblock %}

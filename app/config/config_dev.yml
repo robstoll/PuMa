@@ -52,3 +52,7 @@ assetic:
 
 #swiftmailer:
 #    delivery_address: me@example.com
+
+twig:
+  globals:
+    baseUrl:  /tutteli.ch/purchase/web/app_dev.php/

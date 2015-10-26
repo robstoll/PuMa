@@ -9,8 +9,9 @@ tutteli_purchase:
     prefix:   /
 
 login:
-    path:   /login
-    defaults: { _controller: TutteliAppBundle:Security:login }
+    path:   /login{ending}
+    defaults: { _controller: TutteliAppBundle:Security:login, ending: ""}
+
 
 login_check:
     path:   /login_check

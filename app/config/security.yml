@@ -9,7 +9,7 @@ security:
     encoders:
         Tutteli\AppBundle\Entity\User:
             algorithm: bcrypt
-            cost: 11
+            
 
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
@@ -34,13 +34,20 @@ security:
             # http://symfony.com/doc/current/book/security.html#a-configuring-how-your-users-will-authenticate
 
             form_login:
-                login_path: login
-                check_path: login_check
+                login_path: /login
+                check_path: /login_check
                 provider: db_provider
                 csrf_provider: security.csrf.token_manager
                 username_parameter: form[username]
                 password_parameter: form[password]
             # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
+            
+            remember_me:
+              key: "%secret%"
+              lifetime: 2419200 # 4 weeks in seconds
+              path: /
+              always_remember_me: true
+              secure: true
             
             logout:
                 path:   /logout
@@ -48,6 +55,7 @@ security:
             
     access_control:
         # require ROLE_ADMIN for /admin*
-        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/, roles: IS_AUTHENTICATED_REMEMBERED }
-        - { path: ^/admin, role: ROLE_ADMIN }
+        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/login.tpl$, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/admin, role: ROLE_ADMIN, requires_channel: https }
+        - { path: ^/, roles: IS_AUTHENTICATED_REMEMBERED, requires_channel: https }

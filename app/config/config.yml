@@ -40,6 +40,8 @@ framework:
 
 # Twig Configuration
 twig:
+    globals:
+      baseUrl:  /
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
     form:
