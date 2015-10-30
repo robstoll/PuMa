@@ -5,64 +5,78 @@
  */
 'use strict';
 
-var tutteliPurchase = angular.module('tutteli-purchase', [ 
-    'ngCookies',
-    'ui.router', 
-    'ui.bootstrap', 
+angular.module('tutteli.purchase', [
     'tutteli.services', 
-    'tutteli-purchase.ctrls']);
-
-tutteliPurchase.config(
-        ['$urlRouterProvider', '$locationProvider', '$stateProvider',
-          function($urlRouterProvider, $locationProvider, $stateProvider) {
+    'tutteli.ctrls', 
     
+    'ui.router',
+    'ngCookies',
+    
+    'tutteli.preWork',
+    'tutteli.auth',
+    'tutteli.auth.routing',
+]).config(
+  ['$httpProvider', '$locationProvider','$stateProvider', 'tutteli.auth.USER_ROLES', 
+  function($httpProvider, $locationProvider, $stateProvider, USER_ROLES){
+    
+    $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
     $locationProvider.html5Mode(true);
-
     $stateProvider.state('login', {
         url: '/login',
+        controller: 'tutteli.LoginCtrl',
         templateUrl: 'login.tpl',
         data : {
-            requireLogin : false
+            authRoles : []
         }
     }).state('home', {
         url: '/',
-        templateUrl: 'partials/dashboard.html',
+        templateUrl: 'dashboard.html',
         data : {
-            requireLogin : true
+            authRoles : [USER_ROLES.authenticated]
         }
     }).state('users', {
         url : '/admin/users',
         templateUrl : 'users.html',
         data : {
-            requireLogin : true
-        }
-    }).state('users.edit', {
-        url : '/admin/users/edit',
-        templateUrl : 'route2.list.html',
-        controller : function($scope) {
-            $scope.things = [ "A", "Set", "Of", "Things" ];
-        }
-    })
-    
-    
-} ]);
-
-tutteliPurchase.run(['$rootScope', '$state','$cookies', 'tutteliLoginModal', 
-                     function($rootScope, $state, $cookies, tutteliLoginModal) {
-
-    $rootScope.currentUser = $cookies.get('REMEMBERME');
-    
-    $rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
-        var requireLogin = toState.data.requireLogin;
-
-        if (requireLogin && typeof $rootScope.currentUser === 'undefined') {
-            event.preventDefault();
-            
-            tutteliLoginModal().then(function () {
-              return $state.go(toState.name, toParams);
-            }).catch(function (reason) {
-                console.log(reason)
-            });
+            authRoles : [USER_ROLES.admin]
         }
     });
-}]);
+    
+}]).run(
+  ['$rootScope', '$location', 'tutteli.auth.EVENTS', 
+  function($rootScope, $location, AUTH_EVENTS) {
+      
+    $rootScope.$on(AUTH_EVENTS.notAuthorised, function(event, url) {
+        //TODO show error message to the user
+    });   
+    
+    $rootScope.$on(AUTH_EVENTS.loginSuccess, function(event, result){
+        //only :/ because the href element of the <base> tag will already start with /
+        var base = $location.protocol() + ':/' + angular.element(document.querySelector('base')).attr('href');
+        var url = result.url;
+        if (url != ""){
+            if (base == url.substr(0, base.length)) {
+                $location.path(url.substr(base.length + 1));
+            } else {
+                //TODO show error message to the user
+            }
+        } else {
+            //no url provided, redirect to home url
+            $location.path(url);
+        }
+        
+       
+    });
+  }
+]);  
+
+//        
+//        if (requireLogin && $rootScope.currentUser === undefined) {
+//            event.preventDefault();
+//            
+//            LoginModal().then(function () {
+//              return $state.go(toState.name, toParams);
+//            }).catch(function (reason) {
+//                console.log(reason)
+//            });
+//        }

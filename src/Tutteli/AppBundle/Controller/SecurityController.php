@@ -8,36 +8,34 @@
 namespace Tutteli\AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class SecurityController extends Controller {
     
-    public function loginAction($ending = null) {
+    public function loginAction(Request $request, $ending = null) {        
         if ($ending != '' && $ending != '.tpl') {
             throw $this->createNotFoundException('File Not Found');
         }
-        
-        $authenticationUtils = $this->get('security.authentication_utils');
-        
-        $form = $this->createFormBuilder(array(
-                // last username entered by the user
-                'username' => $authenticationUtils->getLastUsername(),
-            ))
-            ->add('username', 'text', array('label' => 'login.username', 'attr' => array('autocapitalize' => 'off')))
-            ->add('password', 'password', array('label' => 'login.password'))
-            ->add('login', 'submit', array('label' => 'login.submit'))
-            ->setAction($this->generateUrl('login_check'))
-            ->getForm();
-        
-        $error = $authenticationUtils->getLastAuthenticationError();
-        if ($error) {
-            $msg = $this->get('translator')->trans($error->getMessage(), [ ], 'security');
-            $form->addError(new FormError($msg));
+                
+        if ($ending == '.tpl') {
+            $response = new Response();
+            $csrf = $this->get('form.csrf_provider');
+            $etag = $csrf->generateCsrfToken('authenticate').'0.0.1';
+            $response->setETag($etag);
+            if ($response->isNotModified($request)) {
+                return $response;
+            }
         }
         
-        return $this->render(
-                'TutteliAppBundle:Security:login.html' . $ending . '.twig', 
-                array ('form' => $form->createView()));
+        $authenticationUtils = $this->get('security.authentication_utils');
+        $response = $this->render('TutteliAppBundle:Security:login.html' . $ending . '.twig', 
+                array('error' => $authenticationUtils->getLastAuthenticationError()));
+        
+        if ($ending == '.tpl') {
+            $response->setETag($etag);
+        }
+        return $response;
     }
     
     public function loginCheckAction() {
