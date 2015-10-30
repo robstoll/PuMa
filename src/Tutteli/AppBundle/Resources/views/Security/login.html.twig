@@ -8,15 +8,8 @@
 {% block title %} Login | {{ parent() }}{% endblock %}
 
 {% block content %}
-    {% include 'TutteliAppBundle:Security:login.html.tpl.twig' %}
-{% endblock %}
-
-{% block javascripts %}
-	{{ parent() }}
-	<script type="text/javascript">
-		var tutteliPurchase = angular.module('tutteli-purchase');
-		tutteliPurchase.run(function($templateCache) {
-  			$templateCache.put('partial/login.html', document.getElementById('_tpl_login').innerHtml);
-		});
-	</script>
-{%  endblock %}
+	<div ui-view></div>
+	<div pre-work="login.tpl">
+        {% include 'TutteliAppBundle:Security:login.html.tpl.twig' %}
+    </div>
+{% endblock %} 

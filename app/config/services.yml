@@ -10,6 +10,13 @@ parameters:
 #    parameter_name: value
 
 services:
-#    service_name:
-#        class: AppBundle\Directory\ClassName
-#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    tutteli_auth_success_handler:
+        class: Tutteli\AppBundle\Handler\AuthSuccessHandler
+        arguments: ["@security.http_utils", {}]
+        tags: 
+          - {name: 'monolog.logger', channel: 'security' }
+    tutteli_auth_failure_handler:
+        class: Tutteli\AppBundle\Handler\AuthFailureHandler
+        arguments:  ["@http_kernel", "@security.http_utils", {}, "@logger"]
+        tags:
+            - { name: 'monolog.logger', channel: 'security' }

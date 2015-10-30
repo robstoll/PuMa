@@ -37,9 +37,12 @@ security:
                 login_path: /login
                 check_path: /login_check
                 provider: db_provider
+                csrf_parameter: csrf_token
                 csrf_provider: security.csrf.token_manager
-                username_parameter: form[username]
-                password_parameter: form[password]
+                username_parameter: username
+                password_parameter: password
+                success_handler: tutteli_auth_success_handler
+                failure_handler: tutteli_auth_failure_handler
             # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
             
             remember_me:
@@ -56,6 +59,6 @@ security:
     access_control:
         # require ROLE_ADMIN for /admin*
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
-        - { path: ^/login.tpl$, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/login.tpl$, role: IS_AUTHENTICATED_ANONYMOUSLY}
         - { path: ^/admin, role: ROLE_ADMIN, requires_channel: https }
         - { path: ^/, roles: IS_AUTHENTICATED_REMEMBERED, requires_channel: https }
