@@ -16,6 +16,7 @@ angular.module('tutteli.purchase', [
     'tutteli.preWork',
     'tutteli.auth',
     'tutteli.auth.routing',
+    'tutteli.loader'
 ]).config(['$httpProvider', function($httpProvider){
     
     $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';

@@ -24,7 +24,8 @@
                         <span class="icon-bar"></span>
                     </button>
                 {% endif %}
-                <a class="navbar-brand" ui-sref="home" href="{{ path('tutteli_purchase_homepage') }}"> {{ 'nav.purchase'|trans }}</a>
+                <a class="navbar-brand" ui-sref="home" href="{{ path('tutteli_purchase_homepage') }}"> {{ 'nav.purchase'|trans }}</a> 
+                <span id="loader"></span>
             </div>
             {% if app.user and is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                 <div id="navbar" class="navbar-collapse collapse">
@@ -49,8 +50,8 @@
             {% endif %}
         </div>
     </nav>
-    <div class="container" role="main" ng-view>
-        {% block content %}{% endblock %}  
+    <div class="container" role="main">
+        {% block content %}{% endblock %}
 	</div>
 {% endblock %}    
 
@@ -66,9 +67,12 @@
     	'../bower_components/angular-cookies/angular-cookies.js'
     	'../bower_components/angular-ui-router/release/angular-ui-router.js'
     	'../bower_components/angular-bootstrap/ui-bootstrap-tpls.js'
+    	'../bower_components/angular-pre-work/src/pre-work.js'
     	'@TutteliAppBundle/Resources/js/app.js'
     	'@TutteliAppBundle/Resources/js/controllers.js'
-        '@TutteliAppBundle/Resources/js/services.js' %}
+        '@TutteliAppBundle/Resources/js/services.js'
+    	'@TutteliAppBundle/Resources/js/tutteli-auth.js'
+        '@TutteliAppBundle/Resources/js/tutteli-loader.js' %}
         <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
 {% endblock %}

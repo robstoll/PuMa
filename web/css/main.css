@@ -5,3 +5,20 @@ body {
 .modal-content {
 	padding:10px;
 }
+
+.waiting *{ cursor: wait !important; }
+
+#loader {
+	visibility: hidden;
+    background-image: url(../images/loader.gif);
+    background-repeat: no-repeat;
+    width: 32px;
+    height: 32px;    
+    margin-top: 8px;
+    margin-right: 5px;
+    margin-left: 9px;
+    float:left
+}
+#loader.loading {
+	visibility: visible;
+}
