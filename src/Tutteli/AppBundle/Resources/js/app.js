@@ -8,6 +8,7 @@
 angular.module('tutteli.purchase', [
     'tutteli.services', 
     'tutteli.ctrls', 
+    'tutteli.purchase.routing',
     
     'ui.router',
     'ngCookies',
@@ -15,32 +16,9 @@ angular.module('tutteli.purchase', [
     'tutteli.preWork',
     'tutteli.auth',
     'tutteli.auth.routing',
-]).config(
-  ['$httpProvider', '$locationProvider','$stateProvider', 'tutteli.auth.USER_ROLES', 
-  function($httpProvider, $locationProvider, $stateProvider, USER_ROLES){
+]).config(['$httpProvider', function($httpProvider){
     
     $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
-    $locationProvider.html5Mode(true);
-    $stateProvider.state('login', {
-        url: '/login',
-        controller: 'tutteli.LoginCtrl',
-        templateUrl: 'login.tpl',
-        data : {
-            authRoles : []
-        }
-    }).state('home', {
-        url: '/',
-        templateUrl: 'dashboard.html',
-        data : {
-            authRoles : [USER_ROLES.authenticated]
-        }
-    }).state('users', {
-        url : '/admin/users',
-        templateUrl : 'users.html',
-        data : {
-            authRoles : [USER_ROLES.admin]
-        }
-    });
     
 }]).run(
   ['$rootScope', '$location', 'tutteli.auth.EVENTS', 
@@ -80,3 +58,32 @@ angular.module('tutteli.purchase', [
 //                console.log(reason)
 //            });
 //        }
+
+angular.module('tutteli.purchase.routing', ['ui.router', 'tutteli.auth']).config(
+  ['$locationProvider','$stateProvider', 'tutteli.auth.USER_ROLES',
+  function($locationProvider, $stateProvider, USER_ROLES) {
+      
+    $locationProvider.html5Mode(true);
+    $stateProvider.state('login', {
+        url: '/login',
+        controller: 'tutteli.LoginCtrl',
+        templateUrl: 'login.tpl',
+        data : {
+            authRoles : []
+        }
+    }).state('home', {
+        url: '/',
+        templateUrl: 'dashboard.html',
+        data : {
+            authRoles : [USER_ROLES.authenticated]
+        }
+    }).state('users', {
+        url : '/admin/users',
+        templateUrl : 'users.html',
+        data : {
+            authRoles : [USER_ROLES.admin]
+        }
+    });
+  }
+]);
+
