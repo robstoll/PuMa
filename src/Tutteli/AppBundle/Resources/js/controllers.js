@@ -5,12 +5,14 @@
  */
 'use strict';
 
-angular.module('tutteli.ctrls', ['tutteli.preWork', 'tutteli.auth'])
+angular.module('tutteli.ctrls', ['tutteli.preWork', 'tutteli.auth', 'tutteli.alert'])
   .controller('tutteli.LoginCtrl', 
     ['$scope', '$rootScope', '$cookies', 
-     'tutteli.PreWork','tutteli.auth.AuthService', 'tutteli.auth.EVENTS',
+     'tutteli.PreWork', 'tutteli.auth.AuthService', 'tutteli.auth.EVENTS',
+     'tutteli.alert.AlertService', 
     function ($scope, $rootScope, $cookies, 
-            PreWork, AuthService, AUTH_EVENTS) {
+            PreWork, AuthService, AUTH_EVENTS,
+            AlertService) {
     
         $scope.credentials = {
                 username: '',
@@ -21,11 +23,13 @@ angular.module('tutteli.ctrls', ['tutteli.preWork', 'tutteli.auth'])
         PreWork.merge('login.tpl', $scope);        
         
         $scope.login = function (credentials, $event) {
+            var alertId = 'tutteli-ctrls-LoginCtrl';
+            AlertService.close(alertId);
             $event.preventDefault();
             AuthService.login(credentials).then(function(response) {
-                //TODO redirect
+                
             }, function(response){
-                //TODO show error message to user
+                AlertService.add(alertId, response.data, 'danger');
             });
         };
     }

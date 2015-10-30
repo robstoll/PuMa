@@ -16,26 +16,28 @@ angular.module('tutteli.purchase', [
     'tutteli.preWork',
     'tutteli.auth',
     'tutteli.auth.routing',
-    'tutteli.loader'
+    'tutteli.loader',
+    'tutteli.alert',
 ]).config(['$httpProvider', function($httpProvider){
     
     $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
     
 }]).run(
-  ['$rootScope', '$location', 'tutteli.auth.EVENTS', 
-  function($rootScope, $location, AUTH_EVENTS) {
+  ['$rootScope', '$location', 'tutteli.auth.EVENTS', 'tutteli.alert.AlertService',  
+  function($rootScope, $location, AUTH_EVENTS, AlertService) {
       
     $rootScope.$on(AUTH_EVENTS.notAuthorised, function(event, url) {
-        //TODO show error message to the user
+        AlertService.add('tutteli.purchase.notAuthorised', 'You are not authorised to visit ' + url, 'danger');
     });   
     
     $rootScope.$on(AUTH_EVENTS.loginSuccess, function(event, result){
-        //only :/ because the href element of the <base> tag will already start with /
-        var base = $location.protocol() + ':/' + angular.element(document.querySelector('base')).attr('href');
+        var base = $location.protocol() + '://' + $location.host() 
+            + angular.element(document.querySelector('base')).attr('href');
+        
         var url = result.url;
         if (url != ""){
             if (base == url.substr(0, base.length)) {
-                $location.path(url.substr(base.length + 1));
+                $location.path(url.substr(base.length));
             } else {
                 //TODO show error message to the user
             }
@@ -47,7 +49,7 @@ angular.module('tutteli.purchase', [
        
     });
   }
-]);  
+]);
 
 //        
 //        if (requireLogin && $rootScope.currentUser === undefined) {

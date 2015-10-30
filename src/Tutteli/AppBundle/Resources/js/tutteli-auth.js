@@ -15,8 +15,8 @@ function AuthServiceProvider() {
     };
     
     this.$get = $get; //bind function to property
-    $get.$inject = ['$rootScope', '$http', 'tutteli.auth.Session', 'tutteli.auth.USER_ROLES'];
-    function $get($rootScope, $http, Session, USER_ROLES){ return {
+    $get.$inject = ['$rootScope', '$http', 'tutteli.auth.Session', 'tutteli.auth.USER_ROLES', 'tutteli.auth.EVENTS'];
+    function $get($rootScope, $http, Session, USER_ROLES, AUTH_EVENTS){ return {
         
         login : function (credentials) {
             return $http.post(loginUrl, credentials).success(function (result) {
@@ -78,7 +78,7 @@ angular.module('tutteli.auth', [])
 })
 .constant('tutteli.auth.USER_ROLES', {
     authenticated: 'is-authenticated',
-    admin: 'admin'
+    admin: 'ROLE_ADMIN'
 });
 
 angular.module('tutteli.auth.routing', ['ui.router', 'tutteli.auth'])
