@@ -32,6 +32,7 @@ angular.module('tutteli.purchase', [
     });   
     
     $rootScope.$on(AUTH_EVENTS.loginSuccess, function(event, result){
+        AlertService.add('tutteli.purchase.loginSuccess', 'Login was successfull... loading new state...', 'success');
         var base = $location.protocol() + '://' + $location.host() 
             + angular.element(document.querySelector('base')).attr('href');
         
@@ -46,8 +47,15 @@ angular.module('tutteli.purchase', [
             //no url provided, redirect to home url
             $location.path(url);
         }
-        
-       
+    });
+    
+    $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
+        if (error.status == 404) {
+           //TODO enable html in alert and set up link
+           AlertService.add('tutteli.purchase.404', 
+            'Error while loading the new state "' + toState.name + '" - could not load "' + error.config.url + '". '
+                + 'Please check your internet-connection and click here to repeat the action.', 'danger');
+        }
     });
   }
 ]).factory('tutteli.auth.loginUrl', function(){
@@ -67,7 +75,7 @@ angular.module('tutteli.purchase', [
 
 angular.module('tutteli.purchase.routing', ['ui.router', 'tutteli.auth.routing']).config(
   ['$locationProvider','$stateProvider', 'tutteli.auth.USER_ROLES',
-  function($locationProvider, $stateProvider, USER_ROLES) {
+  function($locationProvider, $stateProvider,  USER_ROLES) {
       
     $locationProvider.html5Mode(true);
     $stateProvider.state('login', {
@@ -89,6 +97,8 @@ angular.module('tutteli.purchase.routing', ['ui.router', 'tutteli.auth.routing']
         data : {
             authRoles : [USER_ROLES.admin] //user needs to be logged in
         }
+    }).state('404', {
+        template: '<div>error</div>',
     });
   }
 ]);
