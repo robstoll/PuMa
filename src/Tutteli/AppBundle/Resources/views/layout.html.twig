@@ -61,10 +61,7 @@
 {% endblock %}    
 
 {% block javascripts %}
-    {# 
-        filter="?jsqueeze"
-     #}
-    {% javascripts  output="js/app.js" 
+    {% javascripts filter="?jsqueeze" output="js/app.js" 
     	'../bower_components/jquery/dist/jquery.js'
         '../bower_components/bootstrap/dist/js/bootstrap.js' 
     	'../bower_components/angular/angular.js'
@@ -72,14 +69,14 @@
     	'../bower_components/angular-cookies/angular-cookies.js'
     	'../bower_components/angular-ui-router/release/angular-ui-router.js'
     	'../bower_components/angular-bootstrap/ui-bootstrap-tpls.js'
-    	'../bower_components/angular-pre-work/src/pre-work.js'
-    	'@TutteliAppBundle/Resources/js/app.js'
-    	'@TutteliAppBundle/Resources/js/controllers.js'
-        '@TutteliAppBundle/Resources/js/services.js'
-    	'@TutteliAppBundle/Resources/js/tutteli-auth.js'
+    	'../bower_components/tutteli-angular-pre-work/src/pre-work.js'
+    	'../bower_components/tutteli-angular-auth/src/auth.js'
         '@TutteliAppBundle/Resources/js/tutteli-loader.js'
     	'@TutteliAppBundle/Resources/js/tutteli-alert.js'
-    	'@TutteliAppBundle/Resources/js/tutteli-regainFocus.js' %}
+    	'@TutteliAppBundle/Resources/js/tutteli-regainFocus.js'
+    	'@TutteliAppBundle/Resources/js/app.js'
+    	'@TutteliAppBundle/Resources/js/controllers.js'
+        '@TutteliAppBundle/Resources/js/services.js' %}
         <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
 {% endblock %}

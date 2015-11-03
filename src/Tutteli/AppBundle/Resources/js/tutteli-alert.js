@@ -5,7 +5,7 @@
  */
 'use strict';
 
-angular.module('tutteli.alert', ['ui.bootstrap'])
+angular.module('tutteli.alert', [])
 .controller('tutteli.alert.AlertCtrl', 
   ['$scope', '$element', 'tutteli.alert.AlertService', 
   function ($scope, $element, AlertService) {

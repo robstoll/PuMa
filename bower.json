@@ -13,13 +13,16 @@
   "dependencies": {
     "jquery": "~2.1.4",
     "angular": "~1.4.7",
-    "angular-mocks": "~1.4.7",
     "bootstrap": "~3.3.5",
     "angular-cookies": "~1.4.7",
     "angular-ui-router": "~0.2.15",
     "angular-resource": "~1.4.7",
     "angular-bootstrap": "~0.14.2",
-    "angular-pre-work": "~0.0.2"
+    "tutteli-angular-pre-work": "~0.0.2",
+    "tutteli-angular-auth": "~0.0.1"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.4.7"
   },
   "moduleType": [
     "globals"
@@ -28,12 +31,6 @@
     "purchase"
   ],
   "license": "Apache-2.0",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ],
+  "ignore": [],
   "private": true
 }

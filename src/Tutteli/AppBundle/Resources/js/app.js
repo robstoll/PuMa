@@ -11,11 +11,11 @@ angular.module('tutteli.purchase', [
     'tutteli.purchase.routing',
     
     'ui.router',
+    'ui.bootstrap',
     'ngCookies',
     
     'tutteli.preWork',
-    'tutteli.auth',
-    'tutteli.auth.routing',
+    'tutteli.auth.full',
     'tutteli.loader',
     'tutteli.alert',
     'tutteli.regainFocus'
@@ -50,7 +50,9 @@ angular.module('tutteli.purchase', [
        
     });
   }
-]);
+]).factory('tutteli.auth.loginUrl', function(){
+    return angular.element(document.querySelector('base')).attr('href') + 'login_check';
+});
 
 //        
 //        if (requireLogin && $rootScope.currentUser === undefined) {
@@ -63,7 +65,7 @@ angular.module('tutteli.purchase', [
 //            });
 //        }
 
-angular.module('tutteli.purchase.routing', ['ui.router', 'tutteli.auth']).config(
+angular.module('tutteli.purchase.routing', ['ui.router', 'tutteli.auth.routing']).config(
   ['$locationProvider','$stateProvider', 'tutteli.auth.USER_ROLES',
   function($locationProvider, $stateProvider, USER_ROLES) {
       
@@ -85,7 +87,7 @@ angular.module('tutteli.purchase.routing', ['ui.router', 'tutteli.auth']).config
         url : '/admin/users',
         templateUrl : 'users.html',
         data : {
-            authRoles : [USER_ROLES.admin]
+            authRoles : [USER_ROLES.admin] //user needs to be logged in
         }
     });
   }

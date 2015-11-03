@@ -8,10 +8,10 @@
 angular.module('tutteli.ctrls', ['tutteli.preWork', 'tutteli.auth', 'tutteli.alert'])
   .controller('tutteli.LoginCtrl', 
     ['$scope', '$rootScope', '$cookies', 
-     'tutteli.PreWork', 'tutteli.auth.AuthService', 'tutteli.auth.EVENTS',
+     'tutteli.PreWork', 'tutteli.auth.AuthService',
      'tutteli.alert.AlertService', 
     function ($scope, $rootScope, $cookies, 
-            PreWork, AuthService, AUTH_EVENTS,
+            PreWork, AuthService,
             AlertService) {
     
         $scope.credentials = {
@@ -26,9 +26,7 @@ angular.module('tutteli.ctrls', ['tutteli.preWork', 'tutteli.auth', 'tutteli.ale
             var alertId = 'tutteli-ctrls-LoginCtrl';
             AlertService.close(alertId);
             $event.preventDefault();
-            AuthService.login(credentials).then(function(response) {
-                
-            }, function(response){
+            AuthService.login(credentials).then(null, function(response){
                 AlertService.add(alertId, response.data, 'danger');
             });
         };
