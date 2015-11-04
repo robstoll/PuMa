@@ -42,7 +42,10 @@ angular.module('tutteli.purchase', [
             if (base == url.substr(0, base.length)) {
                 $location.path(url.substr(base.length));
             } else {
-                //TODO show error message to the user
+                AlertService.add('tutteli.purchase.hijack', 
+                        'Possible attempt of haijacking detected. Loading "' + url + '" was aborted.<br/>'
+                        + 'Please log out if this seems suspicious to you, close your browser and restart again.',
+                        'warning');
             }
         } else {
             //no url provided, redirect to home url

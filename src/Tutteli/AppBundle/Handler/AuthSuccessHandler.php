@@ -31,8 +31,8 @@ class AuthSuccessHandler extends DefaultAuthenticationSuccessHandler {
                        .'"role":"'.$user->getRole().'",'
                        .'"username":"'.$user->getUserName().'"'
                        .'},' 
-                       .'"url":"'.$redirectUrl.'"
-                    }');
+                       .'"url":"'.$redirectUrl.'"'
+                    .'}');
         }
         return parent::onAuthenticationSuccess($request, $token);
     }
