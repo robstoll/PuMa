@@ -96,8 +96,15 @@ angular.module('tutteli.purchase', [
                 return msg;
             }
             
-            var errorMsg = 'err.msg: ' + error.message + '<br/><br/>'
-                + report(fromState, 'fromState') + '<br/><br/>'
+            var errorMsg = '';
+            if (error.stack){
+                errorMsg += error.stack.replace('\n', '<br/>') + '<br/><br/>';
+            } else if (error.status){
+                errorMsg += 'status: ' + error.status + '<br/>statusText: ' + error.statusText + '<br/><br/>';
+                errorMsg += report(error.config);
+            }
+            
+            errorMsg += report(fromState, 'fromState') + '<br/><br/>' 
                 + report(fromParams, 'fromParams') + '<br/><br/>'
                 + report(toState, 'toState') + '<br/><br/>'
                 + report(toParams, 'toParams');
@@ -107,7 +114,7 @@ angular.module('tutteli.purchase', [
                 + '<a href="' + url + '" ng-click="close(\'tutteli.purchase.500\')">'
                     + 'click here to repeat the action'
                 + '</a>. If it should occurr again (this message does not disappear), then please '
-                + '<a style="cursor:pointer" onclick="document.getElementById(\'_error_msg\').style.display=\'block\'">click here</a> '
+                + '<a style="cursor:pointer" onclick="var a = document.getElementById(\'_error_msg\'); a.style.display=\'block\'; selectText(a);">click here</a> '
                 + 'and report the shown error to the admin.<br/>'
                 + '<div id="_error_msg" class="error-report">' + errorMsg + '</div>';
             AlertService.add('tutteli.purchase.500', msg, 'danger');
@@ -143,7 +150,7 @@ angular.module('tutteli.purchase.routing', ['ui.router', 'tutteli.auth.routing']
         }
     }).state('home', {
         url: '/',
-        templateProvider: function(){errorOnPurpose;},
+        templateUrl: 'dashboard.html',
         data : {
             authRoles : [USER_ROLES.authenticated]
         }

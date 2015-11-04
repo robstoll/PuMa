@@ -27,7 +27,9 @@ angular.module('tutteli.ctrls', ['tutteli.preWork', 'tutteli.auth', 'tutteli.ale
             AlertService.close(alertId);
             $event.preventDefault();
             AuthService.login(credentials).then(null, function(response){
-                AlertService.add(alertId, response.data, 'danger');
+                if (response.status == 401){
+                    AlertService.add(alertId, response.data, 'danger');
+                }
             });
         };
     }
