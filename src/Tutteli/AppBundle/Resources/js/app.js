@@ -55,15 +55,59 @@ angular.module('tutteli.purchase', [
   function($rootScope, $state, AlertService){
     
     $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
+        var msg = 'Error while loading the new state "' + toState.name + '" - ';
+        var url = $state.href(toState.name, toParams);
+        
         if (error.status == 404) {
-            var url = $state.href(toState.name, toParams);
-            var msg = 'Error while loading the new state "' + toState.name + '" - '
-                + 'could not load "' + error.config.url + '".<br/>'
-                + 'Please check your internet-connection and '
+            msg += 'could not load "' + error.config.url + '".<br/>'
+                + 'Please check your internet-connection and ' 
                 + '<a href="' + url + '" ng-click="close(\'tutteli.purchase.404\')">'
                     + 'click here to repeat the action'
                 + '</a>.';
-           AlertService.add('tutteli.purchase.404', msg, 'danger');
+            AlertService.add('tutteli.purchase.404', msg, 'danger');
+        } else {
+            
+            function report(obj, name, tDepth){
+                var depth = tDepth || 0;
+                var msg ='';
+                var indent = '&nbsp;'.repeat((depth + 1) * 2);
+                if (depth == 0) {
+                    msg += name +': {<br/>';
+                }
+                for (var prop in obj) {
+                    if (angular.isArray(obj[prop]) && depth <= 3) {
+                        msg += indent +  prop + ': [<br/>';
+                        msg += report(obj[prop], '', depth + 1);
+                        msg += indent + ']<br/>';
+                    } else if (angular.isObject(obj[prop]) &&  depth <= 3) {
+                        msg += indent + prop + ': {<br/>';
+                        msg += report(obj[prop], '', depth + 1); 
+                        msg += indent + '}<br/>';
+                    } else{
+                        msg += indent + prop + ': ' + obj[prop] + '<br/>';    
+                    }
+                }
+                if (depth == 0) {
+                    msg += '}';
+                }
+                return msg;
+            }
+            
+            var errorMsg = 'err.msg: ' + error.message + '<br/><br/>'
+                + report(fromState, 'fromState') + '<br/><br/>'
+                + report(fromParams, 'fromParams') + '<br/><br/>'
+                + report(toState, 'toState') + '<br/><br/>'
+                + report(toParams, 'toParams');
+            
+            msg += 'unexpected error occurred.<br/>'
+                + 'Please '
+                + '<a href="' + url + '" ng-click="close(\'tutteli.purchase.500\')">'
+                    + 'click here to repeat the action'
+                + '</a>. If it should occurr again (this message does not disappear), then please '
+                + '<a style="cursor:pointer" onclick="document.getElementById(\'_error_msg\').style.display=\'block\'">click here</a> '
+                + 'and report the shown error to the admin.<br/>'
+                + '<div id="_error_msg" class="error-report">' + errorMsg + '</div>';
+            AlertService.add('tutteli.purchase.500', msg, 'danger');
         }
     });
   }
@@ -96,7 +140,7 @@ angular.module('tutteli.purchase.routing', ['ui.router', 'tutteli.auth.routing']
         }
     }).state('home', {
         url: '/',
-        templateUrl: 'dashboard.html',
+        templateProvider: function(){errorOnPurpose;},
         data : {
             authRoles : [USER_ROLES.authenticated]
         }

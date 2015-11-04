@@ -22,3 +22,10 @@ body {
 #loader.loading {
 	visibility: visible;
 }
+
+.error-report {
+	border: 1px dashed #CCC;
+	padding: 10px;
+	display: none;
+	background-color: #FFF;
+}
