@@ -18,7 +18,8 @@ angular.module('tutteli.purchase', [
     'tutteli.auth.full',
     'tutteli.loader',
     'tutteli.alert',
-    'tutteli.regainFocus'
+    'tutteli.regainFocus',
+    'tutteli.utils'
 ]).config(['$httpProvider', function($httpProvider){
     
     $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
@@ -48,13 +49,21 @@ angular.module('tutteli.purchase', [
             $location.path(url);
         }
     });
+  }
+]).run(
+  ['$rootScope', '$state', 'tutteli.alert.AlertService',  
+  function($rootScope, $state, AlertService){
     
     $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
         if (error.status == 404) {
-           //TODO enable html in alert and set up link
-           AlertService.add('tutteli.purchase.404', 
-            'Error while loading the new state "' + toState.name + '" - could not load "' + error.config.url + '". '
-                + 'Please check your internet-connection and click here to repeat the action.', 'danger');
+            var url = $state.href(toState.name, toParams);
+            var msg = 'Error while loading the new state "' + toState.name + '" - '
+                + 'could not load "' + error.config.url + '".<br/>'
+                + 'Please check your internet-connection and '
+                + '<a href="' + url + '" ng-click="close(\'tutteli.purchase.404\')">'
+                    + 'click here to repeat the action'
+                + '</a>.';
+           AlertService.add('tutteli.purchase.404', msg, 'danger');
         }
     });
   }
@@ -97,8 +106,6 @@ angular.module('tutteli.purchase.routing', ['ui.router', 'tutteli.auth.routing']
         data : {
             authRoles : [USER_ROLES.admin] //user needs to be logged in
         }
-    }).state('404', {
-        template: '<div>error</div>',
     });
   }
 ]);

@@ -18,7 +18,7 @@ angular.module('tutteli.alert', [])
     this.getAlerts = function(){
         return alerts;
     };
-
+    
     this.add = function(key, msg, type) {
         alerts[key] = {key: key, msg: msg, type: type};
     };

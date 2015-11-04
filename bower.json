@@ -19,7 +19,7 @@
     "angular-resource": "~1.4.7",
     "angular-bootstrap": "~0.14.2",
     "tutteli-angular-pre-work": "~0.0.2",
-    "tutteli-angular-auth": "~0.0.1"
+    "tutteli-angular-auth": null
   },
   "devDependencies": {
     "angular-mocks": "~1.4.7"

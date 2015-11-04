@@ -53,7 +53,7 @@
     <div class="container" role="main">
     	<div ng-controller="tutteli.alert.AlertCtrl" style="display:none" ng-cloak>
     		<uib-alert ng-repeat="alert in alerts" type="{{'{{alert.type}}'}}" close="close(alert.key)">
-    		    {{'{{alert.msg}}'}}
+    		    <div compile="alert.msg"></div>
     		</uib-alert>
     	</div>
         {% block content %}{% endblock %}
@@ -74,6 +74,7 @@
         '@TutteliAppBundle/Resources/js/tutteli-loader.js'
     	'@TutteliAppBundle/Resources/js/tutteli-alert.js'
     	'@TutteliAppBundle/Resources/js/tutteli-regainFocus.js'
+    	'@TutteliAppBundle/Resources/js/tutteli-utils.js'
     	'@TutteliAppBundle/Resources/js/app.js'
     	'@TutteliAppBundle/Resources/js/controllers.js'
         '@TutteliAppBundle/Resources/js/services.js' %}
