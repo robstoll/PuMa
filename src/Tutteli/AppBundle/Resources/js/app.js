@@ -15,7 +15,7 @@ angular.module('tutteli.purchase', [
     'ngCookies',
     
     'tutteli.preWork',
-    'tutteli.auth.full',
+    'tutteli.auth',
     'tutteli.loader',
     'tutteli.alert',
     'tutteli.regainFocus',
@@ -37,7 +37,7 @@ angular.module('tutteli.purchase', [
         var base = $location.protocol() + '://' + $location.host() 
             + angular.element(document.querySelector('base')).attr('href');
         
-        var url = result.url;
+        var url = result.url || '';
         if (url != ""){
             if (base == url.substr(0, base.length)) {
                 $location.path(url.substr(base.length));
@@ -70,55 +70,26 @@ angular.module('tutteli.purchase', [
             AlertService.add('tutteli.purchase.404', msg, 'danger');
         } else {
             
-            function report(obj, name, tDepth){
-                var depth = tDepth || 0;
-                var msg ='';
-                var indent = '&nbsp;'.repeat((depth + 1) * 2);
-                if (depth == 0) {
-                    msg += name +': {<br/>';
-                }
-                for (var prop in obj) {
-                    if (angular.isArray(obj[prop]) && depth <= 3) {
-                        msg += indent +  prop + ': [<br/>';
-                        msg += report(obj[prop], '', depth + 1);
-                        msg += indent + ']<br/>';
-                    } else if (angular.isObject(obj[prop]) &&  depth <= 3) {
-                        msg += indent + prop + ': {<br/>';
-                        msg += report(obj[prop], '', depth + 1); 
-                        msg += indent + '}<br/>';
-                    } else{
-                        msg += indent + prop + ': ' + obj[prop] + '<br/>';    
-                    }
-                }
-                if (depth == 0) {
-                    msg += '}';
-                }
-                return msg;
-            }
+            var errorMsg = AlertService.getHttpErrorReport(error) + '<br/><br/>';
             
-            var errorMsg = '';
-            if (error.stack){
-                errorMsg += error.stack.replace('\n', '<br/>') + '<br/><br/>';
-            } else if (error.status){
-                errorMsg += 'status: ' + error.status + '<br/>statusText: ' + error.statusText + '<br/><br/>';
-                errorMsg += report(error.config);
-            }
-            
-            errorMsg += report(fromState, 'fromState') + '<br/><br/>' 
-                + report(fromParams, 'fromParams') + '<br/><br/>'
-                + report(toState, 'toState') + '<br/><br/>'
-                + report(toParams, 'toParams');
+            errorMsg += AlertService.getObjectInfo(fromState, 'fromState') + '<br/><br/>' 
+                + AlertService.getObjectInfo(fromParams, 'fromParams') + '<br/><br/>'
+                + AlertService.getObjectInfo(toState, 'toState') + '<br/><br/>'
+                + AlertService.getObjectInfo(toParams, 'toParams');
             
             msg += 'unexpected error occurred.<br/>'
-                + 'Please '
-                + '<a href="' + url + '" ng-click="close(\'tutteli.purchase.500\')">'
-                    + 'click here to repeat the action'
-                + '</a>. If it should occurr again (this message does not disappear), then please '
-                + '<a style="cursor:pointer" onclick="var a = document.getElementById(\'_error_msg\'); a.style.display=\'block\'; selectText(a);">click here</a> '
-                + 'and report the shown error to the admin.<br/>'
-                + '<div id="_error_msg" class="error-report">' + errorMsg + '</div>';
-            AlertService.add('tutteli.purchase.500', msg, 'danger');
+                + 'Please {{repeatLink}}.'
+                + 'If it should occurr again (this message does not disappear), '
+                + 'then please {{reportLink}} and report the shown error to the admin.<br/>'
+                + '{{reportContent}}';
+            AlertService.addErrorReport('tutteli.purchase.500', msg, 'danger', 
+                    url, 'click here to repeat the action', 
+                    '_stateChange_report', 'click here', errorMsg);
         }
+    });
+    
+    $rootScope.$on('$stateChangeError', function(){
+        
     });
   }
 ]).factory('tutteli.auth.loginUrl', function(){
@@ -151,6 +122,7 @@ angular.module('tutteli.purchase.routing', ['ui.router', 'tutteli.auth.routing']
     }).state('home', {
         url: '/',
         templateUrl: 'dashboard.html',
+        //templateProvider: function(){nonExisting;},
         data : {
             authRoles : [USER_ROLES.authenticated]
         }

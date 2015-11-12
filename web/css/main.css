@@ -28,4 +28,5 @@ body {
 	padding: 10px;
 	display: none;
 	background-color: #FFF;
+	overflow-x: auto;
 }

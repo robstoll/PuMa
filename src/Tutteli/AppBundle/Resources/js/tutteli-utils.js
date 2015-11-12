@@ -3,7 +3,25 @@
  * For the full copyright and license information, please have a look at LICENSE in the
  * root folder or visit https://github.com/robstoll/purchase
  */
+(function(){
 'use strict';
+
+function UtilsService(){
+    
+    this.selectText = function (element) {
+        if (document.body.createTextRange) {
+            var range = document.body.createTextRange();
+            range.moveToElementText(element);
+            range.select();
+        } else if (window.getSelection) {
+            var selection = window.getSelection();        
+            var range = document.createRange();
+            range.selectNodeContents(element);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+    };
+}
 
 angular.module('tutteli.utils', [])
 .directive('compile', ['$compile', function($compile){
@@ -13,18 +31,8 @@ angular.module('tutteli.utils', [])
             $compile(elem.contents())(scope);
         }
     };
-}]);
+}])
+.service('tutteli.UtilsService', UtilsService);
 
-function selectText(element) {
-    if (document.body.createTextRange) {
-        var range = document.body.createTextRange();
-        range.moveToElementText(element);
-        range.select();
-    } else if (window.getSelection) {
-        var selection = window.getSelection();        
-        var range = document.createRange();
-        range.selectNodeContents(element);
-        selection.removeAllRanges();
-        selection.addRange(range);
-    }
-}
+
+})();

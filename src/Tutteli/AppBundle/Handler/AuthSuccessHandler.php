@@ -22,7 +22,6 @@ class AuthSuccessHandler extends DefaultAuthenticationSuccessHandler {
     public function onAuthenticationSuccess(Request $request, TokenInterface $token) {
         if ($request->isXmlHttpRequest()) {
             $user = $token->getUser();
-            $session = $request->getSession();
             $redirectUrl = $request->getSession()->get('_security.main.target_path');
             return new Response(
                     '{'

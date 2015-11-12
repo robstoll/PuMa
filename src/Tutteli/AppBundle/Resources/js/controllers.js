@@ -5,11 +5,11 @@
  */
 'use strict';
 
-angular.module('tutteli.ctrls', ['tutteli.preWork', 'tutteli.auth', 'tutteli.alert'])
+angular.module('tutteli.ctrls', ['tutteli.preWork', 'tutteli.auth', 'tutteli.alert', 'tutteli.utils'])
   .controller('tutteli.LoginCtrl', 
     ['$scope', '$rootScope', '$cookies', 
      'tutteli.PreWork', 'tutteli.auth.AuthService',
-     'tutteli.alert.AlertService', 
+     'tutteli.alert.AlertService',
     function ($scope, $rootScope, $cookies, 
             PreWork, AuthService,
             AlertService) {
@@ -27,8 +27,18 @@ angular.module('tutteli.ctrls', ['tutteli.preWork', 'tutteli.auth', 'tutteli.ale
             AlertService.close(alertId);
             $event.preventDefault();
             AuthService.login(credentials).then(null, function(response){
-                if (response.status == 401){
+                if (response.status == 401) {
                     AlertService.add(alertId, response.data, 'danger');
+                } else {
+                    var msg = 'Unexpected error occured. '
+                        + 'Please log in again in a few minutes. If the error should occurr again (this message does not disappear), '
+                        + 'then please {{reportLink}} and report the shown error to the admin.<br/>'
+                        + '{{reportContent}}';
+                    
+                    var report = AlertService.getHttpErrorReport(response);
+                    AlertService.addErrorReport(alertId, msg, 'warning', 
+                            null, null, 
+                            '_login_report', 'click here', report);                            
                 }
             });
         };
