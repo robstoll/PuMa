@@ -7,20 +7,23 @@ exports.config = {
   allScriptsTimeout: 11000,
 
   specs: [
-    '../src/**/Tests/e2e/*.js'
+    '../src/**/Tests/integration/*.js',
+    '../src/**/Tests/e2e/*.js',
   ],
 
   capabilities: {
-    'browserName': 'chrome'
+    'browserName': 'firefox'
   },
 
   chromeOnly: true,
 
-  baseUrl: 'http://localhost/tutteli.ch/purchase/web/app_dev.php/',
+  baseUrl: 'https://localhost/tutteli.ch/purchase/web/app_dev.php/',
 
-  framework: 'jasmine',
+  framework: 'jasmine2',
 
   jasmineNodeOpts: {
-    defaultTimeoutInterval: 30000
+    defaultTimeoutInterval: 30000,
+    isVerbose: true,
+    includeStackTrace: true
   }
 };

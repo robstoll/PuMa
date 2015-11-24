@@ -12,17 +12,17 @@
   "main": "",
   "dependencies": {
     "jquery": "~2.1.4",
-    "angular": "~1.4.7",
+    "angular": "~1.4.8",
     "bootstrap": "~3.3.5",
-    "angular-cookies": "~1.4.7",
+    "angular-cookies": "~1.4.8",
     "angular-ui-router": "~0.2.15",
-    "angular-resource": "~1.4.7",
+    "angular-resource": "~1.4.8",
     "angular-bootstrap": "~0.14.2",
-    "tutteli-angular-pre-work": "~0.0.2",
-    "tutteli-angular-auth": null
+    "tutteli-angular-pre-work": "master",
+    "tutteli-angular-auth": "master"
   },
   "devDependencies": {
-    "angular-mocks": "~1.4.7"
+    "angular-mocks": "~1.4.8"
   },
   "moduleType": [
     "globals"

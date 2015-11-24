@@ -12,16 +12,16 @@
     "url": "https://github.com/robstoll/purchase/issues"
   },
   "homepage": "https://github.com/robstoll/purchase#readme",
-  "dependencies": {
-    "uglify-js": "^2.5.0"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "bower": "^1.6.3",
-    "jasmine-core": "^2.3.4",
-    "karma": "^0.13.11",
-    "karma-chrome-launcher": "^0.2.1",
+    "bower": "*",
+    "jasmine-core": "*",
+    "jasmine-expect": "^1.22.3",
+    "karma": "*",
+    "karma-chrome-launcher": "*",
     "karma-jasmine": "^0.3.6",
-    "protractor": "^2.5.1"
+    "protractor": "^3.0.0",
+    "uglify-js": "*"
   },
   "scripts": {
     "postinstall": "bower install",
