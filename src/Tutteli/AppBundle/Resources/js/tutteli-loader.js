@@ -6,6 +6,14 @@
 'use strict';
 (function(){
     
+angular.module('tutteli.loader', [])
+.config(['$httpProvider', function ($httpProvider) {
+    $httpProvider.interceptors.push(['$injector', function ($injector) {
+      return $injector.get('tutteli.loader.HttpInterceptor');
+    }]);
+}]).provider('tutteli.loader.HttpInterceptor', HttpInterceptorProvider);
+    
+    
 function HttpInterceptorProvider() {
     var selector = '#loader';
     var className = 'loading';
@@ -47,12 +55,5 @@ function HttpInterceptorProvider() {
     
     };}
 }
-
-angular.module('tutteli.loader', [])
-.config(['$httpProvider', function ($httpProvider) {
-    $httpProvider.interceptors.push(['$injector', function ($injector) {
-      return $injector.get('tutteli.loader.HttpInterceptor');
-    }]);
-}]).provider('tutteli.loader.HttpInterceptor', HttpInterceptorProvider);
 
 })();

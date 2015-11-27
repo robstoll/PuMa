@@ -3,11 +3,11 @@
  * For the full copyright and license information, please have a look at LICENSE in the
  * root folder or visit https://github.com/robstoll/purchase
  */
+(function(){
 'use strict';
 
 angular.module('tutteli.purchase', [
-    'tutteli.services', 
-    'tutteli.ctrls', 
+    'tutteli.login',
     'tutteli.purchase.routing',
     
     'ui.router',
@@ -16,6 +16,7 @@ angular.module('tutteli.purchase', [
     
     'tutteli.preWork',
     'tutteli.auth',
+    'tutteli.auth.cookie',
     'tutteli.loader',
     'tutteli.alert',
     'tutteli.regainFocus',
@@ -23,10 +24,18 @@ angular.module('tutteli.purchase', [
 ]).config(['$httpProvider', function($httpProvider){
     
     $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
-    
-}]).run(
-  ['$rootScope', '$location', 'tutteli.auth.EVENTS', 'tutteli.alert.AlertService',  
-  function($rootScope, $location, AUTH_EVENTS, AlertService) {
+
+}])
+    .run(authEventHandler)
+    .run(routingErrorHandler)
+    .factory('tutteli.auth.loginUrl', loginUrlFactory);
+
+function loginUrlFactory(){
+    return angular.element(document.querySelector('base')).attr('href') + 'login_check';
+}
+
+authEventHandler.$inject =  ['$rootScope', '$location', 'tutteli.auth.EVENTS', 'tutteli.alert.AlertService'];
+function authEventHandler($rootScope, $location, AUTH_EVENTS, AlertService) {
       
     $rootScope.$on(AUTH_EVENTS.notAuthorised, function(event, url) {
         AlertService.add('tutteli.purchase.notAuthorised', 'You are not authorised to visit ' + url, 'danger');
@@ -52,10 +61,10 @@ angular.module('tutteli.purchase', [
             $location.path(url);
         }
     });
-  }
-]).run(
-  ['$rootScope', '$state', 'tutteli.alert.AlertService',  
-  function($rootScope, $state, AlertService){
+}
+
+routingErrorHandler.$inject = ['$rootScope', '$state', 'tutteli.alert.AlertService'];
+function routingErrorHandler($rootScope, $state, AlertService){
     
     $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
         var msg = 'Error while loading the new state "' + toState.name + '" - ';
@@ -87,14 +96,7 @@ angular.module('tutteli.purchase', [
                     '_stateChange_report', 'click here', errorMsg);
         }
     });
-    
-    $rootScope.$on('$stateChangeError', function(){
-        
-    });
-  }
-]).factory('tutteli.auth.loginUrl', function(){
-    return angular.element(document.querySelector('base')).attr('href') + 'login_check';
-});
+}
 
 //        
 //        if (requireLogin && $rootScope.currentUser === undefined) {
@@ -107,32 +109,4 @@ angular.module('tutteli.purchase', [
 //            });
 //        }
 
-angular.module('tutteli.purchase.routing', ['ui.router', 'tutteli.auth.routing']).config(
-  ['$locationProvider','$stateProvider', 'tutteli.auth.USER_ROLES',
-  function($locationProvider, $stateProvider,  USER_ROLES) {
-      
-    $locationProvider.html5Mode(true);
-    $stateProvider.state('login', {
-        url: '/login',
-        controller: 'tutteli.LoginCtrl',
-        templateUrl: 'login.tpl',
-        data : {
-            authRoles : []
-        }
-    }).state('home', {
-        url: '/',
-        templateUrl: 'dashboard.html',
-        //templateProvider: function(){nonExisting;},
-        data : {
-            authRoles : [USER_ROLES.authenticated]
-        }
-    }).state('users', {
-        url : '/admin/users',
-        templateUrl : 'users.html',
-        data : {
-            authRoles : [USER_ROLES.admin] //user needs to be logged in
-        }
-    });
-  }
-]);
-
+})();

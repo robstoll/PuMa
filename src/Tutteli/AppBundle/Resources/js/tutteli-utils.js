@@ -6,6 +6,17 @@
 (function(){
 'use strict';
 
+angular.module('tutteli.utils', [])
+.directive('compile', ['$compile', function($compile){
+    return {
+        link: function(scope, elem, attrs) {
+            elem.html(scope.$eval(attrs.compile));
+            $compile(elem.contents())(scope);
+        }
+    };
+}])
+.service('tutteli.UtilsService', UtilsService);
+
 function UtilsService(){
     
     this.selectText = function (element) {
@@ -22,17 +33,5 @@ function UtilsService(){
         }
     };
 }
-
-angular.module('tutteli.utils', [])
-.directive('compile', ['$compile', function($compile){
-    return {
-        link: function(scope, elem, attrs) {
-            elem.html(scope.$eval(attrs.compile));
-            $compile(elem.contents())(scope);
-        }
-    };
-}])
-.service('tutteli.UtilsService', UtilsService);
-
 
 })();

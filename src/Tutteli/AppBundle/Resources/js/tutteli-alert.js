@@ -3,20 +3,23 @@
  * For the full copyright and license information, please have a look at LICENSE in the
  * root folder or visit https://github.com/robstoll/purchase
  */
+(function(){
 'use strict';
 
 angular.module('tutteli.alert', ['tutteli.utils'])
-.controller('tutteli.alert.AlertCtrl', 
-  ['$scope', '$element', 'tutteli.alert.AlertService', 
-  function ($scope, $element, AlertService) {
+    .controller('tutteli.alert.AlertController', AlertController)
+    .service('tutteli.alert.AlertService', AlertService);
+
+AlertController.$inject =  ['$element', 'tutteli.alert.AlertService'];
+function AlertController($element, AlertService) {
     $element.css('display','block');
-    $scope.alerts = AlertService.getAlerts();
-    $scope.close = AlertService.close;
-    $scope.openErrorReport = AlertService.openErrorReport;
-  }
-]).service('tutteli.alert.AlertService', 
-  ['$interpolate', 'tutteli.UtilsService', 
-  function($interpolate, UtilsService){
+    this.alerts = AlertService.getAlerts();
+    this.close = AlertService.close;
+    this.openErrorReport = AlertService.openErrorReport;
+}
+
+AlertService.$inject =  ['$interpolate', 'tutteli.UtilsService'];
+function AlertService($interpolate, UtilsService){
     var self = this;  
     var alerts = {};
     
@@ -39,6 +42,8 @@ angular.module('tutteli.alert', ['tutteli.utils'])
         } else if (response.status) {
             errorMsg += 'status: ' + response.status + '<br/>statusText: ' + response.statusText + '<br/><br/>';
             errorMsg += self.getObjectInfo(response.config);
+        } else if (response.msg) {
+            errorMsg += 'msg: '+ response.msg + '<br/>' + self.getObjectInfo(response.data, 'response');
         }
         return errorMsg;
     };
@@ -47,9 +52,11 @@ angular.module('tutteli.alert', ['tutteli.utils'])
         var depth = tDepth || 0;
         var msg ='';
         var indent = '&nbsp;'.repeat((depth + 1) * 2);
+        
         if (depth == 0) {
             msg += name +': {<br/>';
         }
+        
         for (var prop in obj) {
             if (angular.isArray(obj[prop]) && depth <= 3) {
                 msg += indent +  prop + ': [<br/>';
@@ -63,16 +70,18 @@ angular.module('tutteli.alert', ['tutteli.utils'])
                 msg += indent + prop + ': ' + obj[prop] + '<br/>';    
             }
         }
+        
         if (depth == 0) {
             msg += '}';
         }
+        
         return msg;
     };
     
     this.addErrorReport = function(key, msg, type, repeatUrl, repeatUrlText, reportId, reportUrlText, reportText) {
         var message = $interpolate(msg)({
             repeatLink : '<a href="' + repeatUrl + '" ng-click="close(\'' + key + '\')">' + repeatUrlText + '</a>',
-            reportLink : '<a style="cursor:pointer" ng-click="openErrorReport(\'' + reportId + '\')">' + reportUrlText + '</a>',
+            reportLink : '<a style="cursor:pointer" ng-click="alertCtrl.openErrorReport(\'' + reportId + '\')">' + reportUrlText + '</a>',
             reportContent: '<div id="'+ reportId + '" class="error-report">' + reportText + '</div>'
         });
         this.add(key, message, type);
@@ -83,4 +92,6 @@ angular.module('tutteli.alert', ['tutteli.utils'])
         element.style.display= 'block'; 
         UtilsService.selectText(element);
     };
-}]);
+}
+
+})();
