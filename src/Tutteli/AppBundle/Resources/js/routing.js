@@ -10,7 +10,7 @@
 angular.module('tutteli.purchase.routing', [
     'ui.router', 
     'tutteli.auth.routing', 
-    'tutteli.purchase.login'
+    'tutteli.login'
 ]).config(
   ['$locationProvider','$stateProvider', 'tutteli.auth.USER_ROLES',
   function($locationProvider, $stateProvider,  USER_ROLES) {
