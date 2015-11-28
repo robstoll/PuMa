@@ -18,7 +18,23 @@
             <trans-unit id="3">
                 <source>login.submit</source>
                 <target>Login</target>
-            </trans-unit>
+            </trans-unit>            
+            
+            <trans-unit id="10">
+                <source>general.dateFormat.php</source>
+                <target>d.m.Y</target>
+            </trans-unit>  
+            <trans-unit id="11">
+                <source>general.dateFormat.angularjs</source>
+                <target>dd.MM.yyyy</target>
+            </trans-unit>         
+            <trans-unit id="12">
+                <source>general.close</source>
+                <target>Close</target>
+            </trans-unit>         
+            
+            
+            
             <trans-unit id="100">
                 <source>nav.purchase</source>
                 <target>Purchase</target>
@@ -38,6 +54,39 @@
             <trans-unit id="120">
                 <source>nav.logout</source>
                 <target>Logout</target>
+            </trans-unit>
+            
+            <trans-unit id="200">
+                <source>purchase.price</source>
+                <target>Price</target>
+            </trans-unit>
+            <trans-unit id="201">
+                <source>purchase.category</source>
+                <target>Category</target>
+            </trans-unit>
+            <trans-unit id="202">
+                <source>purchase.loadingCategories</source>
+                <target>Loading categories</target>
+            </trans-unit>
+            <trans-unit id="203">
+                <source>purchase.date</source>
+                <target>Date</target>
+            </trans-unit>
+            <trans-unit id="204">
+                <source>purchase.notice</source>
+                <target>Notice</target>
+            </trans-unit>
+            <trans-unit id="205">
+                <source>purchase.user</source>
+                <target>User</target>
+            </trans-unit>
+             <trans-unit id="206">
+                <source>purchase.add</source>
+                <target>Add position</target>
+            </trans-unit>
+            <trans-unit id="207">
+                <source>purchase.submit</source>
+                <target>End purchase</target>
             </trans-unit>
         </body>
     </file>

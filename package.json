@@ -25,7 +25,8 @@
   },
   "scripts": {
     "postinstall": "bower install",
-    "test": "node node_modules/karma/bin/karma start devconfig/karma.conf.js",
+    "test": "npm run protractor",
+    "karma" : "node node_modules/karma/bin/karma start devconfig/karma.conf.js",
     "protractor": "protractor devconfig/protractor-conf.js"
   }
 }

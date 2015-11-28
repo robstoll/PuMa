@@ -24,7 +24,7 @@
                         <span class="icon-bar"></span>
                     </button>
                 {% endif %}
-                <a class="navbar-brand" ui-sref="home" href="{{ path('tutteli_purchase_homepage') }}"> {{ 'nav.purchase'|trans }}</a> 
+                <a class="navbar-brand" ui-sref="home" href="{{ path('home') }}"> {{ 'nav.purchase'|trans }}</a> 
                 <span id="loader"></span>
             </div>
             {% if app.user and is_granted('IS_AUTHENTICATED_REMEMBERED') %}
@@ -50,9 +50,9 @@
             {% endif %}
         </div>
     </nav>
-    <div class="container" role="main">
-    	<div ng-controller="tutteli.alert.AlertCtrl" style="display:none" ng-cloak>
-    		<uib-alert ng-repeat="alert in alerts" type="{{'{{alert.type}}'}}" close="close(alert.key)">
+    <div class="container main" role="main">
+    	<div ng-controller="tutteli.alert.AlertController as alertCtrl" style="display:none">
+    		<uib-alert ng-repeat="alert in alertCtrl.alerts" type="{{'{{alert.type}}'}}" close="alertCtrl.close(alert.key)">
     		    <div compile="alert.msg"></div>
     		</uib-alert>
     	</div>
@@ -74,13 +74,16 @@
     	'../bower_components/tutteli-angular-auth/src/auth-login-form.js'
     	'../bower_components/tutteli-angular-auth/src/auth-http.js'
     	'../bower_components/tutteli-angular-auth/src/auth-routing.js'
-        '@TutteliAppBundle/Resources/js/tutteli-loader.js'
-    	'@TutteliAppBundle/Resources/js/tutteli-alert.js'
-    	'@TutteliAppBundle/Resources/js/tutteli-regainFocus.js'
-    	'@TutteliAppBundle/Resources/js/tutteli-utils.js'
-    	'@TutteliAppBundle/Resources/js/app.js'
-    	'@TutteliAppBundle/Resources/js/controllers.js'
-        '@TutteliAppBundle/Resources/js/services.js' %}
+        '@TutteliAppBundle/Resources/js/*.js'
+        '@TutteliAppBundle/Resources/js/**/*.js'
+    	 %}
         <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
+    {% if app.environment == 'dev' %}
+    	{%  javascripts output="js/angular-mocks.js" 
+    		'../bower_components/angular-mocks/angular-mocks.js'
+        %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+    {% endif %}
 {% endblock %}

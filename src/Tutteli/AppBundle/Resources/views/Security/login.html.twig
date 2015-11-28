@@ -3,13 +3,55 @@
  * For the full copyright and license information, please have a look at LICENSE in the
  * root folder or visit https://github.com/robstoll/purchase
  #}
-{% extends 'TutteliAppBundle::layout.html.twig' %}
+{% extends notXhr ? 'TutteliAppBundle::layout.html.twig' : 'xhr.twig' %}
 
 {% block title %} Login | {{ parent() }}{% endblock %}
 
 {% block content %}
-	<div ui-view></div>
-	<div pre-work="login.tpl">
-        {% include 'TutteliAppBundle:Security:login.html.tpl.twig' %}
-    </div>
+    {% if notXhr %}
+		<div ui-view></div>
+		<div pre-work="login.tpl">
+	{%  endif  %}
+       
+   <form name="form" method="post" action="{{ path('login_check') }}" id="login_form" ng-submit="loginCtrl.login($event)"> 
+        {% if error %}
+        	<div id="login_error" class="alert alert-danger alert-dismissible" role="alert">
+            	<button type="button" class="close" onclick="this.parentNode.parentNode.removeChild(this.parentNode)">
+                	<span aria-hidden="true">&times;</span>
+                	<span class="sr-only">Close</span>
+            	</button>
+        	    {{ error.messageKey|trans(error.messageData, 'security') }}
+    		</div>
+        {% endif %}
+        <div class="form-group">
+        	<label class="control-label" for="login_form_username">{{ 'login.username'|trans }}</label>
+        	<input type="text" id="login_form_username" name="username" required="required" autocapitalize="off" ng-model="loginCtrl.credentials.username" class="form-control" />
+       	</div>
+        <div class="form-group">
+        	<label class="control-label" for="login_form_password">{{ 'login.password'|trans }}</label>
+        	<input type="password" id="login_form_password" name="password" required="required" ng-model="loginCtrl.credentials.password" class="form-control" />
+        </div>
+        <div class="form-group"><button type="submit" id="login_form_submit" name="form[login]" class="btn-default btn">{{ 'login.submit'|trans }}</button></div>
+        <input type="hidden" id="csrf_token" ng-model="loginCtrl.credentials.csrf_token" name="csrf_token" value="{{ csrf_token('authenticate') }}"> {# ng-init="credentials.csrf_token='{{ csrf_token('authenticate') }}'" #}
+    </form>
+       
+    {% if notXhr %}   
+    	</div>
+    {%  endif  %}
+{% endblock %} 
+
+{%  block javascripts %}
+    {% if error %}
+        <script type="text/javascript">
+        	(function(){
+        		var oneTimeRemove = function(){
+              		this.removeChild(document.getElementById('login_error'));
+              		this.removeEventListener('submit', oneTimeRemove);
+        		};
+              	document.getElementById('login_form').addEventListener('submit', oneTimeRemove);
+        	})();
+        </script>
+    {% endif %}
+    
+    {{ parent() }}
 {% endblock %} 

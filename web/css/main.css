@@ -30,3 +30,17 @@ body {
 	background-color: #FFF;
 	overflow-x: auto;
 }
+
+@media (max-width: 768px){
+	.footer {
+	  position: absolute;
+	  bottom: 0;
+	  width: 100%;
+	  /* Set the fixed height of the footer here */
+	  height: 60px;
+	  background-color: #101010;
+	  left: 0;
+	  padding: 10px;
+	  padding-bottom: 0px;
+	}
+}

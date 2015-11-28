@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of the project tutteli/purchase published under the Apache License 2.0
  * For the full copyright and license information, please have a look at LICENSE in the
@@ -29,8 +28,10 @@ class SecurityController extends Controller {
         }
         
         $authenticationUtils = $this->get('security.authentication_utils');
-        $response = $this->render('TutteliAppBundle:Security:login.html' . $ending . '.twig', 
-                array('error' => $authenticationUtils->getLastAuthenticationError()));
+        $response = $this->render('TutteliAppBundle:Security:login.html.twig', array(
+                'notXhr' => $ending == '',
+                'error' => $authenticationUtils->getLastAuthenticationError(),
+        ));
         
         if ($ending == '.tpl') {
             $response->setETag($etag);
