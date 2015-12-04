@@ -29,6 +29,8 @@ angular.module('tutteli.purchase.routing', [
         redirectTo: 'purchase'
     }).state('purchase', {
         url: '/purchase',
+        controller: 'tutteli.purchase.PurchaseController',
+        controllerAs: 'purchaseCtrl',
         templateUrl: 'purchase.tpl',
         data : {
             authRoles : [USER_ROLES.authenticated]

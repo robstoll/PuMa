@@ -1,0 +1,97 @@
+{#
+ * This file is part of the project tutteli/purchase published under the Apache License 2.0
+ * For the full copyright and license information, please have a look at LICENSE in the
+ * root folder or visit https://github.com/robstoll/purchase
+ #}
+
+{% extends notXhr ? 'TutteliAppBundle::layout.html.twig' : 'xhr.twig' %}
+
+{% block title %} Add Purchase | {{ parent() }}{% endblock %}
+
+
+{% block content %}
+    {% if notXhr %}
+    	<div ui-view></div>
+    	<div pre-work="purchase.tpl">
+    {%  endif %}
+        <form name="form" method="post" action="{{ path('purchase_new') }}" id="purchase_form" ng-submit="purchaseCtrl.add($event)">
+            {% if error %}
+            	<div id="purchase_error" class="alert alert-danger alert-dismissible" role="alert">
+                	<button type="button" class="close" onclick="this.parentNode.parentNode.removeChild(this.parentNode)">
+                    	<span aria-hidden="true">&times;</span>
+                    	<span class="sr-only">Close</span>
+                	</button>
+            	    {{ error.messageKey|trans(error.messageData) }}
+        		</div>
+            {% endif %}
+            <div ng-repeat="position in purchaseCtrl.positions">
+                <div class="form-group">
+                	<div>
+                		<div class="closePosition"  ng-class="{show: $index>0}" ng-click="purchaseCtrl.removePosition($index);"><i class="glyphicon glyphicon-trash"></i></div>
+                		<label class="control-label" for="purchase_price">{{ 'purchase.price'|trans }}</label>
+                		<div style="float:clear"></div>
+                	</div>
+                	 <div class="input-group">
+                	 	<input type="text" id="purchase_price" name="price" required="required" ng-model="position.price" class="form-control"/>
+                	 	<span class="input-group-addon"><span ng-bind="position.calc()">CHF 0.00</span></span>
+                     </div>
+               	</div>
+                <div class="form-group">
+                	<label class="control-label" for="purchase_category">{{ 'purchase.category'|trans }}</label>
+                	<select id="purchase_category" name="category" required="required" ng-model="position.category" ng-options="val for val in purchaseCtrl.getCategories()" class="form-control">
+                		<option>{{ 'purchase.loadingCategories'|trans }}</option>
+                	</select>
+                </div>
+                <div class="form-group">
+                	<label class="control-label" for="purchase_notice">{{ 'purchase.notice'|trans }}</label>
+                	<input type="text" id="purchase_notice" name="notice" ng-model="position.notice" class="form-control">
+               	</div>
+               	<hr/>
+           	</div>
+            <div class="form-group">
+            	<label class="control.label" for="purchase_date">{{ 'purchase.date'|trans }}</label>
+            	<div>
+                    <div class="input-group">
+                      <input type="text" class="form-control" name="date" uib-datepicker-popup="{{ 'general.dateFormat.angularjs'|trans }}" ng-model="purchaseCtrl.dt" is-open="purchaseCtrl.opened" min-date="purchaseCtrl.minDate" max-date="purchaseCtrl.maxDate" datepicker-options="purchaseCtrl.dateOptions" ng-required="true" close-text="{{'general.close'|trans}}" value="{{ "now"|date('general.dateFormat.php'|trans) }}" />
+                      <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="purchaseCtrl.open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                      </span>
+                    </div>
+                </div>
+            </div>
+           	<div class="form-group last">
+            	<label class="control-label" for="purchase_user">{{ 'purchase.user'|trans }}</label>
+            	<select id="purchase_category" name="user" required="required" ng-model="purchaseCtrl.user" ng-options="val for val in purchaseCtrl.getUsers()" class="form-control" ng-init="purchaseCtrl.user='{{ app.user.username }}'">
+            		<option>{{ app.user.username }}</option>
+            	</select>
+           	</div>
+           	<input type="hidden" id="csrf_token" ng-model="purchaseCtrl.csrf_token" name="csrf_token" value="{{ csrf_token('purchase') }}">
+           	<footer class="footer">
+                <div class="form-group">
+                	<button style="display:none" type="button" id="purchase_add" class="btn-default btn" ng-click="purchaseCtrl.addPosition()">{{ 'purchase.add'|trans }}</button>
+                	<span class="pull-right"><button type="submit" id="purchase_form_submit" class="btn-default btn">{{ 'purchase.submit'|trans }}</button></span>
+            	</div>
+            </footer>    
+        </form>
+        {% if error %}
+        <script type="text/javascript">
+        	(function(){
+        		var oneTimeRemove = function(){
+              		this.removeChild(document.getElementById('purchase_error'));
+              		this.removeEventListener('submit', oneTimeRemove);
+        		};
+              	document.getElementById('purchase_form').addEventListener('submit', oneTimeRemove);
+        	})();
+        </script>
+        {% endif %}
+        <script type="text/javascript">
+      		document.getElementById('purchase_add').style.display = 'inline';
+      	</script>
+                      	
+    {% if notXhr %}
+    	</div>
+    {%  endif %}
+    
+{% endblock %} 
+
+ 

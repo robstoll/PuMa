@@ -31,9 +31,19 @@ body {
 	overflow-x: auto;
 }
 
+.closePosition {
+	float: right;
+	cursor: pointer;
+	display: none;
+}
+
+.closePosition.show{
+	display: block;
+}
+
 @media (max-width: 768px){
 	.footer {
-	  position: absolute;
+	  position: fixed;
 	  bottom: 0;
 	  width: 100%;
 	  /* Set the fixed height of the footer here */
@@ -42,5 +52,9 @@ body {
 	  left: 0;
 	  padding: 10px;
 	  padding-bottom: 0px;
+	}
+	
+	.form-group.last {
+	   margin-bottom: 85px;
 	}
 }

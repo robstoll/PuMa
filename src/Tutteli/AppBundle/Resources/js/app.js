@@ -7,8 +7,9 @@
 'use strict';
 
 angular.module('tutteli.purchase', [
-    'tutteli.login',
     'tutteli.purchase.routing',
+    'tutteli.login',
+    'tutteli.purchase.core',
     
     'ui.router',
     'ui.bootstrap',
