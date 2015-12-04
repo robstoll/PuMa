@@ -9,8 +9,8 @@
 angular.module('tutteli.purchase.core', [])
     .controller('tutteli.purchase.PurchaseController', PurchaseController);
 
-PurchaseController.$inject = ['$parse', '$filter'];
-function PurchaseController($parse, $filter) {
+PurchaseController.$inject = ['$parse', '$filter', 'tutteli.PreWork'];
+function PurchaseController($parse, $filter, PreWork) {
     var self = this;
     
     this.positions = [];
@@ -54,7 +54,14 @@ function PurchaseController($parse, $filter) {
     
     //-------------------
     
-    self.addPosition();    
+    self.addPosition();
+    var position = {};
+    if (PreWork.merge('purchase.tpl', position,  'position')) {
+        self.positions[0].price = position.price;
+        self.positions[0].notice = position.notice;
+    }
+    PreWork.merge('purchase.tpl', this, 'purchaseCtrl');
+    
 }
 
 function Position($parse, $filter) {
