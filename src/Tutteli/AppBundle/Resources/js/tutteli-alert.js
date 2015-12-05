@@ -18,17 +18,22 @@ function AlertController($element, AlertService) {
     this.openErrorReport = AlertService.openErrorReport;
 }
 
-AlertService.$inject =  ['$interpolate', 'tutteli.UtilsService'];
-function AlertService($interpolate, UtilsService){
+AlertService.$inject =  ['$interpolate', '$timeout', 'tutteli.UtilsService'];
+function AlertService($interpolate, $timeout,  UtilsService){
     var self = this;  
     var alerts = {};
     
-    this.getAlerts = function(){
+    this.getAlerts = function() {
         return alerts;
     };
     
-    this.add = function(key, msg, type) {
+    this.add = function(key, msg, type, timeout) {
         alerts[key] = {key: key, msg: msg, type: type};
+        if (!isNaN(timeout)) {
+            $timeout(function() {
+                self.close(key);
+            }, timeout);
+        }
     };
     
     this.close = function(key) {
@@ -78,13 +83,13 @@ function AlertService($interpolate, UtilsService){
         return msg;
     };
     
-    this.addErrorReport = function(key, msg, type, repeatUrl, repeatUrlText, reportId, reportUrlText, reportText) {
+    this.addErrorReport = function(key, msg, type, repeatUrl, repeatUrlText, reportId, reportUrlText, reportText, timeout) {
         var message = $interpolate(msg)({
             repeatLink : '<a href="' + repeatUrl + '" ng-click="close(\'' + key + '\')">' + repeatUrlText + '</a>',
             reportLink : '<a style="cursor:pointer" ng-click="alertCtrl.openErrorReport(\'' + reportId + '\')">' + reportUrlText + '</a>',
             reportContent: '<div id="'+ reportId + '" class="error-report">' + reportText + '</div>'
         });
-        this.add(key, message, type);
+        this.add(key, message, type, timeout);
     };
     
     this.openErrorReport = function(reportId) {
