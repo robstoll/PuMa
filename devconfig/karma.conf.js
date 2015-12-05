@@ -11,18 +11,21 @@ module.exports = function(config){
     files : [
       'bower_components/angular/angular.js',
       'bower_components/angular-mocks/angular-mocks.js',
-      'src/**/*.js'
+      'node_modules/jasmine-expect/dist/jasmine-matchers.js',
+      'src/**/Resources/js/**/*.js',
+      'src/**/Tests/unit/**/*.js'
     ],
 
     autoWatch : true,
 
-    frameworks: ['jasmine2'],
+    frameworks: ['jasmine', 'jasmine-matchers'],
 
     browsers : ['Chrome'],
 
     plugins : [
             'karma-chrome-launcher',
-            'karma-jasmine'
+            'karma-jasmine',
+            'karma-jasmine-matchers'
             ],
 
     junitReporter : {
