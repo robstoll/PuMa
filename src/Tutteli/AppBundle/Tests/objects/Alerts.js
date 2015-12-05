@@ -10,12 +10,18 @@ function Alerts(){
     this.get = function(index){
         var elem = element(by.repeater('alert in alertCtrl.alerts').row(index));
         return {
-            getText:function(){
+            elem: elem,
+            
+            getText:function() {
                 return elem.$('div[compile]').getText();
             },
             
-            getErrorReport: function(){
+            getErrorReport: function() {
                 return elem.$('.error-report').getInnerHtml();
+            },
+            
+            clickRepeatUrl: function() {
+                elem.$('a').click();
             }
         }; 
     };

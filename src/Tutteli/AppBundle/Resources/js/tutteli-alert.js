@@ -41,7 +41,9 @@ function AlertService($interpolate, $timeout,  UtilsService){
     };
     
     this.clear = function() {
-        alerts = {};
+        for(var prop in alerts) {
+            self.close(prop);
+        }
     };
     
     this.getHttpErrorReport = function (response) {
@@ -87,9 +89,20 @@ function AlertService($interpolate, $timeout,  UtilsService){
         return msg;
     };
     
+    this.addNoConnection = function(key, msg, type, repeatUrl, repeatUrlText, timeout) {
+        var message = $interpolate(msg)({
+            repeatLink: getRepeatLink(key, repeatUrl, repeatUrlText)
+        });
+        this.add(key, message, type, timeout);
+    };
+    
+    function getRepeatLink(key, repeatUrl, repeatUrlText) {
+        return '<a href="' + repeatUrl + '" ng-click="alertCtrl.close(\'' + key + '\')">' + repeatUrlText + '</a>';
+    }
+    
     this.addErrorReport = function(key, msg, type, repeatUrl, repeatUrlText, reportId, reportUrlText, reportText, timeout) {
         var message = $interpolate(msg)({
-            repeatLink : '<a href="' + repeatUrl + '" ng-click="close(\'' + key + '\')">' + repeatUrlText + '</a>',
+            repeatLink : getRepeatLink(key, repeatUrl, repeatUrlText),
             reportLink : '<a style="cursor:pointer" ng-click="alertCtrl.openErrorReport(\'' + reportId + '\')">' + reportUrlText + '</a>',
             reportContent: '<div id="'+ reportId + '" class="error-report">' + reportText + '</div>'
         });

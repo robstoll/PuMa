@@ -74,11 +74,9 @@ function routingErrorHandler($rootScope, $state, AlertService) {
         
         if (error.status == 404) {
             msg += 'could not load "' + error.config.url + '".<br/>'
-                + 'Please check your internet-connection and ' 
-                + '<a href="' + url + '" ng-click="close(\'tutteli.purchase.404\')">'
-                    + 'click here to repeat the action'
-                + '</a>.';
-            AlertService.add('tutteli.purchase.404', msg, 'danger');
+                + 'Please check your internet-connection and {{repeatLink}}.';
+            AlertService.addNoConnection('tutteli.purchase.404', msg, 'danger',
+                    url, 'click here to repeat the action');
         } else {
             
             var errorMsg = AlertService.getHttpErrorReport(error) + '<br/><br/>';
