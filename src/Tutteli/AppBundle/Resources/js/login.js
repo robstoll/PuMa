@@ -13,12 +13,13 @@ angular.module('tutteli.login', [
     
     'ui.bootstrap'
 ])
-.controller('tutteli.LoginController', LoginController)
-.controller('tutteli.LoginModalController', LoginModalController)
-.service('tutteli.LoginModalService', LoginModalService);
+    .controller('tutteli.LoginController', LoginController)
+    .controller('tutteli.LoginModalController', LoginModalController)
+    .service('tutteli.LoginModalService', LoginModalService)
+    .constant('tutteli.alertId.LoginController', 'tutteli-ctrls-Login');
 
-LoginController.$inject = ['tutteli.PreWork', 'tutteli.auth.AuthService','tutteli.alert.AlertService'];
-function LoginController(PreWork, AuthService, AlertService) {
+LoginController.$inject = ['tutteli.PreWork', 'tutteli.auth.AuthService','tutteli.alert.AlertService', 'tutteli.alertId.LoginController'];
+function LoginController(PreWork, AuthService, AlertService, alertId) {
     var self = this;
     
     this.credentials = {
@@ -32,7 +33,6 @@ function LoginController(PreWork, AuthService, AlertService) {
     PreWork.merge('login.tpl', this, 'loginCtrl');
     
     function login($event) {
-        var alertId = 'tutteli-ctrls-Login';
         AlertService.close(alertId);
         $event.preventDefault();
         AuthService.login(self.credentials).then(null, function(error){

@@ -51,7 +51,7 @@ describe('login scenarios:', function () {
         expect(alert.getText()).toBe(message);
     });
     
-    it('redirect to purchase if no redirect url is provided by login response', function () {
+    it('redirects to purchase if no redirect url is provided by login response', function () {
         var payload = 'hello';
         httpMock.get('purchase.tpl', payload);
         loginPage.createMockedHttpResponse({user:{role: 'admin'}});
@@ -77,5 +77,15 @@ describe('login scenarios:', function () {
         var alert = alerts.get(0);
         expect(alert.getText()).toBe('Error while loading the new state "purchase" - could not load "purchase.tpl".\n'
                 + 'Please check your internet-connection and click here to repeat the action.');
+    });
+    
+    it('click on "purchase" link - shows an alert that the user is not yet logged in.', function() {
+        loginPage.navigateToPage();
+        
+        element(by.css('a.navbar-brand')).click();
+        
+        var alerts = require('../objects/Alerts.js');
+        var alert = alerts.get(0);
+        expect(alert.getText()).toBe('You are not yet logged in, please use the form below.');
     });
 });

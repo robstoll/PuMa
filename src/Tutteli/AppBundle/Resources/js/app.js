@@ -36,22 +36,28 @@ function loginUrlFactory(){
     return angular.element(document.querySelector('base')).attr('href') + 'login_check';
 }
 
-authEventHandler.$inject =  ['$rootScope', '$location', 'tutteli.auth.EVENTS', 'tutteli.alert.AlertService'];
-function authEventHandler($rootScope, $location, AUTH_EVENTS, AlertService) {
+authEventHandler.$inject =  ['$rootScope', '$location', 'tutteli.auth.EVENTS', 'tutteli.alert.AlertService', 'tutteli.alertId.LoginController'];
+function authEventHandler($rootScope, $location, AUTH_EVENTS, AlertService, alertId) {
       
     $rootScope.$on(AUTH_EVENTS.notAuthorised, function(event, response) {
         AlertService.add('tutteli.purchase.notAuthorised', 
                 'You are not authorised to visit ' + response.url, 'danger');
-//      
-//      if (requireLogin && $rootScope.currentUser === undefined) {
-//          event.preventDefault();
-//          
-//          LoginModal().then(function () {
-//            return $state.go(toState.name, toParams);
-//          }).catch(function (reason) {
-//              console.log(reason)
-//          });
-//      }
+    });   
+    
+    $rootScope.$on(AUTH_EVENTS.notAuthenticated, function(event, response) {
+        if ($location.path() != '/login') {
+//          if (requireLogin && $rootScope.currentUser === undefined) {
+//              event.preventDefault();
+//              
+//              LoginModal().then(function () {
+//                return $state.go(toState.name, toParams);
+//              }).catch(function (reason) {
+//                  console.log(reason)
+//              });
+//          }   
+        } else {
+            AlertService.add(alertId, 'You are not yet logged in, please use the form below.', 'warning');
+        }
     });   
     
     $rootScope.$on(AUTH_EVENTS.loginSuccess, function(event, result){
