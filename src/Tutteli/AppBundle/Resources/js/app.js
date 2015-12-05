@@ -39,12 +39,25 @@ function loginUrlFactory(){
 authEventHandler.$inject =  ['$rootScope', '$location', 'tutteli.auth.EVENTS', 'tutteli.alert.AlertService'];
 function authEventHandler($rootScope, $location, AUTH_EVENTS, AlertService) {
       
-    $rootScope.$on(AUTH_EVENTS.notAuthorised, function(event, url) {
-        AlertService.add('tutteli.purchase.notAuthorised', 'You are not authorised to visit ' + url, 'danger');
+    $rootScope.$on(AUTH_EVENTS.notAuthorised, function(event, response) {
+        AlertService.add('tutteli.purchase.notAuthorised', 
+                'You are not authorised to visit ' + response.url, 'danger');
+//      
+//      if (requireLogin && $rootScope.currentUser === undefined) {
+//          event.preventDefault();
+//          
+//          LoginModal().then(function () {
+//            return $state.go(toState.name, toParams);
+//          }).catch(function (reason) {
+//              console.log(reason)
+//          });
+//      }
     });   
     
     $rootScope.$on(AUTH_EVENTS.loginSuccess, function(event, result){
-        AlertService.add('tutteli.purchase.loginSuccess', 'Login was successfull... loading new state...', 'success', 3000);
+        AlertService.add('tutteli.purchase.loginSuccess', 
+                'Login was successfull... loading new state...', 'success', 3000);
+        
         var base = $location.protocol() + '://' + $location.host() 
             + angular.element(document.querySelector('base')).attr('href');
         
@@ -77,7 +90,7 @@ function routingErrorHandler($rootScope, $state, AlertService) {
                 + 'Please check your internet-connection and {{repeatLink}}.';
             AlertService.addNoConnection('tutteli.purchase.404', msg, 'danger',
                     url, 'click here to repeat the action');
-        } else {
+        } else if(error.status != 403 && error.status != 401) {
             
             var errorMsg = AlertService.getHttpErrorReport(error) + '<br/><br/>';
             
@@ -104,16 +117,5 @@ function routingSuccessHandler($rootScope, AlertService) {
         AlertService.clear();
     });
 }
-
-//        
-//        if (requireLogin && $rootScope.currentUser === undefined) {
-//            event.preventDefault();
-//            
-//            LoginModal().then(function () {
-//              return $state.go(toState.name, toParams);
-//            }).catch(function (reason) {
-//                console.log(reason)
-//            });
-//        }
 
 })();

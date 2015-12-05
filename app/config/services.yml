@@ -10,13 +10,19 @@ parameters:
 #    parameter_name: value
 
 services:
-    tutteli_auth_success_handler:
+    tutteli.auth_success_handler:
         class: Tutteli\AppBundle\Handler\AuthSuccessHandler
         arguments: ["@security.http_utils", {}]
         tags: 
           - {name: 'monolog.logger', channel: 'security' }
-    tutteli_auth_failure_handler:
+    tutteli.auth_failure_handler:
         class: Tutteli\AppBundle\Handler\AuthFailureHandler
         arguments:  ["@http_kernel", "@security.http_utils", {}, "@logger"]
         tags:
             - { name: 'monolog.logger', channel: 'security' }
+    app.exception_listener:
+        class: Tutteli\AppBundle\Listener\ExceptionListener
+        arguments:
+            - "@security.token_storage"
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, priority: 50  }
