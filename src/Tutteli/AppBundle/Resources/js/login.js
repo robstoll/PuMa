@@ -32,7 +32,7 @@ function LoginController(PreWork, AuthService, AlertService) {
     PreWork.merge('login.tpl', this, 'loginCtrl');
     
     function login($event) {
-        var alertId = 'tutteli-ctrls-LoginCtrl';
+        var alertId = 'tutteli-ctrls-Login';
         AlertService.close(alertId);
         $event.preventDefault();
         AuthService.login(self.credentials).then(null, function(error){

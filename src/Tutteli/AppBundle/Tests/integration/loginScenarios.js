@@ -20,6 +20,7 @@ describe('login scenarios:', function () {
         loginPage.navigateToPage();
         var loginURL = browser.getCurrentUrl();
         browser.get('');
+        
         expect(browser.getCurrentUrl()).toEqual(loginURL);
     });
 
@@ -27,6 +28,7 @@ describe('login scenarios:', function () {
         var response = {userObjectIsMissing: true};
         loginPage.createMockedHttpResponse(response);
         httpMock.finalise();
+        
         loginPage.navigateToPage();
         loginPage.login({username: 'test', password: 'test'});
         
@@ -40,6 +42,7 @@ describe('login scenarios:', function () {
         var message = 'bad credentials';
         loginPage.createMockedHttpResponse(message, 401);
         httpMock.finalise();
+        
         loginPage.navigateToPage();
         loginPage.login({username: 'test', password: 'test'});
         
@@ -53,9 +56,26 @@ describe('login scenarios:', function () {
         httpMock.get('purchase.tpl', payload);
         loginPage.createMockedHttpResponse({user:{role: 'admin'}});
         httpMock.finalise();
+        
         loginPage.navigateToPage();
         loginPage.login({username: 'test', password: 'test'});
+        
         expect(browser.getCurrentUrl()).toEqual(browser.baseUrl + 'purchase');
         expect(element(by.css('div[ui-view]')).getText()).toBe(payload);
+    });
+    
+    it('cannot load next state - stays on login page', function () {
+        httpMock.get('purchase.tpl', 'Not Found', 404);
+        loginPage.createMockedHttpResponse({user:{role: 'admin'}});
+        httpMock.finalise();
+        
+        loginPage.navigateToPage();
+        loginPage.login({username: 'test', password: 'test'});
+        
+        expect(browser.getCurrentUrl()).toEqual(browser.baseUrl + 'login');
+        var alerts = require('../objects/Alerts.js');
+        var alert = alerts.get(0);
+        expect(alert.getText()).toBe('Error while loading the new state "purchase" - could not load "purchase.tpl".\n'
+                + 'Please check your internet-connection and click here to repeat the action.');
     });
 });

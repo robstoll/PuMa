@@ -17,7 +17,7 @@ describe('alert scenarios:', function () {
         httpMock = require('../objects/HttpMock.js');
     });
 
-    fit('cannot load page, should show 404, click on repeat url should hide alert', function () {
+    it('cannot load page, should show 404, click on repeat url should hide alert', function () {
         httpMock.get('purchase.tpl', 'Not Found', 404);
         loginPage.createMockedHttpResponse({user:{role: 'admin'}});
         httpMock.setDelay(100);
