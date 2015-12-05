@@ -64,4 +64,31 @@ describe('AlertService', function() {
             expect(AlertService.getAlerts()).toEqual({});
         });
     });
+    
+    describe('clear:', function(){
+        it('resets alerts to {} when already {}', function(){
+            expect(AlertService.getAlerts()).toEqual({});
+            
+            AlertService.clear();
+            
+            expect(AlertService.getAlerts()).toEqual({});
+        });
+        
+        it('resets alerts to {} when one was added', function(){
+            AlertService.add('dummy', 'text', 'warning');
+            
+            AlertService.clear();
+            
+            expect(AlertService.getAlerts()).toEqual({});
+        });
+        
+        it('resets alerts to {} when two were added', function(){
+            AlertService.add('dummy', 'text', 'warning');
+            AlertService.add('dummy2', 'text', 'warning');
+            
+            AlertService.clear();
+            
+            expect(AlertService.getAlerts()).toEqual({});
+        });
+    });
 });

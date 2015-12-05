@@ -40,6 +40,10 @@ function AlertService($interpolate, $timeout,  UtilsService){
         delete alerts[key];
     };
     
+    this.clear = function() {
+        alerts = {};
+    };
+    
     this.getHttpErrorReport = function (response) {
         var errorMsg = '';
         if (response.stack) {

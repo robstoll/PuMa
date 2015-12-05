@@ -29,6 +29,7 @@ angular.module('tutteli.purchase', [
 }])
     .run(authEventHandler)
     .run(routingErrorHandler)
+    .run(routingSuccessHandler)
     .factory('tutteli.auth.loginUrl', loginUrlFactory);
 
 function loginUrlFactory(){
@@ -43,7 +44,7 @@ function authEventHandler($rootScope, $location, AUTH_EVENTS, AlertService) {
     });   
     
     $rootScope.$on(AUTH_EVENTS.loginSuccess, function(event, result){
-        AlertService.add('tutteli.purchase.loginSuccess', 'Login was successfull... loading new state...', 'success');
+        AlertService.add('tutteli.purchase.loginSuccess', 'Login was successfull... loading new state...', 'success', 3000);
         var base = $location.protocol() + '://' + $location.host() 
             + angular.element(document.querySelector('base')).attr('href');
         
@@ -65,7 +66,7 @@ function authEventHandler($rootScope, $location, AUTH_EVENTS, AlertService) {
 }
 
 routingErrorHandler.$inject = ['$rootScope', '$state', 'tutteli.alert.AlertService'];
-function routingErrorHandler($rootScope, $state, AlertService){
+function routingErrorHandler($rootScope, $state, AlertService) {
     
     $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
         var msg = 'Error while loading the new state "' + toState.name + '" - ';
@@ -96,6 +97,13 @@ function routingErrorHandler($rootScope, $state, AlertService){
                     url, 'click here to repeat the action', 
                     '_stateChange_report', 'click here', errorMsg);
         }
+    });
+}
+
+routingSuccessHandler.$inject = ['$rootScope', 'tutteli.alert.AlertService'];
+function routingSuccessHandler($rootScope, AlertService) {
+    $rootScope.$on('$viewContentLoaded', function(event, view) {
+        AlertService.clear();
     });
 }
 
