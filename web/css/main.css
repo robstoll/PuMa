@@ -19,6 +19,7 @@ body {
     margin-left: 9px;
     float:left
 }
+
 #loader.loading {
 	visibility: visible;
 }
@@ -37,11 +38,33 @@ body {
 	display: none;
 }
 
-.closePosition.show{
+.closePosition.show {
 	display: block;
 }
 
-@media (max-width: 768px){
+
+.navbar-collapse.hidden, .navbar-toggle.hidden {
+    display: none !important;
+}
+
+@media (min-width: 768px) {
+    .navbar-collapse.hidden.show {
+        display: block !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar-collapse.hidden.show.in {
+        display: block !important;
+    }
+}	
+
+.hidden.listShow {
+    display: list-item !important;
+}
+
+
+@media (max-width: 768px) {
 	.footer {
 	  position: fixed;
 	  bottom: 0;
