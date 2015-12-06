@@ -38,7 +38,7 @@ body {
 	display: none;
 }
 
-.closePosition.show {
+.closePosition.showBlock {
 	display: block;
 }
 
@@ -48,18 +48,22 @@ body {
 }
 
 @media (min-width: 768px) {
-    .navbar-collapse.hidden.show {
+	.navbar-toggle.showBlock {
+	   /* only needs to be shown if not mobile */
+	   display: none !important;
+	}
+    .navbar-collapse.hidden.showBlock {
         display: block !important;
     }
 }
 
 @media (max-width: 768px) {
-    .navbar-collapse.hidden.show.in {
+    .navbar-collapse.hidden.showBlock.in {
         display: block !important;
     }
 }	
 
-.hidden.listShow {
+.hidden.showList {
     display: list-item !important;
 }
 

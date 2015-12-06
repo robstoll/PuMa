@@ -22,6 +22,10 @@ function NavigationController(AuthService, ROLES, Session) {
         }
         return 'anon';
     };
+    
+    this.closeNavi = function() {
+        angular.element(document.getElementById('navbar')).removeClass('in');
+    };
 }
 
 })();
