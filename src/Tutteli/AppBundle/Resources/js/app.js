@@ -45,7 +45,7 @@ function loginUrlFactory(baseHref) {
 }
 
 authEventHandler.$inject =  ['$rootScope', '$location', '$state', 
-    'tutteli.auth.EVENTS', 'tutteli.alert.AlertService', 'tutteli.alertId.LoginController', 'tutteli.baseHref'];
+    'tutteli.auth.EVENTS', 'tutteli.alert.AlertService', 'tutteli.LoginController.alertId', 'tutteli.baseHref'];
 function authEventHandler($rootScope, $location, $state, AUTH_EVENTS, AlertService, alertId, baseHref) {
       
     $rootScope.$on(AUTH_EVENTS.notAuthorised, function(event, response) {

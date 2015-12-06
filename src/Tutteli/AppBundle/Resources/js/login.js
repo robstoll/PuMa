@@ -16,9 +16,9 @@ angular.module('tutteli.login', [
     .controller('tutteli.LoginController', LoginController)
     .controller('tutteli.LoginModalController', LoginModalController)
     .service('tutteli.LoginModalService', LoginModalService)
-    .constant('tutteli.alertId.LoginController', 'tutteli-ctrls-Login');
+    .constant('tutteli.LoginController.alertId', 'tutteli-ctrls-Login');
 
-LoginController.$inject = ['$http', 'tutteli.PreWork', 'tutteli.auth.AuthService','tutteli.alert.AlertService', 'tutteli.alertId.LoginController'];
+LoginController.$inject = ['$http', 'tutteli.PreWork', 'tutteli.auth.AuthService','tutteli.alert.AlertService', 'tutteli.LoginController.alertId'];
 function LoginController($http, PreWork, AuthService, AlertService, alertId) {
     var self = this;
     
