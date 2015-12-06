@@ -24,6 +24,9 @@ angular.module('tutteli.purchase.routing', [
         data : {
             authRoles : []
         }
+    }).state('logout', {
+        url: '/logout',
+        controller: 'tutteli.LogoutController'
     }).state('home', {
         url: '/',
         redirectTo: 'purchase'

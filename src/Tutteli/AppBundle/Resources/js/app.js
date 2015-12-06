@@ -9,7 +9,9 @@
 angular.module('tutteli.purchase', [
     'tutteli.purchase.routing',
     'tutteli.login',
+    'tutteli.logout',
     'tutteli.purchase.core',
+    'tutteli.navigation',
     
     'ui.router',
     'ui.bootstrap',
@@ -22,7 +24,7 @@ angular.module('tutteli.purchase', [
     'tutteli.alert',
     'tutteli.regainFocus',
     'tutteli.utils'
-]).config(['$httpProvider', function($httpProvider){
+]).config(['$httpProvider', function($httpProvider) {
     
     $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
 
@@ -30,14 +32,21 @@ angular.module('tutteli.purchase', [
     .run(authEventHandler)
     .run(routingErrorHandler)
     .run(routingSuccessHandler)
+    .factory('tutteli.baseHref', baseHrefFactory)
     .factory('tutteli.auth.loginUrl', loginUrlFactory);
 
-function loginUrlFactory(){
-    return angular.element(document.querySelector('base')).attr('href') + 'login_check';
+function baseHrefFactory() {
+    return angular.element(document.querySelector('base')).attr('href');
 }
 
-authEventHandler.$inject =  ['$rootScope', '$location', 'tutteli.auth.EVENTS', 'tutteli.alert.AlertService', 'tutteli.alertId.LoginController'];
-function authEventHandler($rootScope, $location, AUTH_EVENTS, AlertService, alertId) {
+loginUrlFactory.$inject = ['tutteli.baseHref'];
+function loginUrlFactory(baseHref) {
+     return baseHref + 'login_check';
+}
+
+authEventHandler.$inject =  ['$rootScope', '$location', '$state', 
+    'tutteli.auth.EVENTS', 'tutteli.alert.AlertService', 'tutteli.alertId.LoginController', 'tutteli.baseHref'];
+function authEventHandler($rootScope, $location, $state, AUTH_EVENTS, AlertService, alertId, baseHref) {
       
     $rootScope.$on(AUTH_EVENTS.notAuthorised, function(event, response) {
         AlertService.add('tutteli.purchase.notAuthorised', 
@@ -60,17 +69,16 @@ function authEventHandler($rootScope, $location, AUTH_EVENTS, AlertService, aler
         }
     });   
     
-    $rootScope.$on(AUTH_EVENTS.loginSuccess, function(event, result){
+    $rootScope.$on(AUTH_EVENTS.loginSuccess, function(event, result) {
         AlertService.add('tutteli.purchase.loginSuccess', 
                 'Login was successfull... loading new state...', 'success', 3000);
         
-        var base = $location.protocol() + '://' + $location.host() 
-            + angular.element(document.querySelector('base')).attr('href');
+        var baseUrl = $location.protocol() + '://' + $location.host() + baseHref;
         
         var url = result.url || '';
         if (url != ""){
-            if (base == url.substr(0, base.length)) {
-                $location.path(url.substr(base.length));
+            if (baseUrl == url.substr(0, baseUrl.length)) {
+                $location.path(url.substr(baseUrl.length));
             } else {
                 AlertService.add('tutteli.purchase.hijack', 
                         'Possible attempt of haijacking detected. Loading "' + url + '" was aborted.<br/>'
@@ -81,6 +89,12 @@ function authEventHandler($rootScope, $location, AUTH_EVENTS, AlertService, aler
             //no url provided, redirect to home url
             $location.path(url);
         }
+    });
+    
+    $rootScope.$on(AUTH_EVENTS.logoutSuccess, function(event, result) {
+        AlertService.add('tutteli.purchase.logoutSuccess', 
+                'Logout was successfull... redirecting to the login page...', 'success', 3000);
+        $state.go('login');
     });
 }
 

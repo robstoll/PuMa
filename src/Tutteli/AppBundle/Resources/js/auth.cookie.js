@@ -15,20 +15,26 @@ function authEventHandler($rootScope, $cookies, AUTH_EVENTS, Session) {
     var user = $cookies.getObject('user');
     if (user) {
         Session.create(user);
+        createCookie();
     }
     
-    $rootScope.$on(AUTH_EVENTS.loginSuccess, function() {
+    function createCookie() {
         var date = new Date();
         date.setFullYear(date.getFullYear() + 1);
         $cookies.putObject('user', Session.user, {expires: date});
+    }
+    
+    $rootScope.$on(AUTH_EVENTS.loginSuccess, function() {
+        createCookie();
     });
     
-    $rootScope.$on(AUTH_EVENTS.logout, function() {
+    $rootScope.$on(AUTH_EVENTS.logoutSuccess, function() {
         $cookies.remove('user');
     });
     
     $rootScope.$on(AUTH_EVENTS.notAuthenticated, function() {
         $cookies.remove('user');
+        Session.destroy();
     });
 }
 

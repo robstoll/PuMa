@@ -18,8 +18,8 @@ angular.module('tutteli.login', [
     .service('tutteli.LoginModalService', LoginModalService)
     .constant('tutteli.alertId.LoginController', 'tutteli-ctrls-Login');
 
-LoginController.$inject = ['tutteli.PreWork', 'tutteli.auth.AuthService','tutteli.alert.AlertService', 'tutteli.alertId.LoginController'];
-function LoginController(PreWork, AuthService, AlertService, alertId) {
+LoginController.$inject = ['$http', 'tutteli.PreWork', 'tutteli.auth.AuthService','tutteli.alert.AlertService', 'tutteli.alertId.LoginController'];
+function LoginController($http, PreWork, AuthService, AlertService, alertId) {
     var self = this;
     
     this.credentials = {
@@ -31,6 +31,10 @@ function LoginController(PreWork, AuthService, AlertService, alertId) {
     this.login = login;
     
     PreWork.merge('login.tpl', this, 'loginCtrl');
+       
+    if (self.credentials.csrf_token == '') {
+        loadCsrfToken();
+    }
     
     function login($event) {
         AlertService.close(alertId);
@@ -38,6 +42,9 @@ function LoginController(PreWork, AuthService, AlertService, alertId) {
         AuthService.login(self.credentials).then(null, function(error){
             if (error.status == 401) {
                 AlertService.add(alertId, error.data, 'danger');
+                if (error.data == 'Invalid CSRF token.') {
+                    loadCsrfToken();
+                }
             } else {
                 var msg = 'Unexpected error occured. '
                     + 'Please log in again in a few minutes. If the error should occurr again (this message does not disappear), '
@@ -49,6 +56,15 @@ function LoginController(PreWork, AuthService, AlertService, alertId) {
                         null, null, 
                         '_login_report', 'click here', report);                            
             }
+        });
+    }
+    
+    function loadCsrfToken() {
+        $http.get('login/token').then(function(response) {
+            self.credentials.csrf_token = response.data.csrf_token;
+        }, function() {
+            //TODO generate link which repeats the action
+            var i = 0;
         });
     }
 }

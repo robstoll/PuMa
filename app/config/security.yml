@@ -55,10 +55,12 @@ security:
             logout:
                 path:   /logout
                 target: /
+                success_handler: tutteli.logout_success_handler
             
     access_control:
         # require ROLE_ADMIN for /admin*
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
         - { path: ^/login.tpl$, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/login/token$, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
         - { path: ^/admin, role: ROLE_ADMIN, requires_channel: https }
         - { path: ^/, roles: IS_AUTHENTICATED_REMEMBERED, requires_channel: https }

@@ -39,6 +39,11 @@ class SecurityController extends Controller {
         return $response;
     }
     
+    public function csrfTokenAction() {
+        $csrf = $this->get('form.csrf_provider');
+        return new Response('{"csrf_token": "'.$csrf->generateCsrfToken('authenticate').'"}');
+    }
+    
     public function loginCheckAction() {
         // this controller will not be executed,
         // as the route is handled by the Security system
