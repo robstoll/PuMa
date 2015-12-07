@@ -10,7 +10,9 @@
 angular.module('tutteli.purchase.routing', [
     'ui.router', 
     'tutteli.auth.routing', 
-    'tutteli.login'
+    'tutteli.login',
+    'tutteli.logout',
+    'tutteli.purchase.core'
 ]).config(
   ['$locationProvider','$stateProvider', 'tutteli.auth.USER_ROLES',
   function($locationProvider, $stateProvider,  USER_ROLES) {
@@ -31,7 +33,7 @@ angular.module('tutteli.purchase.routing', [
         url: '/',
         redirectTo: 'purchase'
     }).state('purchase', {
-        url: '/purchase',
+        url: '/purchases/new',
         controller: 'tutteli.purchase.PurchaseController',
         controllerAs: 'purchaseCtrl',
         templateUrl: 'purchase.tpl',
@@ -53,6 +55,8 @@ angular.module('tutteli.purchase.routing', [
         $state.go(toState.redirectTo, params);
       }
     });
-}]);
+}]).constant('tutteli.purchase.ROUTES', {
+    post_purchase : 'purchases',
+});
 
 })();

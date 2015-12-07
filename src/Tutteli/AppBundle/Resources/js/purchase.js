@@ -6,12 +6,15 @@
 (function(){
 'use strict';
 
-angular.module('tutteli.purchase.core', [])
-    .controller('tutteli.purchase.PurchaseController', PurchaseController);
+angular.module('tutteli.purchase.core', ['tutteli.purchase.routing'])
+    .controller('tutteli.purchase.PurchaseController', PurchaseController)
+    .service('tutteli.purchase.PurchaseService', PurchaseService);
 
-PurchaseController.$inject = ['$parse', '$filter', 'tutteli.PreWork'];
-function PurchaseController($parse, $filter, PreWork) {
+PurchaseController.$inject = ['$parse', '$filter', 'tutteli.PreWork', 'tutteli.purchase.PurchaseService', 'tutteli.alert.AlertService'];
+function PurchaseController($parse, $filter, PreWork, PurchaseService, AlertService) {
     var self = this;
+    var categories = [{id: '1', text: 'Lebensmittel'}];
+    var users = [{id: 1, name: 'admin'}];
     
     this.positions = [];
     
@@ -35,12 +38,16 @@ function PurchaseController($parse, $filter, PreWork) {
     
     this.getCategories = function() {
         //TODO replace dummy categories
-        return ['Lebensmittel'];
+        return categories;
     };
     
     this.getUsers = function() {
         //TODO replace dummy users
-        return ['admin'];
+        return users;
+    };
+    
+    this.selectUser = function(id) {
+        this.user = id;
     };
     
     this.addPosition = addPosition;
@@ -50,6 +57,30 @@ function PurchaseController($parse, $filter, PreWork) {
     
     this.removePosition = function(index) {
         self.positions.splice(index, 1);  
+    };
+    
+    this.addPurchase = function($event) {
+        $event.preventDefault();
+        var alertId = 'tutteli-ctrls-Purchase';
+        AlertService.close(alertId);
+        PurchaseService.add(self.user, self.dt, self.positions).then(function() {
+            AlertService.add(alertId, 'Purchase successfully added', 'success');
+        }, function(errorResponse) {
+            if (errorResponse.status == 400) {
+                var data = errorResponse.data;
+                var err = '';
+                if (angular.isObject(data)) {
+                    for (var prop in data) {
+                        err += data[prop];
+                    }
+                } else {
+                    err = data;
+                }
+                AlertService.add(alertId, err, 'danger');
+            } else {
+                AlertService.add(alertId, 'Unknown error occurred. Please try again.', 'danger');
+            }
+        });
     };
     
     //-------------------
@@ -79,6 +110,21 @@ function Position($parse, $filter) {
             }
         }
         return $filter('currency')(val, 'CHF ');
+    };
+}
+
+PurchaseService.$inject = ['$http', 'tutteli.purchase.ROUTES'];
+function PurchaseService($http, ROUTES) {
+    this.add = function(userId, date, positions) {
+        var positionDtos = [];
+        for (var i = 0; i < positions.length; ++i) {
+            positionDtos[i] = {
+                    price: positions[i].price,
+                    categoryId: positions[i].category,
+                    notice: positions[i].notice
+            };
+        }
+        return $http.post(ROUTES.post_purchase, {userId: userId, dt: date, positions: positionDtos});
     };
 }
 
