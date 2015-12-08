@@ -56,7 +56,7 @@
 {% endblock %}    
 
 {% block javascripts %}
-    {% javascripts filter="?jsqueeze" output="js/lib.js" 
+    {% javascripts filter="?uglifyjs2" output="js/lib.js" 
     	'../bower_components/jquery/dist/jquery.js'
         '../bower_components/bootstrap/dist/js/bootstrap.js' 
     	'../bower_components/angular/angular.js'
@@ -72,9 +72,8 @@
     	 %}
         <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
-    {% javascripts filter="?jsqueeze" output="js/app.js" 
+    {% javascripts filter="?uglifyjs2" output="js/app.js" 
         '@TutteliAppBundle/Resources/js/*.js'
-        '@TutteliAppBundle/Resources/js/**/*.js'
 	     %}
         <script src="{{ asset_url }}"></script>
     {% endjavascripts %}

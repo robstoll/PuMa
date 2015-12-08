@@ -33,8 +33,7 @@
 		"doctrine/doctrine-migrations-bundle" : "^1.0",
 		"ircmaxell/password-compat" : "^1.0",
 		"friendsofsymfony/rest-bundle" : "^1.7",
-		"jms/serializer-bundle" : "^1.0",
-		"patchwork/jsqueeze" : "~1.0"
+		"jms/serializer-bundle" : "^1.0"
 	},
 	"require-dev" : {
 		"sensio/generator-bundle" : "~2.3"

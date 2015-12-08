@@ -31,3 +31,7 @@ monolog:
             level: debug
         console:
             type:  console
+
+twig:
+  globals:
+    baseUrl:  /tutteli.ch/purchase/web/
