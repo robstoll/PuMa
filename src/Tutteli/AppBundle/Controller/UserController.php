@@ -7,14 +7,12 @@
 
 namespace Tutteli\AppBundle\Controller;
 
-use FOS\RestBundle\Controller\FOSRestController;
-use FOS\RestBundle\Routing\ClassResourceInterface;
-use FOS\RestBundle\Util\Codes;
 use Symfony\Component\HttpFoundation\Request;
 use Tutteli\AppBundle\Entity\User;
 use Tutteli\AppBundle\Form\UserType;
 
-class UserController extends FOSRestController implements ClassResourceInterface {
+
+class UserController {
 
     public function cgetAction() {
         $repository = $this->getDoctrine()->getRepository('TutteliAppBundle:User');
@@ -69,34 +67,4 @@ class UserController extends FOSRestController implements ClassResourceInterface
         return $this->handleView($view);
     }
 
-    public function editUserAction($slug) {
-        //TODO
-    }
-
-    public function putUserAction($id) {
-        //TODO
-    }
-
-
-    public function patchUserAction($slug) {
-        
-    }
-
-    // "remove_user"   [GET] /users/{slug}/remove
-
-    public function deleteUserAction($slug) {
-        
-    }
-
-    public function linkUserAction($slug) {
-        
-    }
-
-// "link_user_friend"     [LINK] /users/{slug}
-
-    public function unlinkUserAction($slug) {
-        
-    }
-
-// "unlink_user_friend"     [UNLINK] /users/{slug}
 }

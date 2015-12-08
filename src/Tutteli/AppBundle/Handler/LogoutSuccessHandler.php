@@ -21,7 +21,7 @@ class LogoutSuccessHandler extends DefaultLogoutSuccessHandler {
     public function onLogoutSuccess(Request $request)
     {
         if ($request->isXmlHttpRequest()) {
-            return new Response('', 204);
+            return new Response('', Response::HTTP_NO_CONTENT);
         }
         return parent::onLogoutSuccess($request);
     }

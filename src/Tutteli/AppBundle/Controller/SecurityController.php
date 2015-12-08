@@ -6,16 +6,13 @@
  */
 namespace Tutteli\AppBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class SecurityController extends Controller {
+class SecurityController extends ATplController {
     
     public function loginAction(Request $request, $ending = null) {        
-        if ($ending != '' && $ending != '.tpl') {
-            throw $this->createNotFoundException('File Not Found');
-        }
+        $this->checkEnding($request, $ending);
                 
         if ($ending == '.tpl') {
             $response = new Response();

@@ -6,35 +6,41 @@
 login:
     path:   /login{ending}
     defaults: { _controller: TutteliAppBundle:Security:login, ending: ""}
+    methods: [GET]
 
 login_check:
     path:   /login_check
-    defaults: { _controller: TutteliAppBundle:Security:loginCheck }    
+    defaults: { _controller: TutteliAppBundle:Security:loginCheck }
+    methods: [POST]    
     
 logout:
     path: /logout
+    methods: [GET]
     
 csrfToken:
     path: /login/token
     defaults: { _controller: TutteliAppBundle:Security:csrfToken }    
+    methods: [GET]
 
 home:
     path:   /
     defaults: 
       _controller: FrameworkBundle:Redirect:redirect
-      route:  purchase
+      route:  new_purchase
+    methods: [GET]
 
-purchase:
-    path:   /purchase{ending}
-    defaults: { _controller: TutteliAppBundle:Purchase:index, ending: ""}
+new_purchase:
+    path:   /purchases/new{ending}
+    defaults: { _controller: TutteliAppBundle:Purchase:new, ending: ""}
+    methods: [GET]
 
-purchase_new:
-    path:   /purchase/new
-    defaults: { _controller: TutteliAppBundle:Purchase:new}
-
-
-
-admin_users:
-    type: rest
-    prefix: admin
-    resource: Tutteli\AppBundle\Controller\UserController
+post_purchase:
+    path:   /purchases{ending}
+    defaults: { _controller: TutteliAppBundle:Purchase:post, ending: ""}
+    methods: [POST]
+    
+get_users:
+    path:  /admin/users{ending}
+    defaults: { _controller: TutteliAppBundle:User:index, ending: ""}
+    methods: [GET]    
+    
