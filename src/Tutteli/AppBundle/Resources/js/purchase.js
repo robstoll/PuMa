@@ -17,7 +17,6 @@ function PurchaseController($parse, $filter, PreWork, PurchaseService, AlertServ
     var users = [{id: 1, name: 'admin'}];
     
     this.positions = [];
-    
     this.dt = new Date();
     this.opened = false;
     this.maxDate = new Date();
@@ -63,7 +62,7 @@ function PurchaseController($parse, $filter, PreWork, PurchaseService, AlertServ
         $event.preventDefault();
         var alertId = 'tutteli-ctrls-Purchase';
         AlertService.close(alertId);
-        PurchaseService.add(self.user, self.dt, self.positions).then(function() {
+        PurchaseService.add(self.user, self.dt, self.positions, self.csrf_token).then(function() {
             AlertService.add(alertId, 'Purchase successfully added', 'success');
         }, function(errorResponse) {
             if (errorResponse.status == 400) {
@@ -115,7 +114,7 @@ function Position($parse, $filter) {
 
 PurchaseService.$inject = ['$http', 'tutteli.purchase.ROUTES'];
 function PurchaseService($http, ROUTES) {
-    this.add = function(userId, date, positions) {
+    this.add = function(userId, date, positions, csrf_token) {
         var positionDtos = [];
         for (var i = 0; i < positions.length; ++i) {
             positionDtos[i] = {
@@ -124,7 +123,8 @@ function PurchaseService($http, ROUTES) {
                     notice: positions[i].notice
             };
         }
-        return $http.post(ROUTES.post_purchase, {userId: userId, dt: date, positions: positionDtos});
+        var data = {userId: userId, dt: date, positions: positionDtos, csrf_token: csrf_token};
+        return $http.post(ROUTES.post_purchase, data);
     };
 }
 

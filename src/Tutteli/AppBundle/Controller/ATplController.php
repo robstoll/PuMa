@@ -9,16 +9,62 @@ namespace Tutteli\AppBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 abstract class ATplController extends Controller {
     
-    protected function checkEnding(Request $request, $ending) {
+    protected function checkEnding(Request $request, $ending, callable $callable) {
         if ($ending != '' && $ending != '.tpl') {
             throw $this->createNotFoundException('File Not Found');
-        } else if ($ending == '.tpl' && ! $request->isXmlHttpRequest() 
-                && $this->container->get('kernel')->getEnvironment() != 'dev') {
-            return new Response('partials are only available per xmlHttpRequest', Response::HTTP_BAD_REQUEST);
         }
+
+        $etag = '';
+        $response = null;
+        if ($ending == '.tpl') {
+            if ($request->isXmlHttpRequest() || $this->container->get('kernel')->getEnvironment() == 'dev') {
+                $response = new Response();
+                $etag = $callable();
+                $response->setETag($etag);
+                if (!$response->isNotModified($request)) {
+                    //is newer, need to generate a new response and cannot use the old one
+                    $response = null;
+                }
+            } else {
+                $response = new Response('partials are only available per xmlHttpRequest', Response::HTTP_BAD_REQUEST);
+            }
+        }
+        return [$etag, $response];
+    }
+    
+    protected function decodeDataAndVerifyCsrf(Request $request) {
+        $response = null;
+        $data = json_decode($request->getContent(), true);
+        if ($data != null) {
+            if (!array_key_exists('csrf_token', $data) || !$this->isCsrfTokenValid('purchase', $data['csrf_token'])) {
+                $response = new JsonResponse('Invalid CSRF token.', Response::HTTP_UNAUTHORIZED);
+            }
+        } else {
+            $response = new JsonResponse('No data provided.', Response::HTTP_BAD_REQUEST);
+        }
+        return [$data, $response];
+    }
+    
+    protected function getValidationResponse(ConstraintViolationList $errorList) { 
+        new JsonResponse($this->getErrorArray($errorList), Response::HTTP_BAD_REQUEST);
+    }
+    
+    private function getErrorArray(ConstraintViolationList $errorList) {
+        $translator = $this->get('translator');
+        $errors = array();
+        foreach ($errorList as $error) {
+            $errors[$error->getPropertyPath()] = $translator->trans($error->getMessage(), [], 'validators');
+        }
+        return $errors;
+    }
+    
+    protected function getCreateResponse($id){
+        new Response('{"id": "'.$id.'"}', Response::HTTP_CREATED);
     }
 
 }
