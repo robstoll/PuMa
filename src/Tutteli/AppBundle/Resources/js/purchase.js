@@ -8,10 +8,17 @@
 
 angular.module('tutteli.purchase.core', ['tutteli.purchase.routing'])
     .controller('tutteli.purchase.PurchaseController', PurchaseController)
-    .service('tutteli.purchase.PurchaseService', PurchaseService);
+    .service('tutteli.purchase.PurchaseService', PurchaseService)
+    .constant('tutteli.purchase.PurchaseService.alertId', 'tutteli-ctrls-Purchase');
 
-PurchaseController.$inject = ['$parse', '$filter', 'tutteli.PreWork', 'tutteli.purchase.PurchaseService', 'tutteli.alert.AlertService'];
-function PurchaseController($parse, $filter, PreWork, PurchaseService, AlertService) {
+PurchaseController.$inject = [
+    '$parse',
+    '$filter', 
+    'tutteli.PreWork', 
+    'tutteli.purchase.PurchaseService', 
+    'tutteli.alert.AlertService', 
+    'tutteli.purchase.PurchaseService.alertId'];
+function PurchaseController($parse, $filter, PreWork, PurchaseService, AlertService, alertId) {
     var self = this;
     var categories = [{id: '1', text: 'Lebensmittel'}];
     var users = [{id: 1, name: 'admin'}];
@@ -60,8 +67,9 @@ function PurchaseController($parse, $filter, PreWork, PurchaseService, AlertServ
     
     this.addPurchase = function($event) {
         $event.preventDefault();
-        var alertId = 'tutteli-ctrls-Purchase';
         AlertService.close(alertId);
+        
+        
         PurchaseService.add(self.user, self.dt, self.positions, self.csrf_token).then(function() {
             AlertService.add(alertId, 'Purchase successfully added', 'success');
         }, function(errorResponse) {
@@ -76,6 +84,8 @@ function PurchaseController($parse, $filter, PreWork, PurchaseService, AlertServ
                     err = data;
                 }
                 AlertService.add(alertId, err, 'danger');
+            } else if(errorResponse.error) {
+                AlertService.add(alertId, errorResponse.error);
             } else {
                 AlertService.add(alertId, 'Unknown error occurred. Please try again.', 'danger');
             }
@@ -87,7 +97,7 @@ function PurchaseController($parse, $filter, PreWork, PurchaseService, AlertServ
     self.addPosition();
     var position = {};
     if (PreWork.merge('purchase.tpl', position,  'position')) {
-        self.positions[0].price = position.price;
+        self.positions[0].expression = position.expression;
         self.positions[0].notice = position.notice;
     }
     PreWork.merge('purchase.tpl', this, 'purchaseCtrl');
@@ -96,14 +106,14 @@ function PurchaseController($parse, $filter, PreWork, PurchaseService, AlertServ
 
 function Position($parse, $filter) {
     var self = this;
-    this.price = null;
+    this.expression = null;
     this.category = null;
     this.notice = '';
     this.calc = function() {
         var val = 0;
-        if (self.price) {
-            try{
-                val = $parse(self.price)(this);
+        if (self.expression) {
+            try {
+                val = $parse(self.expression)(this);
             } catch(err){
                 //that's fine
             }
@@ -112,19 +122,35 @@ function Position($parse, $filter) {
     };
 }
 
-PurchaseService.$inject = ['$http', 'tutteli.purchase.ROUTES'];
-function PurchaseService($http, ROUTES) {
+PurchaseService.$inject = [
+    '$http', 
+    '$q',
+    'tutteli.purchase.ROUTES', 
+    'tutteli.alert.AlertService'];
+function PurchaseService($http, $q, ROUTES, AlertService) {
     this.add = function(userId, date, positions, csrf_token) {
+        var errors = '';
         var positionDtos = [];
         for (var i = 0; i < positions.length; ++i) {
-            positionDtos[i] = {
-                    price: positions[i].price,
-                    categoryId: positions[i].category,
-                    notice: positions[i].notice
-            };
+            var position = positions[i];
+            if (position.expression == '0') {
+                errors += 'The <a href="#" onclick="document.getElementById(\'purchase_expression' + i + '\').focus(); return false">price of position ' + (i + 1) + '</a> needs to be greater than 0.<br/>';
+            } else if(!position.expression.match(/^[0-9]+(.[0-9]+)?(\s*(\+|-|\*)\s*[0-9]+(.[0-9]+)?)*$/)) {
+                errors += 'The <a href="#" onclick="document.getElementById(\'purchase_expression' + i + '\').focus(); return false">price expression of position ' + (i + 1) + '</a> is erroneous. '
+                        + 'Only the following operators are allowed: plus (+), minus (-), multiply (*).<br/>';
+            } else {
+                positionDtos[i] = {
+                        expression: position.expression,
+                        categoryId: position.category,
+                        notice: position.notice
+                };
+            }
         }
-        var data = {userId: userId, dt: date, positions: positionDtos, csrf_token: csrf_token};
-        return $http.post(ROUTES.post_purchase, data);
+        if (errors == '') {
+            var data = {userId: userId, dt: date, positions: positionDtos, csrf_token: csrf_token};
+            return $http.post(ROUTES.post_purchase, data);
+        } 
+        return $q.reject({error: errors});
     };
 }
 
