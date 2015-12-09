@@ -12,17 +12,11 @@ use Symfony\Component\HttpFoundation\Response;
 class SecurityController extends ATplController {
     
     public function loginAction(Request $request, $ending = null) {        
-        $this->checkEnding($request, $ending);
-                
-        if ($ending == '.tpl') {
-            $response = new Response();
+        list($etag, $response) = $this->checkEnding($request, $ending, function(){
             $csrf = $this->get('form.csrf_provider');
             $etag = $csrf->generateCsrfToken('authenticate').'0.0.1';
-            $response->setETag($etag);
-            if ($response->isNotModified($request)) {
-                return $response;
-            }
-        }
+            return $etag;
+        });
         
         $authenticationUtils = $this->get('security.authentication_utils');
         $response = $this->render('TutteliAppBundle:Security:login.html.twig', array(

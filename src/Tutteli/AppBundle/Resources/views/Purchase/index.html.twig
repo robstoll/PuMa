@@ -31,11 +31,15 @@
                 		<label class="control-label" for="purchase_expression{{ '{{$index}}' }}">{{ 'purchase.price'|trans }}</label>
                 		<div style="float:clear"></div>
                 	</div>
-                	 <div class="input-group">
+                	<div class="input-group">
                 	 	<input type="text" id="purchase_expression{{ '{{$index}}' }}" name="expression" required="required" ng-model="position.expression" class="form-control"/>
                 	 	<span class="input-group-addon"><span ng-bind="position.calc()">CHF 0.00</span></span>
                      </div>
                	</div>
+               	<div class="form-group calc">
+               		<calculator field="position.expression" btn-class="'btn btn-default'"></calculator>
+               	</div>
+               	
                 <div class="form-group">
                 	<label class="control-label" for="purchase_category{{ '{{$index}}' }}">{{ 'purchase.category'|trans }}</label>
                 	<select id="purchase_category" name="category" required="required" ng-model="position.category" ng-options="obj.id as obj.text for obj in purchaseCtrl.getCategories()" class="form-control">

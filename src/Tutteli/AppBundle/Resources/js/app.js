@@ -12,6 +12,7 @@ angular.module('tutteli.purchase', [
     'tutteli.logout',
     'tutteli.purchase.core',
     'tutteli.navigation',
+    'tutteli.calc',
     
     'ui.router',
     'ui.bootstrap',

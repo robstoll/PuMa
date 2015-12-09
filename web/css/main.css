@@ -67,6 +67,26 @@ body {
     display: list-item !important;
 }
 
+.calc {
+	display:none;
+}
+
+.calc div {
+    margin-bottom: 8px;
+}
+.calc button {
+    margin-right: 8px;
+}
+.calc .op {
+    margin-left: 8px;
+    width: 34px;
+}
+.calc .dot {
+    margin-left: 0;
+}
+.calc .zero {
+    width: 74px;
+}
 
 @media (max-width: 768px) {
 	.footer {
@@ -79,9 +99,15 @@ body {
 	  left: 0;
 	  padding: 10px;
 	  padding-bottom: 0px;
+	  z-index: 2;
 	}
 	
 	.form-group.last {
 	   margin-bottom: 85px;
 	}
+	
+	.calc {
+        display: block;
+    }
+	
 }
