@@ -25,7 +25,12 @@ class PurchasePosition {
     
     /**
      * @ORM\Column(type="string", length=200)
-     * @Assert\Regex(pattern="#^[0-9]+(.[0-9]+)?(\s*(\+|-|\*)\s*[0-9]+(.[0-9]+)?)*$#", message="val.purchase.expr")
+     * @Assert\Regex(pattern="#^[0-9]+(.[0-9]+)?(\s*(\+|-|\*)\s*[0-9]+(.[0-9]+)?)*$#", message="purchase.expr")
+     */
+    private $expression;
+    
+    /**
+     * @ORM\Column(type="decimal", scale=2)
      */
     private $price;
     
@@ -151,5 +156,29 @@ class PurchasePosition {
     public function getPurchase()
     {
         return $this->purchase;
+    }
+
+    /**
+     * Set expression
+     *
+     * @param string $expression
+     *
+     * @return PurchasePosition
+     */
+    public function setExpression($expression)
+    {
+        $this->expression = $expression;
+
+        return $this;
+    }
+
+    /**
+     * Get expression
+     *
+     * @return string
+     */
+    public function getExpression()
+    {
+        return $this->expression;
     }
 }

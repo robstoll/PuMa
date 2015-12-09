@@ -50,21 +50,25 @@ abstract class ATplController extends Controller {
         return [$data, $response];
     }
     
-    protected function getValidationResponse(ConstraintViolationList $errorList) { 
-        new JsonResponse($this->getErrorArray($errorList), Response::HTTP_BAD_REQUEST);
-    }
-    
-    private function getErrorArray(ConstraintViolationList $errorList) {
+    protected function getTranslatedValidationResponse(ConstraintViolationList $errorList) {
         $translator = $this->get('translator');
         $errors = array();
         foreach ($errorList as $error) {
             $errors[$error->getPropertyPath()] = $translator->trans($error->getMessage(), [], 'validators');
         }
-        return $errors;
+        return new JsonResponse($errors, Response::HTTP_BAD_REQUEST);
+    }
+    
+    protected function getValidationResponse(ConstraintViolationList $errorList) {
+        $errors = array();
+        foreach ($errorList as $error) {
+            $errors[$error->getPropertyPath()] = $error->getMessage();
+        }
+        return new JsonResponse($errors, Response::HTTP_BAD_REQUEST);
     }
     
     protected function getCreateResponse($id){
-        new Response('{"id": "'.$id.'"}', Response::HTTP_CREATED);
+        return new Response('{"id": "'.$id.'"}', Response::HTTP_CREATED);
     }
 
 }

@@ -33,7 +33,7 @@ class User implements UserInterface, \Serializable {
     private $username;
 
     /**
-     * @Assert\Regex(pattern="/(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{7,}/", message="val.password")
+     * @Assert\Regex(pattern="/(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{7,}/", message="login.password")
      */
     private $plainPassword;
 

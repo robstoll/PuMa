@@ -68,8 +68,6 @@ function PurchaseController($parse, $filter, PreWork, PurchaseService, AlertServ
     this.addPurchase = function($event) {
         $event.preventDefault();
         AlertService.close(alertId);
-        
-        
         PurchaseService.add(self.user, self.dt, self.positions, self.csrf_token).then(function() {
             AlertService.add(alertId, 'Purchase successfully added', 'success');
         }, function(errorResponse) {
@@ -78,7 +76,7 @@ function PurchaseController($parse, $filter, PreWork, PurchaseService, AlertServ
                 var err = '';
                 if (angular.isObject(data)) {
                     for (var prop in data) {
-                        err += data[prop];
+                        err += data[prop] + '<br/>';
                     }
                 } else {
                     err = data;
@@ -125,9 +123,10 @@ function Position($parse, $filter) {
 PurchaseService.$inject = [
     '$http', 
     '$q',
+    '$timeout',
     'tutteli.purchase.ROUTES', 
     'tutteli.alert.AlertService'];
-function PurchaseService($http, $q, ROUTES, AlertService) {
+function PurchaseService($http, $q, $timeout, ROUTES, AlertService) {
     this.add = function(userId, date, positions, csrf_token) {
         var errors = '';
         var positionDtos = [];
@@ -150,7 +149,12 @@ function PurchaseService($http, $q, ROUTES, AlertService) {
             var data = {userId: userId, dt: date, positions: positionDtos, csrf_token: csrf_token};
             return $http.post(ROUTES.post_purchase, data);
         } 
-        return $q.reject({error: errors});
+        //delay is necessary in order that alert is removed properly
+        var delay = $q.defer();
+        $timeout(function(){
+            delay.reject({error: errors});
+        }, 1);
+        return delay.promise;
     };
 }
 
