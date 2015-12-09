@@ -12,7 +12,7 @@
 {% block content %}
     {% if notXhr %}
     	<div ui-view></div>
-    	<div pre-work="purchase.tpl">
+    	<div pre-work="purchases/new.tpl">
     {%  endif %}
         <form name="form" method="post" action="{{ path('post_purchase') }}" id="purchase_form" ng-submit="purchaseCtrl.addPurchase($event)">
             {% if error %}

@@ -36,7 +36,7 @@ angular.module('tutteli.purchase.routing', [
         url: '/purchases/new',
         controller: 'tutteli.purchase.PurchaseController',
         controllerAs: 'purchaseCtrl',
-        templateUrl: 'purchase.tpl',
+        templateUrl: 'purchases/new.tpl',
         data : {
             authRoles : [USER_ROLES.authenticated]
         }
