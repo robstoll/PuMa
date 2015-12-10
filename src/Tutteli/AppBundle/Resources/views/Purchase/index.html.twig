@@ -42,7 +42,7 @@
                	
                 <div class="form-group">
                 	<label class="control-label" for="purchase_category{{ '{{$index}}' }}">{{ 'purchase.category'|trans }}</label>
-                	<select id="purchase_category" name="category" required="required" ng-model="position.category" ng-options="obj.id as obj.text for obj in purchaseCtrl.getCategories()" class="form-control">
+                	<select id="purchase_category" name="category" required="required" ng-model="position.category" ng-options="obj.id as obj.name for obj in purchaseCtrl.getCategories()" class="form-control">
                 		<option>{{ 'purchase.loadingCategories'|trans }}</option>
                 	</select>
                 </div>

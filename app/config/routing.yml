@@ -29,6 +29,7 @@ home:
       route:  new_purchase
     methods: [GET]
 
+
 new_purchase:
     path:   /purchases/new{ending}
     defaults: { _controller: TutteliAppBundle:Purchase:new, ending: ""}
@@ -43,6 +44,11 @@ post_purchase:
     path:   /purchases{ending}
     defaults: { _controller: TutteliAppBundle:Purchase:post, ending: ""}
     methods: [POST]
+    
+    
+get_categories:
+    path:   /categories
+    defaults: { _controller: TutteliAppBundle:Category:cget }
     
 get_users:
     path:  /admin/users{ending}

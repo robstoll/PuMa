@@ -57,6 +57,7 @@ angular.module('tutteli.purchase.routing', [
     });
 }]).constant('tutteli.purchase.ROUTES', {
     post_purchase : 'purchases',
+    get_categories: 'categories',
 });
 
 })();

@@ -18,12 +18,22 @@ PurchaseController.$inject = [
     'tutteli.purchase.PurchaseService', 
     'tutteli.alert.AlertService', 
     'tutteli.purchase.PurchaseService.alertId',
-    'tutteli.csrf.CsrfService'];
-function PurchaseController($parse, $filter, PreWork, PurchaseService, AlertService, alertId, CsrfService) {
+    'tutteli.csrf.CsrfService', 
+    'tutteli.purchase.CategoryService'];
+function PurchaseController(
+        $parse, 
+        $filter, 
+        PreWork, 
+        PurchaseService, 
+        AlertService, 
+        alertId, 
+        CsrfService, 
+        CategoryService) {
+    
     var self = this;
-    var categories = [{id: '1', text: 'Lebensmittel'}];
     var users = [{id: 1, name: 'admin'}];
     
+    this.disabled = false;
     this.positions = [];
     this.dt = new Date();
     this.opened = false;
@@ -44,7 +54,6 @@ function PurchaseController($parse, $filter, PreWork, PurchaseService, AlertServ
     };
     
     this.getCategories = function() {
-        //TODO replace dummy categories
         return categories;
     };
     
@@ -114,6 +123,9 @@ function PurchaseController($parse, $filter, PreWork, PurchaseService, AlertServ
         reloadCsrfToken();
     }
     
+    CategoryService.getCategories().then(function(data) {
+        categories = data;
+    });    
 }
 
 function Position($parse, $filter) {

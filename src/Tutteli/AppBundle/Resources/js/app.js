@@ -11,9 +11,10 @@ angular.module('tutteli.purchase', [
     'tutteli.login',
     'tutteli.logout',
     'tutteli.csrf',
-    'tutteli.purchase.core',
     'tutteli.navigation',
     'tutteli.calc',
+    'tutteli.purchase.core',
+    'tutteli.purchase.category',
     
     'ui.router',
     'ui.bootstrap',
@@ -46,8 +47,14 @@ function loginUrlFactory(baseHref) {
      return baseHref + 'login_check';
 }
 
-authEventHandler.$inject =  ['$rootScope', '$location', '$state', 
-    'tutteli.auth.EVENTS', 'tutteli.alert.AlertService', 'tutteli.LoginController.alertId', 'tutteli.baseHref'];
+authEventHandler.$inject =  [
+    '$rootScope', 
+    '$location', 
+    '$state', 
+    'tutteli.auth.EVENTS', 
+    'tutteli.alert.AlertService', 
+    'tutteli.LoginController.alertId', 
+    'tutteli.baseHref'];
 function authEventHandler($rootScope, $location, $state, AUTH_EVENTS, AlertService, alertId, baseHref) {
       
     $rootScope.$on(AUTH_EVENTS.notAuthorised, function(event, response) {
