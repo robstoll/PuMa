@@ -36,7 +36,7 @@ function CalculatorDirective($parse) {
                 $event.preventDefault();
                 if ($scope.field !== undefined && $scope.field !== null && $scope.field.length > 0) {
                     var len = $scope.field.length;
-                    if ($scope.field.substr(len - 1, 1) == ' ' && len > 3 && 
+                    if ($scope.field.substr(len - 1, 1) == ' ' && len >= 3 && 
                             $scope.field.substr(len - 3, 1) == ' ') {
                         $scope.field = $scope.field.substr(0, len - 3);
                     } else {
