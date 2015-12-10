@@ -14,6 +14,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 abstract class ATplController extends Controller {
     
+    protected abstract function getCsrfTokenDomain();
+    
+    public function csrfTokenAction() {
+        $csrf = $this->get('security.csrf.token_manager');
+        return new Response('{"csrf_token": "'.$csrf->getToken($this->getCsrfTokenDomain()).'"}');
+    }
+    
     protected function checkEnding(Request $request, $ending, callable $callable) {
         if ($ending != '' && $ending != '.tpl') {
             throw $this->createNotFoundException('File Not Found');

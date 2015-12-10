@@ -7,14 +7,17 @@
 namespace Tutteli\AppBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class SecurityController extends ATplController {
     
+    protected function getCsrfTokenDomain() {
+        return 'authenticate';
+    }
+    
     public function loginAction(Request $request, $ending = null) {        
-        list($etag, $response) = $this->checkEnding($request, $ending, function(){
-            $csrf = $this->get('form.csrf_provider');
-            $etag = $csrf->generateCsrfToken('authenticate').'0.0.1';
+        list($etag, $response) = $this->checkEnding($request, $ending, function() {
+            $csrf = $this->get('security.csrf.token_manager');
+            $etag = $csrf->getToken('authenticate').'0.0.1';
             return $etag;
         });
         
@@ -28,11 +31,6 @@ class SecurityController extends ATplController {
             $response->setETag($etag);
         }
         return $response;
-    }
-    
-    public function csrfTokenAction() {
-        $csrf = $this->get('form.csrf_provider');
-        return new Response('{"csrf_token": "'.$csrf->generateCsrfToken('authenticate').'"}');
     }
     
     public function loginCheckAction() {

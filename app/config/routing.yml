@@ -12,14 +12,14 @@ login_check:
     path:   /login_check
     defaults: { _controller: TutteliAppBundle:Security:loginCheck }
     methods: [POST]    
+
+login_csrf:
+    path: /login/token
+    defaults: { _controller: TutteliAppBundle:Security:csrfToken }    
+    methods: [GET]
     
 logout:
     path: /logout
-    methods: [GET]
-    
-csrfToken:
-    path: /login/token
-    defaults: { _controller: TutteliAppBundle:Security:csrfToken }    
     methods: [GET]
 
 home:
@@ -32,6 +32,11 @@ home:
 new_purchase:
     path:   /purchases/new{ending}
     defaults: { _controller: TutteliAppBundle:Purchase:new, ending: ""}
+    methods: [GET]
+    
+new_purchase_token:
+    path:   /purchases/new{ending}
+    defaults: { _controller: TutteliAppBundle:Purchase:csrfToken, ending: ""}
     methods: [GET]
 
 post_purchase:

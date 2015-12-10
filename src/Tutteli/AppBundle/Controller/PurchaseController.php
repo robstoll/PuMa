@@ -16,6 +16,10 @@ use Symfony\Component\Validator\ConstraintViolation;
 
 class PurchaseController extends ATplController {
     
+    protected function getCsrfTokenDomain() {
+        return 'purchase';
+    }
+    
     public function newAction(Request $request, $ending) {
         list($etag, $response) = $this->checkEnding($request, $ending, function(){
             $path = $this->get('kernel')->locateResource('@TutteliAppBundle/Resources/views/Purchase/index.html.twig');
