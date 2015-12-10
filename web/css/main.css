@@ -58,6 +58,9 @@ body {
 }
 
 @media (max-width: 768px) {
+	 .navbar-toggle.hidden.showBlock {
+        display: block !important;
+    }
     .navbar-collapse.hidden.showBlock.in {
         display: block !important;
     }
