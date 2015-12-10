@@ -49,10 +49,10 @@ function AlertService($interpolate, $timeout,  UtilsService){
     this.getHttpErrorReport = function (response) {
         var errorMsg = '';
         if (response.stack) {
-            errorMsg += response.stack.replace('\n', '<br/>');
+            errorMsg += response.stack.replace(/\\n/g, '<br/>');
         } else if (response.status) {
             errorMsg += 'status: ' + response.status + '<br/>statusText: ' + response.statusText + '<br/><br/>';
-            errorMsg += self.getObjectInfo(response.config);
+            errorMsg += self.getObjectInfo(response.config, 'config');
         } else if (response.msg) {
             errorMsg += 'msg: '+ response.msg + '<br/>' + self.getObjectInfo(response.data, 'response');
         }
@@ -78,7 +78,12 @@ function AlertService($interpolate, $timeout,  UtilsService){
                 msg += self.getObjectInfo(obj[prop], '', depth + 1); 
                 msg += indent + '}<br/>';
             } else{
-                msg += indent + prop + ': ' + obj[prop] + '<br/>';    
+                msg += indent + prop + ': ' 
+                    + obj[prop].toString()
+                        .replace(/\t/g, '&nbsp;&nbsp;')
+                        .replace(/  /g, '&nbsp;&nbsp;')
+                        .replace(/\n/g, '<br/>' + indent)
+                    + '<br/>';    
             }
         }
         
@@ -103,10 +108,20 @@ function AlertService($interpolate, $timeout,  UtilsService){
     this.addErrorReport = function(key, msg, type, repeatUrl, repeatUrlText, reportId, reportUrlText, reportText, timeout) {
         var message = $interpolate(msg)({
             repeatLink : getRepeatLink(key, repeatUrl, repeatUrlText),
-            reportLink : '<a style="cursor:pointer" ng-click="alertCtrl.openErrorReport(\'' + reportId + '\')">' + reportUrlText + '</a>',
-            reportContent: '<div id="'+ reportId + '" class="error-report">' + reportText + '</div>'
+            reportLink : self.getReportLink(reportId, reportUrlText),
+            reportContent: self.getReportContent(reportId, reportText)
         });
         this.add(key, message, type, timeout);
+    };
+    
+    this.getReportLink = function(reportId, reportUrlText) {
+        return '<a style="cursor:pointer" ng-click="alertCtrl.openErrorReport(\'' + reportId + '\')">' 
+                + reportUrlText 
+            + '</a>';
+    };
+    
+    this.getReportContent = function(reportId, reportText) {
+        return '<div id="'+ reportId + '" class="error-report">' + reportText + '</div>';
     };
     
     this.openErrorReport = function(reportId) {

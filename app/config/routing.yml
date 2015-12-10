@@ -49,9 +49,10 @@ post_purchase:
 get_categories:
     path:   /categories
     defaults: { _controller: TutteliAppBundle:Category:cget }
+    methods: [GET]
     
 get_users:
-    path:  /admin/users{ending}
-    defaults: { _controller: TutteliAppBundle:User:index, ending: ""}
-    methods: [GET]    
+    path:  /users
+    defaults: { _controller: TutteliAppBundle:User:cget}
+    methods: [GET]
     

@@ -28,7 +28,10 @@ class CategoryController extends ATplController {
                     $list .= ',';
                 }
                 $category = $data[$i]; 
-                $list .= '{"id": "'.$category->getId().'", "name": "'.$category->getName().'"}'; 
+                $list .= '{'
+                        .'"id": "'.$category->getId().'",'
+                        .'"name": "'.$category->getName().'"'
+                        .'}'; 
             }
         }
         $list .= ']}';

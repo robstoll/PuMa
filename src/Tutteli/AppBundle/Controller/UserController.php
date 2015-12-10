@@ -10,17 +10,41 @@ namespace Tutteli\AppBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Tutteli\AppBundle\Entity\User;
 use Tutteli\AppBundle\Form\UserType;
+use Symfony\Component\HttpFoundation\Response;
 
 
-class UserController {
+class UserController extends ATplController {
 
+    protected function getCsrfTokenDomain() {
+        return 'user';
+    }
+    
     public function cgetAction() {
         $repository = $this->getDoctrine()->getRepository('TutteliAppBundle:User');
         $data = $repository->findAll();
-        $view = $this->view($data, 200)
-            ->setTemplate("TutteliAppBundle:User:cget.html.twig")
-            ->setTemplateVar('users');
-        return $this->handleView($view);
+        return new Response($this->getJSon($data));
+    }
+    
+    private function getJSon(array $data) {
+        $list = '{"users":[';
+        $count = count($data);
+        if ($count > 0) {
+            for ($i = 0; $i < $count; ++$i) {
+                if ($i != 0) {
+                    $list .= ',';
+                }
+                /* @var $user \Tutteli\AppBundle\Entity\User */
+                $user = $data[$i];
+                $list .= '{'
+                        .'"id":"'.$user->getId().'",'
+                        .'"username":"'.$user->getUsername().'",'
+                        .'"email":"'.$user->getEmail().'",'
+                        .'"roles":"'.$user->getRole().'"'                                
+                        .'}';
+            }
+        }
+        $list .= ']}';
+        return $list;
     }
 
     public function newAction() {

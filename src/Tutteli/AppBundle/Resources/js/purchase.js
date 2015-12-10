@@ -19,7 +19,8 @@ PurchaseController.$inject = [
     'tutteli.alert.AlertService', 
     'tutteli.purchase.PurchaseService.alertId',
     'tutteli.csrf.CsrfService', 
-    'tutteli.purchase.CategoryService'];
+    'tutteli.purchase.CategoryService', 
+    'tutteli.purchase.UserService'];
 function PurchaseController(
         $parse, 
         $filter, 
@@ -28,11 +29,14 @@ function PurchaseController(
         AlertService, 
         alertId, 
         CsrfService, 
-        CategoryService) {
+        CategoryService, 
+        UserService) {
     
     var self = this;
     var categories = [{id: 0, name: 'Loading categories...'}];
-    var users = [{id: 1, name: 'admin'}];
+    var users = null;
+    var usersLoaded = false;
+    var categoriesLoaded = false;
     
     this.disabled = false;
     this.positions = [];
@@ -60,23 +64,96 @@ function PurchaseController(
     
     this.loadCategories = function() {
         CategoryService.getCategories().then(function(data) {
-            if (data.length == 0) {
-                self.disabled = true;
-                AlertService.add(alertId, 'No categories are defined yet, gathering purchases is not yet possible. '
-                        + 'Please inform your administrator. '
-                        + '<a href="#" ng-click="alertCtrl.close(\'' + alertId + '\')" onclick="angular.element(document.querySelector(\'[ui-view]\')).controller().loadCategories(); return false;">Click then here once the categories have been created.</a>');
-            }
+            categoriesLoaded = data.length > 0;
+            checkDisabled();
             categories = data;
+            if (!categoriesLoaded) {
+                self.disabled = true;
+                var alertIdCategories = alertId + '-categories';
+                AlertService.add(alertIdCategories, 
+                        'No categories are defined yet, gathering purchases is not yet possible. '
+                        + 'Please inform your administrator. '
+                        + '<a ' + closeAlertAndCall(alertIdCategories, 'loadCategories') + '>'
+                            + 'Click then here once the categories have been created'
+                        + '</a>.');
+            }
+            
+        }, function(errorResponse) {
+            self.disabled = true;
+            var alertIdUsers = alertId + '-users';
+            var reportId = '_purchase_categories_report';
+            var report = AlertService.getHttpErrorReport(errorResponse);
+            if (errorResponse.status == 404) {
+                var msg = 'Categories could not been loaded, gathering purchases is thus not possible at the moment. ' 
+                    + 'Please verify you have internet connection and '
+                    + '<a ' + closeAlertAndCall(alertIdUsers, 'loadCategories') + '>'
+                        + 'click here to load the categories again'
+                    + '</a>. If the error should occur again, then please ' 
+                    + AlertService.getReportLink(reportId, 'click here') 
+                    + ' and report the shown error to the admin.<br/>'
+                    + AlertService.getReportContent(reportId, report);
+                AlertService.add(alertIdUsers, msg);
+            } else {
+                var msg = 'Categories could not been loaded. Unknown error occurred. '
+                    + '<a ' + closeAlertAndCall(alertIdUsers, 'loadCategories') + '>'
+                        + 'Please click here to reload the categories'
+                    + '</a>. If the error should occur again, then please ' 
+                    + AlertService.getReportLink(reportId, 'click here') 
+                    + ' and report the shown error to the admin.<br/>'
+                    + AlertService.getReportContent(reportId, report);
+                AlertService.add(alertIdUsers, msg);
+            }
         });
     };
     
+    function checkDisabled() {
+        self.disabled = self.disabled && (!usersLoaded || !categoriesLoaded);
+    }
+    
+    function closeAlertAndCall(id, methodName) {
+        return 'href="#" ng-click="alertCtrl.close(\'' + id + '\')" '
+            + 'onclick="angular.element(document.querySelector(\'[ui-view]\')).controller().' + methodName + '(); return false;"';
+    }
+    
     this.getUsers = function() {
-        //TODO replace dummy users
         return users;
     };
     
     this.selectUser = function(id) {
         this.user = id;
+    };
+    
+    this.loadUsers = function() {
+        UserService.getUsers().then(function(data) {
+            usersLoaded = true;
+            checkDisabled();
+            users = data;
+        }, function(errorResponse) {
+            self.disabled = true;
+            var alertIdUsers = alertId + '-users';
+            var reportId = '_purchase_categories_report';
+            var report = AlertService.getHttpErrorReport(errorResponse);
+            if (errorResponse.status == 404) {
+                var msg = 'Users could not been loaded, gathering purchases is thus not possible at the moment. ' 
+                    + 'Please verify you have internet connection and '
+                    + '<a ' + closeAlertAndCall(alertIdUsers, 'loadUsers') + '>'
+                        + 'click here to load the users again'
+                    + '</a>. If the error should occur again, then please ' 
+                    + AlertService.getReportLink(reportId, 'click here') 
+                    + ' and report the shown error to the admin.<br/>'
+                    + AlertService.getReportContent(reportId, report);
+                AlertService.add(alertIdUsers, msg);
+            } else {
+                var msg = 'Users could not been loaded. Unknown error occurred. '
+                    + '<a ' + closeAlertAndCall(alertIdUsers, 'loadUsers') + '>'
+                        + 'Please click here to reload the users'
+                    + '</a>. If the error should occur again, then please ' 
+                    + AlertService.getReportLink(reportId, 'click here') 
+                    + ' and report the shown error to the admin.<br/>'
+                    + AlertService.getReportContent(reportId, report);
+                AlertService.add(alertIdUsers, msg);
+            }
+        });
     };
     
     this.addPosition = addPosition;
@@ -137,6 +214,7 @@ function PurchaseController(
     }
     
     self.loadCategories();
+    self.loadUsers();
 }
 
 function Position($parse, $filter) {
