@@ -18,8 +18,14 @@ angular.module('tutteli.login', [
     .service('tutteli.LoginModalService', LoginModalService)
     .constant('tutteli.LoginController.alertId', 'tutteli-ctrls-Login');
 
-LoginController.$inject = ['$http', 'tutteli.PreWork', 'tutteli.auth.AuthService','tutteli.alert.AlertService', 'tutteli.LoginController.alertId'];
-function LoginController($http, PreWork, AuthService, AlertService, alertId) {
+LoginController.$inject = [
+    '$http', 
+    'tutteli.PreWork', 
+    'tutteli.auth.AuthService',
+    'tutteli.alert.AlertService', 
+    'tutteli.LoginController.alertId',
+    'tutteli.csrf.CsrfService'];
+function LoginController($http, PreWork, AuthService, AlertService, alertId, CsrfService) {
     var self = this;
     
     this.credentials = {
@@ -32,8 +38,8 @@ function LoginController($http, PreWork, AuthService, AlertService, alertId) {
     
     PreWork.merge('login.tpl', this, 'loginCtrl');
        
-    if (self.credentials.csrf_token == '') {
-        loadCsrfToken();
+    if (self.credentials.csrf_token === undefined || self.credentials.csrf_token === '') {
+        reloadCsrfToken();
     }
     
     function login($event) {
@@ -43,7 +49,7 @@ function LoginController($http, PreWork, AuthService, AlertService, alertId) {
             if (error.status == 401) {
                 AlertService.add(alertId, error.data, 'danger');
                 if (error.data == 'Invalid CSRF token.') {
-                    loadCsrfToken();
+                    reloadCsrfToken();
                 }
             } else {
                 var msg = 'Unexpected error occured. '
@@ -59,13 +65,8 @@ function LoginController($http, PreWork, AuthService, AlertService, alertId) {
         });
     }
     
-    function loadCsrfToken() {
-        $http.get('login/token').then(function(response) {
-            self.credentials.csrf_token = response.data.csrf_token;
-        }, function() {
-            //TODO generate link which repeats the action
-            var i = 0;
-        });
+    function reloadCsrfToken() {
+        CsrfService.reloadToken('login/token', self.credentials);
     }
 }
 

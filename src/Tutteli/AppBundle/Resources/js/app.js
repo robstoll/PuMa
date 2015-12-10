@@ -10,6 +10,7 @@ angular.module('tutteli.purchase', [
     'tutteli.purchase.routing',
     'tutteli.login',
     'tutteli.logout',
+    'tutteli.csrf',
     'tutteli.purchase.core',
     'tutteli.navigation',
     'tutteli.calc',

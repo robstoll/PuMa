@@ -35,7 +35,7 @@ new_purchase:
     methods: [GET]
     
 new_purchase_token:
-    path:   /purchases/new{ending}
+    path:   /purchases/new/token
     defaults: { _controller: TutteliAppBundle:Purchase:csrfToken, ending: ""}
     methods: [GET]
 

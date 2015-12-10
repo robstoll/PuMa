@@ -17,8 +17,9 @@ PurchaseController.$inject = [
     'tutteli.PreWork', 
     'tutteli.purchase.PurchaseService', 
     'tutteli.alert.AlertService', 
-    'tutteli.purchase.PurchaseService.alertId'];
-function PurchaseController($parse, $filter, PreWork, PurchaseService, AlertService, alertId) {
+    'tutteli.purchase.PurchaseService.alertId',
+    'tutteli.csrf.CsrfService'];
+function PurchaseController($parse, $filter, PreWork, PurchaseService, AlertService, alertId, CsrfService) {
     var self = this;
     var categories = [{id: '1', text: 'Lebensmittel'}];
     var users = [{id: 1, name: 'admin'}];
@@ -71,7 +72,12 @@ function PurchaseController($parse, $filter, PreWork, PurchaseService, AlertServ
         PurchaseService.add(self.user, self.dt, self.positions, self.csrf_token).then(function() {
             AlertService.add(alertId, 'Purchase successfully added', 'success');
         }, function(errorResponse) {
-            if (errorResponse.status == 400) {
+            if (errorResponse.status == 401) {
+                AlertService.add(alertId, error.data, 'danger');
+                if (error.data == 'Invalid CSRF token.') {
+                    reloadCsrfToken();
+                }
+            } else if (errorResponse.status == 400) {
                 var data = errorResponse.data;
                 var err = '';
                 if (angular.isObject(data)) {
@@ -90,6 +96,10 @@ function PurchaseController($parse, $filter, PreWork, PurchaseService, AlertServ
         });
     };
     
+    function reloadCsrfToken() {
+        CsrfService.reloadToken('purchases/new/token', self);
+    }
+    
     //-------------------
     
     self.addPosition();
@@ -99,6 +109,10 @@ function PurchaseController($parse, $filter, PreWork, PurchaseService, AlertServ
         self.positions[0].notice = position.notice;
     }
     PreWork.merge('purchase.tpl', this, 'purchaseCtrl');
+    
+    if (self.csrf_token === undefined || self.csrf_token === '') {
+        reloadCsrfToken();
+    }
     
 }
 
@@ -112,10 +126,15 @@ function Position($parse, $filter) {
         if (self.expression) {
             try {
                 val = $parse(self.expression)(this);
-            } catch(err){
+            } catch(err) {
                 //that's fine
             }
         }
+        
+        if (!val) {
+            val = 0;
+        }
+        
         return $filter('currency')(val, 'CHF ');
     };
 }
