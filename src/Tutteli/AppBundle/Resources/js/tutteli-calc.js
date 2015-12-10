@@ -16,13 +16,14 @@ function CalculatorDirective($parse) {
         restrict: 'E',
         scope: {
             btnClass: '=',
-            field: '='
+            field: '=',
+            disabled: '='
         },
         template: 
-              '<div><button ng-click="press($event, \'7\')" class="{{btnClass}}">7</button><button ng-click="press($event, \'8\')" class="{{btnClass}}">8</button><button ng-click="press($event, \'9\')" class="{{btnClass}}">9</button><button ng-click="press($event, \' + \')" class="op {{btnClass}}">+</button></div>'
-            + '<div><button ng-click="press($event, \'4\')" class="{{btnClass}}">4</button><button ng-click="press($event, \'5\')" class="{{btnClass}}">5</button><button ng-click="press($event, \'6\')" class="{{btnClass}}">6</button><button ng-click="press($event, \' - \')" class="op {{btnClass}}">-</button></div>'
-            + '<div><button ng-click="press($event, \'1\')" class="{{btnClass}}">1</button><button ng-click="press($event, \'2\')" class="{{btnClass}}">2</button><button ng-click="press($event, \'3\')" class="{{btnClass}}">3</button><button ng-click="press($event, \' * \')" class="op {{btnClass}}">*</button></div>'
-            + '<div><button ng-click="press($event, \'0\')" class="zero {{btnClass}}">0</button><button ng-click="press($event, \'.\')" class="dot op {{btnClass}}">.</button><button ng-click="del($event)" class="del op {{btnClass}}">DEL</button></div>',
+              '<div><button ng-click="press($event, \'7\')" ng-disabled="disabled" class="{{btnClass}}">7</button><button ng-click="press($event, \'8\')" ng-disabled="disabled" class="{{btnClass}}">8</button><button ng-click="press($event, \'9\')" ng-disabled="disabled" class="{{btnClass}}">9</button><button ng-click="press($event, \' + \')" ng-disabled="disabled" class="op {{btnClass}}">+</button></div>'
+            + '<div><button ng-click="press($event, \'4\')" ng-disabled="disabled" class="{{btnClass}}">4</button><button ng-click="press($event, \'5\')" ng-disabled="disabled" class="{{btnClass}}">5</button><button ng-click="press($event, \'6\')" ng-disabled="disabled" class="{{btnClass}}">6</button><button ng-click="press($event, \' - \')" ng-disabled="disabled" class="op {{btnClass}}">-</button></div>'
+            + '<div><button ng-click="press($event, \'1\')" ng-disabled="disabled" class="{{btnClass}}">1</button><button ng-click="press($event, \'2\')" ng-disabled="disabled" class="{{btnClass}}">2</button><button ng-click="press($event, \'3\')" ng-disabled="disabled" class="{{btnClass}}">3</button><button ng-click="press($event, \' * \')" ng-disabled="disabled" class="op {{btnClass}}">*</button></div>'
+            + '<div><button ng-click="press($event, \'0\')" ng-disabled="disabled" class="zero {{btnClass}}">0</button><button ng-click="press($event, \'.\')" ng-disabled="disabled" class="dot op {{btnClass}}">.</button><button ng-click="del($event)" ng-disabled="disabled" class="del op {{btnClass}}">DEL</button></div>',
         controller: ['$scope', function($scope) {
             $scope.press = function($event, text) {
                 $event.preventDefault();

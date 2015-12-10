@@ -31,6 +31,7 @@ function PurchaseController(
         CategoryService) {
     
     var self = this;
+    var categories = [{id: 0, name: 'Loading categories...'}];
     var users = [{id: 1, name: 'admin'}];
     
     this.disabled = false;
@@ -55,6 +56,18 @@ function PurchaseController(
     
     this.getCategories = function() {
         return categories;
+    };
+    
+    this.loadCategories = function() {
+        CategoryService.getCategories().then(function(data) {
+            if (data.length == 0) {
+                self.disabled = true;
+                AlertService.add(alertId, 'No categories are defined yet, gathering purchases is not yet possible. '
+                        + 'Please inform your administrator. '
+                        + '<a href="#" ng-click="alertCtrl.close(\'' + alertId + '\')" onclick="angular.element(document.querySelector(\'[ui-view]\')).controller().loadCategories(); return false;">Click then here once the categories have been created.</a>');
+            }
+            categories = data;
+        });
     };
     
     this.getUsers = function() {
@@ -123,9 +136,7 @@ function PurchaseController(
         reloadCsrfToken();
     }
     
-    CategoryService.getCategories().then(function(data) {
-        categories = data;
-    });    
+    self.loadCategories();
 }
 
 function Position($parse, $filter) {

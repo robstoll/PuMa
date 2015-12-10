@@ -32,23 +32,23 @@
                 		<div style="float:clear"></div>
                 	</div>
                 	<div class="input-group">
-                	 	<input type="text" id="purchase_expression{{ '{{$index}}' }}" name="expression" required="required" ng-model="position.expression" class="form-control"/>
+                	 	<input type="text" id="purchase_expression{{ '{{$index}}' }}" name="expression" required="required" ng-model="position.expression" ng-disabled="purchaseCtrl.disabled" class="form-control"/>
                 	 	<span class="input-group-addon"><span ng-bind="position.calc()">CHF 0.00</span></span>
                      </div>
                	</div>
                	<div class="form-group calc">
-               		<calculator field="position.expression" btn-class="'btn btn-default'"></calculator>
+               		<calculator field="position.expression" btn-class="'btn btn-default'" disabled="purchaseCtrl.disabled"></calculator>
                	</div>
                	
                 <div class="form-group">
                 	<label class="control-label" for="purchase_category{{ '{{$index}}' }}">{{ 'purchase.category'|trans }}</label>
-                	<select id="purchase_category" name="category" required="required" ng-model="position.category" ng-options="obj.id as obj.name for obj in purchaseCtrl.getCategories()" class="form-control">
+                	<select id="purchase_category" name="category" required="required" ng-model="position.category" ng-disabled="purchaseCtrl.disabled" ng-options="obj.id as obj.name for obj in purchaseCtrl.getCategories()" class="form-control">
                 		<option>{{ 'purchase.loadingCategories'|trans }}</option>
                 	</select>
                 </div>
                 <div class="form-group">
                 	<label class="control-label" for="purchase_notice">{{ 'purchase.notice'|trans }}</label>
-                	<input type="text" id="purchase_notice" name="notice" ng-model="position.notice" class="form-control">
+                	<input type="text" id="purchase_notice" name="notice" ng-model="position.notice" ng-disabled="purchaseCtrl.disabled" class="form-control">
                	</div>
                	<hr/>
            	</div>
@@ -56,24 +56,24 @@
             	<label class="control.label" for="purchase_date">{{ 'purchase.date'|trans }}</label>
             	<div>
                     <div class="input-group">
-                      <input type="text" class="form-control" name="date" uib-datepicker-popup="{{ 'general.dateFormat.angularjs'|trans }}" ng-model="purchaseCtrl.dt" is-open="purchaseCtrl.opened" min-date="purchaseCtrl.minDate" max-date="purchaseCtrl.maxDate" datepicker-options="purchaseCtrl.dateOptions" ng-required="true" close-text="{{'general.close'|trans}}" value="{{ "now"|date('general.dateFormat.php'|trans) }}" />
+                      <input type="text" class="form-control" name="date" uib-datepicker-popup="{{ 'general.dateFormat.angularjs'|trans }}" ng-model="purchaseCtrl.dt" ng-disabled="purchaseCtrl.disabled" is-open="purchaseCtrl.opened" min-date="purchaseCtrl.minDate" max-date="purchaseCtrl.maxDate" datepicker-options="purchaseCtrl.dateOptions" ng-required="true" close-text="{{'general.close'|trans}}" value="{{ "now"|date('general.dateFormat.php'|trans) }}" />
                       <span class="input-group-btn">
-                        <button type="button" class="btn btn-default" ng-click="purchaseCtrl.open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                        <button type="button" class="btn btn-default" ng-disabled="purchaseCtrl.disabled" ng-click="purchaseCtrl.open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
                       </span>
                     </div>
                 </div>
             </div>
            	<div class="form-group last">
             	<label class="control-label" for="purchase_user">{{ 'purchase.user'|trans }}</label>
-            	<select id="purchase_category" name="user" required="required" ng-model="purchaseCtrl.user" ng-options="obj.id as obj.name for obj in purchaseCtrl.getUsers()" class="form-control" ng-init="purchaseCtrl.selectUser({{ app.user.id }})">
+            	<select id="purchase_category" name="user" required="required" ng-model="purchaseCtrl.user" ng-disabled="purchaseCtrl.disabled" ng-options="obj.id as obj.name for obj in purchaseCtrl.getUsers()" class="form-control" ng-init="purchaseCtrl.selectUser({{ app.user.id }})">
             		<option value="{{ app.user.id }}">{{ app.user.username }}</option>
             	</select>
            	</div>
            	<input type="hidden" id="csrf_token" ng-model="purchaseCtrl.csrf_token" name="csrf_token" value="{{ csrf_token('purchase') }}">
            	<footer class="footer">
                 <div class="form-group">
-                	<button style="display:none" type="button" id="purchase_add" class="btn-default btn" ng-click="purchaseCtrl.addPosition()">{{ 'purchase.add'|trans }}</button>
-                	<span class="pull-right"><button type="submit" id="purchase_form_submit" class="btn-default btn">{{ 'purchase.submit'|trans }}</button></span>
+                	<button style="display:none" type="button" id="purchase_add" class="btn-default btn" ng-disabled="purchaseCtrl.disabled" ng-click="purchaseCtrl.addPosition()">{{ 'purchase.add'|trans }}</button>
+                	<span class="pull-right"><button type="submit" id="purchase_form_submit" ng-disabled="purchaseCtrl.disabled" class="btn-default btn">{{ 'purchase.submit'|trans }}</button></span>
             	</div>
             </footer>    
         </form>

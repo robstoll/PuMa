@@ -66,7 +66,7 @@
             </trans-unit>
             <trans-unit id="202">
                 <source>purchase.loadingCategories</source>
-                <target>Loading categories</target>
+                <target>Loading categories...</target>
             </trans-unit>
             <trans-unit id="203">
                 <source>purchase.date</source>
