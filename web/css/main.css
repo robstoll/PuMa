@@ -88,6 +88,12 @@ body {
     width: 74px;
 }
 
+.calc .del {
+	font-size: 0.8em;
+	padding-left: 2px;
+	padding-right: 2px;
+}
+
 @media (max-width: 768px) {
 	.footer {
 	  position: fixed;
