@@ -91,7 +91,11 @@ class UserController extends ATplController {
 
     public function editAction(Request $request, $userId, $ending) {
         return $this->edit($request, $ending, function() use ($userId) {
-            return $this->loadUser($userId);
+            $user = $this->loadUser($userId);
+            if ($user == null) {
+                throw $this->createNotFoundException('User with id '.$userId. ' not found.');
+            }
+            return $user;
         });
     }
     

@@ -58,15 +58,14 @@
             	})();
             </script>
         {% endif %}
-        {%  if user %}
+    {% if notXhr %}
+    	</div>
+    	
         <script type="text/javascript">
         	document.getElementById('user_id').value = '{{ user.id }}';
         	document.getElementById('user_username').value = '{{ user.username }}';
         	document.getElementById('user_email').value = '{{ user.email }}';
         	document.getElementById('user_role').value = '{{ user.role }}';
         </script>
-        {%  endif %}
-    {% if notXhr %}
-    	</div>
     {%  endif %}
 {% endblock %}
