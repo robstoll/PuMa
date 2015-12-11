@@ -105,15 +105,15 @@
                 <target>Role</target>
             </trans-unit>
             <trans-unit id="303">
-                <source>users.loadingRoles</source>
-                <target>Loading roles...</target>
+                <source>users.loading</source>
+                <target>Loading users...</target>
             </trans-unit>
             <trans-unit id="304">
                 <source>users.save</source>
                 <target>Save user</target>
             </trans-unit>
             <trans-unit id="305">
-                <source>users.roles.ROLE_USER</source>
+                <source>users.roles.</source>
                 <target>User</target>
             </trans-unit>
             <trans-unit id="3065">

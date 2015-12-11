@@ -37,7 +37,7 @@
         		<label class="control-label" for="user_role">{{ 'users.role'|trans }}</label>
             	<select id="user_role" name="role" required="required" ng-model="userCtrl.role" class="form-control">
             		<option value="?"></option>
-            		<option value="">{{ 'users.roles.ROLE_USER'|trans }}</option>
+            		<option value="">{{ 'users.roles.'|trans }}</option>
             		<option value="ROLE_ADMIN">{{ 'users.roles.ROLE_ADMIN'|trans }}</option>
             	</select>
             </div>
@@ -66,9 +66,6 @@
         	document.getElementById('user_role').value = '{{ user.role }}';
         </script>
         {%  endif %}
-        <script type="text/javascript">
-        	document.getElementById('user_role').firstChild.remove();
-        </script>
     {% if notXhr %}
     	</div>
     {%  endif %}

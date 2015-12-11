@@ -74,11 +74,13 @@ class UserController extends ATplController {
     }
     
     private function getJson(User $user) {
+         $translator = $this->get('translator');
         return '{'
                 .'"id":"'.$user->getId().'",'
                 .'"username":"'.$user->getUsername().'",'
                 .'"email":"'.$user->getEmail().'",'
-                .'"role":"'.$user->getRole().'"'                                
+                .'"roleId":"'.$user->getRole().'",'
+                .'"role":"'.$translator->trans('users.roles.'.$user->getRole()).'"'                        
                 .'}';
     }
     

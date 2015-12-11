@@ -23,20 +23,48 @@
     				<th>{{ 'general.edit'|trans }}</th>
 				</tr>
     		</thead>
-    		<tbody>
-            {% for user in users %}
-            	<tr>
-            		<td>{{user.id}}</td>
-            		<td>{{user.username}}</td>
-            		<td>{{user.email}}</td>
-            		<td>{{user.role}}</td>
-            		<td><a href="#" ui-sref="edit_users({userId: '{{ user.id }}'})"><i class="glyphicon glyphicon-pencil"></i></a></td>
+    		<tbody id="users_rows" class="hidden">
+            	<tr ng-repeat="user in usersCtrl.users">
+            		<td ng-bind="user.id"></td>
+            		<td ng-bind="user.username"></td>
+            		<td ng-bind="user.email"></td>
+            		<td ng-bind="user.role"></td>
+            		<td><a href="#" ui-sref="edit_users({userId: user.id})"><i class="glyphicon glyphicon-pencil"></i></a></td>
         		</tr>
-            {% endfor %}
-            </tbody>    
+            </tbody> 
+            {% if users %}
+                {% set json = '[' %}
+                {% for user in users %}
+                	{% set json = json ~ '{' 
+                	    ~ '"id":"' ~ user.id ~ '",' 
+                	    ~ '"username":"' ~ user.username ~ '",'
+                	    ~ '"email":"' ~ user.email ~ '",'
+                	    ~ '"roleId":"' ~ user.role ~ '",'  
+                	    ~ '"role":"' ~ ('users.roles.' ~ user.role)|trans ~ '"'
+                	    ~ '}' %}
+                {% endfor %}
+                {% set json = json ~ ']' %}
+                	<!-- pre-work-exclude-start -->
+                	<tbody id="users_rows_preload"> 
+                    {% for user in users %}
+            			<tr>
+            				<td>{{ user.id }} <input type="hidden" ng-model="usersCtrl.usersInit" value="{{ json }}"/></td>
+            				<td>{{ user.username }}</td>
+            				<td>{{ user.email }}</td>
+            				<td>{{ ('users.roles.' ~ user.role)|trans }}</td>
+            				<td><a href="{{ path('edit_user', {'userId': user.id}) }}"><i class="glyphicon glyphicon-pencil"></i></a></td>
+            			</tr>
+            		{% endfor %}
+            		</tbody>
+            		<!-- pre-work-exclude-end -->
+        	{% endif %}
         </table>
-                        	
+        <div id="users_load">{{ 'users.loading'|trans }}</div>
     {% if notXhr %}
-    	</div>
+        </div>
+        
+        <script type="text/javascript">
+        	document.getElementById('users_load').style.display = 'none';
+		</script>
     {%  endif %}
 {% endblock %}

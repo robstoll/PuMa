@@ -42,6 +42,8 @@ angular.module('tutteli.purchase.routing', [
         }
     }).state('users', {
         url: '/users',
+        controller: 'tutteli.purchase.UsersController',
+        controllerAs: 'usersCtrl',
         templateUrl : 'users.tpl',
         data: {
             authRoles : [USER_ROLES.admin] //user needs to be logged in
