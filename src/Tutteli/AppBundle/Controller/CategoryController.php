@@ -13,13 +13,13 @@ class CategoryController extends ATplController {
         return 'category';
     }
     
-    public function cgetAction() {
+    public function cgetJsonAction() {
         $repository = $this->getDoctrine()->getRepository('TutteliAppBundle:Category');
         $data = $repository->findAll();
-        return new Response($this->getJSon($data));
+        return new Response($this->getJson($data));
     }
     
-    private function getJSon(array $data) {
+    private function getJson(array $data) {
         $list = '{"categories":[';
         $count = count($data);
         if ($count > 0) {

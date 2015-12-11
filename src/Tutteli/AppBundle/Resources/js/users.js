@@ -12,7 +12,7 @@ angular.module('tutteli.purchase.users', [])
 UserService.$inject = ['$http', '$q', 'tutteli.purchase.ROUTES'];
 function UserService($http, $q, ROUTES) {
     this.getUsers = function() {
-        return $http.get(ROUTES.get_users).then(function(response) {
+        return $http.get(ROUTES.get_users_json).then(function(response) {
             if (response.data.users === undefined) {
                 return $q.reject({msg:'The property "users" was not defined in the returned data.', data: response.data});
             }

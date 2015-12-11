@@ -14,6 +14,7 @@ angular.module('tutteli.purchase.core', ['tutteli.purchase.routing'])
 PurchaseController.$inject = [
     '$parse',
     '$filter', 
+    'tutteli.purchase.ROUTES',
     'tutteli.PreWork', 
     'tutteli.purchase.PurchaseService', 
     'tutteli.alert.AlertService', 
@@ -24,6 +25,7 @@ PurchaseController.$inject = [
 function PurchaseController(
         $parse, 
         $filter, 
+        ROUTES,
         PreWork, 
         PurchaseService, 
         AlertService, 
@@ -196,7 +198,7 @@ function PurchaseController(
     };
     
     function reloadCsrfToken() {
-        CsrfService.reloadToken('purchases/new/token', self);
+        CsrfService.reloadToken(ROUTES.get_purchase_csrf, self);
     }
     
     //-------------------

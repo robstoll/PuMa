@@ -41,8 +41,8 @@ angular.module('tutteli.purchase.routing', [
             authRoles : [USER_ROLES.authenticated]
         }
     }).state('users', {
-        url : '/admin/users',
-        templateUrl : 'users.html',
+        url : '/users',
+        templateUrl : 'users.tpl',
         data : {
             authRoles : [USER_ROLES.admin] //user needs to be logged in
         }
@@ -56,9 +56,11 @@ angular.module('tutteli.purchase.routing', [
       }
     });
 }]).constant('tutteli.purchase.ROUTES', {
+    get_login_csrf: 'login/token',
     post_purchase : 'purchases',
-    get_categories: 'categories',
-    get_users: 'users',
+    get_purchase_csrf: 'purchases/new/token',
+    get_categories_json: 'categories.json',
+    get_users_json: 'users.json',
 });
 
 })();

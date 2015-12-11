@@ -46,13 +46,19 @@ post_purchase:
     methods: [POST]
     
     
-get_categories:
-    path:   /categories
-    defaults: { _controller: TutteliAppBundle:Category:cget }
+get_categories_json:
+    path:   /categories.json
+    defaults: { _controller: TutteliAppBundle:Category:cgetJson }
     methods: [GET]
-    
+
+
+get_users_json:
+    path:  /users.json
+    defaults: { _controller: TutteliAppBundle:User:cgetJson }
+    methods: [GET]
+
 get_users:
-    path:  /users
-    defaults: { _controller: TutteliAppBundle:User:cget}
+    path:  /users{ending}
+    defaults: { _controller: TutteliAppBundle:User:cget, ending: ""}
     methods: [GET]
     

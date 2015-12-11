@@ -12,7 +12,7 @@ angular.module('tutteli.purchase.category', [])
 CategoryService.$inject = ['$http', '$q', 'tutteli.purchase.ROUTES'];
 function CategoryService($http, $q, ROUTES) {
     this.getCategories = function() {
-        return $http.get(ROUTES.get_categories).then(function(response) {
+        return $http.get(ROUTES.get_categories_json).then(function(response) {
             if (response.data.categories === undefined) {
                 return $q.reject({msg:'The property "categories" was not defined in the returned data.', data: response.data});
             }

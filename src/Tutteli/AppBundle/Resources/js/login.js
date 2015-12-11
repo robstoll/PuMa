@@ -20,12 +20,13 @@ angular.module('tutteli.login', [
 
 LoginController.$inject = [
     '$http', 
+    'tutteli.purchase.ROUTES',
     'tutteli.PreWork', 
     'tutteli.auth.AuthService',
     'tutteli.alert.AlertService', 
     'tutteli.LoginController.alertId',
     'tutteli.csrf.CsrfService'];
-function LoginController($http, PreWork, AuthService, AlertService, alertId, CsrfService) {
+function LoginController($http, ROUTES, PreWork, AuthService, AlertService, alertId, CsrfService) {
     var self = this;
     
     this.credentials = {
@@ -66,7 +67,7 @@ function LoginController($http, PreWork, AuthService, AlertService, alertId, Csr
     }
     
     function reloadCsrfToken() {
-        CsrfService.reloadToken('login/token', self.credentials);
+        CsrfService.reloadToken(ROUTES.get_login_csrf, self.credentials);
     }
 }
 

@@ -19,13 +19,17 @@ class UserController extends ATplController {
         return 'user';
     }
     
-    public function cgetAction() {
-        $repository = $this->getDoctrine()->getRepository('TutteliAppBundle:User');
-        $data = $repository->findAll();
-        return new Response($this->getJSon($data));
+    public function cgetJsonAction() {
+        $data = $this->getUsers();
+        return new Response($this->getJson($data));
     }
     
-    private function getJSon(array $data) {
+    private function getUsers() {
+        $repository = $this->getDoctrine()->getRepository('TutteliAppBundle:User');
+        return $repository->findAll();
+    }
+
+    private function getJson(array $data) {
         $list = '{"users":[';
         $count = count($data);
         if ($count > 0) {
