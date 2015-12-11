@@ -21,14 +21,11 @@ class PurchaseController extends ATplController {
     }
     
     public function newAction(Request $request, $ending) {
-        list($etag, $response) = $this->checkEnding($request, $ending, function(){
-            $path = $this->get('kernel')->locateResource('@TutteliAppBundle/Resources/views/Purchase/index.html.twig');
-            $etag = hash_file('md5', $path);
-            return $etag;
-        });
-        
+        $viewPath = '@TutteliAppBundle/Resources/views/Purchase/index.html.twig';
+        list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
+          
         if (!$response) {
-            $response = $this->render('TutteliAppBundle:Purchase:index.html.twig', array (
+            $response = $this->render($viewPath, array (
                     'notXhr' => $ending == '',
                     'error' => null 
             ));

@@ -21,7 +21,15 @@ abstract class ATplController extends Controller {
         return new Response('{"csrf_token": "'.$csrf->getToken($this->getCsrfTokenDomain()).'"}');
     }
     
-    protected function checkEnding(Request $request, $ending, callable $callable) {
+    protected function checkEndingAndEtagForView(Request $request, $ending, $viewPath) {
+        return $this->checkEndingAndEtag($request, $ending, function() use ($viewPath){
+            $path = $this->get('kernel')->locateResource($viewPath);
+            $etag = hash_file('md5', $path);
+            return $etag;
+        });
+    }
+    
+    protected function checkEndingAndEtag(Request $request, $ending, callable $callable) {
         if ($ending != '' && $ending != '.tpl') {
             throw $this->createNotFoundException('File Not Found');
         }

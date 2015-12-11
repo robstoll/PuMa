@@ -15,7 +15,7 @@ class SecurityController extends ATplController {
     }
     
     public function loginAction(Request $request, $ending = null) {        
-        list($etag, $response) = $this->checkEnding($request, $ending, function() {
+        list($etag, $response) = $this->checkEndingAndEtag($request, $ending, function() {
             $csrf = $this->get('security.csrf.token_manager');
             $etag = $csrf->getToken('authenticate').'0.0.1';
             return $etag;
