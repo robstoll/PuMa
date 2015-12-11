@@ -23,7 +23,7 @@ angular.module('tutteli.purchase.routing', [
         controller: 'tutteli.LoginController',
         controllerAs: 'loginCtrl',
         templateUrl: 'login.tpl',
-        data : {
+        data: {
             authRoles : []
         }
     }).state('logout', {
@@ -37,13 +37,13 @@ angular.module('tutteli.purchase.routing', [
         controller: 'tutteli.purchase.PurchaseController',
         controllerAs: 'purchaseCtrl',
         templateUrl: 'purchases/new.tpl',
-        data : {
-            authRoles : [USER_ROLES.authenticated]
+        data: {
+            authRoles: [USER_ROLES.authenticated]
         }
     }).state('users', {
-        url : '/users',
+        url: '/users',
         templateUrl : 'users.tpl',
-        data : {
+        data: {
             authRoles : [USER_ROLES.admin] //user needs to be logged in
         }
     });

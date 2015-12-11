@@ -19,6 +19,24 @@ class UserController extends ATplController {
         return 'user';
     }
     
+    public function cgetAction(Request $request, $ending) {
+        $viewPath = '@TutteliAppBundle/Resources/views/User/cget.html.twig';
+        list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
+    
+        if (!$response) {
+            $users = $this->getUsers();
+            $response = $this->render($viewPath, array (
+                    'notXhr' => $ending == '',
+                    'users' => $users
+            ));
+    
+            if ($ending == '.tpl') {
+                $response->setETag($etag);
+            }
+        }
+        return $response;
+    }
+    
     public function cgetJsonAction() {
         $data = $this->getUsers();
         return new Response($this->getJson($data));

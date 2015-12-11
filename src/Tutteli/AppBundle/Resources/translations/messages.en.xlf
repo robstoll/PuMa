@@ -31,8 +31,7 @@
             <trans-unit id="12">
                 <source>general.close</source>
                 <target>Close</target>
-            </trans-unit>         
-            
+            </trans-unit>
             
             
             <trans-unit id="100">
@@ -87,6 +86,19 @@
             <trans-unit id="207">
                 <source>purchase.submit</source>
                 <target>End purchase</target>
+            </trans-unit>
+            
+            <trans-unit id="300">
+                <source>users.username</source>
+                <target>Username</target>
+            </trans-unit>
+            <trans-unit id="301">
+                <source>users.email</source>
+                <target>Email</target>
+            </trans-unit>
+            <trans-unit id="302">
+                <source>users.role</source>
+                <target>Role</target>
             </trans-unit>
         </body>
     </file>

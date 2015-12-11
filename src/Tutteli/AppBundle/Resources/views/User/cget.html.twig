@@ -3,13 +3,38 @@
  * For the full copyright and license information, please have a look at LICENSE in the
  * root folder or visit https://github.com/robstoll/purchase
  #}
-{% extends 'TutteliAppBundle::layout.html.twig' %}
+ {% extends notXhr ? 'TutteliAppBundle::layout.html.twig' : 'xhr.twig' %}
+
+{% block title %} Users | {{ parent() }}{% endblock %}
+
 
 {% block content %}
-    {% for user in users %}
-        {{user.id}}
-        {{user.username}}
-        {{user.email}}
-        {{user.role}}
-    {% endfor %}    
+    {% if notXhr %}
+    <div ui-view></div>
+    	<div pre-work="users.tpl">
+    {%  endif %}
+    	<table class="table table-striped">
+    		<thead>
+    			<tr>
+    				<th>#</th>
+    				<th>{{ 'users.username'|trans }}</th>
+    				<th>{{ 'users.email'|trans }}</th>
+    				<th>{{ 'users.role'|trans }}</th>
+				</tr>
+    		</thead>
+    		<tbody>
+            {% for user in users %}
+            	<tr>
+            		<td>{{user.id}}</td>
+            		<td>{{user.username}}</td>
+            		<td>{{user.email}}</td>
+            		<td>{{user.role}}</td>
+        		</tr>
+            {% endfor %}
+            </tbody>    
+        </table>
+                        	
+    {% if notXhr %}
+    	</div>
+    {%  endif %}
 {% endblock %}
