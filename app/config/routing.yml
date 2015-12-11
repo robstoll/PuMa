@@ -57,8 +57,27 @@ get_users_json:
     defaults: { _controller: TutteliAppBundle:User:cgetJson }
     methods: [GET]
 
+get_user: 
+    path: /users/{userId}.json
+    defaults: { _controller: TutteliAppBundle:User:getJson, ending: ""}
+    methods: [GET]
+
 get_users:
     path:  /users{ending}
     defaults: { _controller: TutteliAppBundle:User:cget, ending: ""}
     methods: [GET]
     
+edit_user:
+    path: /users/{userId}/edit{ending}
+    defaults: { _controller: TutteliAppBundle:User:edit, ending: ""}
+    methods: [GET]
+    
+edit_user_tpl:
+    path: /users/edit.tpl
+    defaults: { _controller: TutteliAppBundle:User:editTpl }
+    methods: [GET]
+    
+put_user:
+    path: /users/{$userId}
+    defaults: { _controller: TutteliAppBundle:User:put }
+    methods: [PUT]

@@ -24,7 +24,7 @@ class UserController extends ATplController {
         list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
     
         if (!$response) {
-            $users = $this->getUsers();
+            $users = $this->loadUsers();
             $response = $this->render($viewPath, array (
                     'notXhr' => $ending == '',
                     'users' => $users
@@ -38,16 +38,25 @@ class UserController extends ATplController {
     }
     
     public function cgetJsonAction() {
-        $data = $this->getUsers();
-        return new Response($this->getJson($data));
+        $users = $this->loadUsers();
+        return new Response($this->getJsonArray($users));
     }
-    
-    private function getUsers() {
+        
+    private function loadUsers() {
         $repository = $this->getDoctrine()->getRepository('TutteliAppBundle:User');
         return $repository->findAll();
     }
+    
+    private function getUserRepository() {
+        return $this->getDoctrine()->getRepository('TutteliAppBundle:User');
+    }
 
-    private function getJson(array $data) {
+    private function loadUser($userId) {
+        $repository = $this->getUserRepository();
+        return $repository->find($userId);
+    }
+
+    private function getJsonArray(array $data) {
         $list = '{"users":[';
         $count = count($data);
         if ($count > 0) {
@@ -57,18 +66,61 @@ class UserController extends ATplController {
                 }
                 /* @var $user \Tutteli\AppBundle\Entity\User */
                 $user = $data[$i];
-                $list .= '{'
-                        .'"id":"'.$user->getId().'",'
-                        .'"username":"'.$user->getUsername().'",'
-                        .'"email":"'.$user->getEmail().'",'
-                        .'"roles":"'.$user->getRole().'"'                                
-                        .'}';
+                $list .= $this->getJson($user);
             }
         }
         $list .= ']}';
         return $list;
     }
+    
+    private function getJson(User $user) {
+        return '{'
+                .'"id":"'.$user->getId().'",'
+                .'"username":"'.$user->getUsername().'",'
+                .'"email":"'.$user->getEmail().'",'
+                .'"role":"'.$user->getRole().'"'                                
+                .'}';
+    }
+    
+    public function getJsonAction($userId) {
+        $user = $this->loadUser($userId);
+        return new Response('{"user":'.$this->getJson($user).'}');
+    }
 
+    public function editAction(Request $request, $userId, $ending) {
+        return $this->edit($request, $ending, function() use ($userId) {
+            return $this->loadUser($userId);
+        });
+    }
+    
+    public function editTplAction(Request $request) {
+        return $this->edit($request, '.tpl', function(){return null;});
+    }
+    
+    private function edit(Request $request, $ending, callable $getUser) {
+        $viewPath = '@TutteliAppBundle/Resources/views/User/edit.html.twig';
+        list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
+        
+        if (!$response) {
+            $user = $getUser();
+            $response = $this->render($viewPath, array (
+                    'notXhr' => $ending == '',
+                    'error' => null,
+                    'user' => $user,
+            ));
+        
+            if ($ending == '.tpl') {
+                $response->setETag($etag);
+            }
+        }
+        return $response;
+    }
+
+    
+    public function putAction(Request $request) {
+        
+    }
+    
     public function newAction() {
         return $this->renderUserForm($this->getForm());
     }
@@ -97,7 +149,7 @@ class UserController extends ATplController {
             $em->persist($user);
             $em->flush();
             return $this->redirectView(
-                    $this->generateUrl('get_user', array('id' => $user->getId())), Codes::HTTP_CREATED);
+                    $this->generateUrl('get_user', array('id' => $user->getId())), Response::HTTP_CREATED);
 
         }
 

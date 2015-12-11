@@ -31,6 +31,10 @@
             <trans-unit id="12">
                 <source>general.close</source>
                 <target>Close</target>
+            </trans-unit>         
+            <trans-unit id="13">
+                <source>general.edit</source>
+                <target>Edit</target>
             </trans-unit>
             
             
@@ -99,6 +103,22 @@
             <trans-unit id="302">
                 <source>users.role</source>
                 <target>Role</target>
+            </trans-unit>
+            <trans-unit id="303">
+                <source>users.loadingRoles</source>
+                <target>Loading roles...</target>
+            </trans-unit>
+            <trans-unit id="304">
+                <source>users.save</source>
+                <target>Save user</target>
+            </trans-unit>
+            <trans-unit id="305">
+                <source>users.roles.ROLE_USER</source>
+                <target>User</target>
+            </trans-unit>
+            <trans-unit id="3065">
+                <source>users.roles.ROLE_ADMIN</source>
+                <target>Admin</target>
             </trans-unit>
         </body>
     </file>

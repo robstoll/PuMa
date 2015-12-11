@@ -20,6 +20,7 @@
     				<th>{{ 'users.username'|trans }}</th>
     				<th>{{ 'users.email'|trans }}</th>
     				<th>{{ 'users.role'|trans }}</th>
+    				<th>{{ 'general.edit'|trans }}</th>
 				</tr>
     		</thead>
     		<tbody>
@@ -29,6 +30,7 @@
             		<td>{{user.username}}</td>
             		<td>{{user.email}}</td>
             		<td>{{user.role}}</td>
+            		<td><a href="#" ui-sref="edit_users({userId: '{{ user.id }}'})"><i class="glyphicon glyphicon-pencil"></i></a></td>
         		</tr>
             {% endfor %}
             </tbody>    

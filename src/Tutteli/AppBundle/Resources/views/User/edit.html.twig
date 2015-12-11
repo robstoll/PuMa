@@ -1,0 +1,75 @@
+{#
+ * This file is part of the project tutteli/purchase published under the Apache License 2.0
+ * For the full copyright and license information, please have a look at LICENSE in the
+ * root folder or visit https://github.com/robstoll/purchase
+ #}
+ {% extends notXhr ? 'TutteliAppBundle::layout.html.twig' : 'xhr.twig' %}
+
+{% block title %} Users | {{ parent() }}{% endblock %}
+
+
+{% block content %}
+    {% if notXhr %}
+    <div ui-view></div>
+    	<div pre-work="users/edit.tpl">
+    {%  endif %}
+    
+    	<form name="form" method="post" action="{{ path('put_user') }}" id="user_form" ng-submit="userCtrl.saveUser($event)">
+            {% if error %}
+            	<div id="user_error" class="alert alert-danger alert-dismissible" role="alert">
+                	<button type="button" class="close" onclick="this.parentNode.parentNode.removeChild(this.parentNode)">
+                    	<span aria-hidden="true">&times;</span>
+                    	<span class="sr-only">Close</span>
+                	</button>
+            	    {{ error.messageKey|trans(error.messageData) }}
+        		</div>
+            {% endif %}
+            <input type="hidden" id="user_id" name="id" ng-model="userCtrl.id"/>
+    		<div class="form-group">
+            	<label class="control-label" for="user_username">{{ 'users.username'|trans }}</label>
+            	<input type="text" id="user_username" name="username" required="required" ng-model="userCtrl.username" class="form-control" />
+			</div>                    
+            <div class="form-group">
+        		<label class="control-label" for="user_email">{{ 'users.email'|trans }}</label>
+            	<input type="text" id="user_email" name="email" ng-model="userCtrl.email" class="form-control">
+           	</div>
+           	<div class="form-group">
+        		<label class="control-label" for="user_role">{{ 'users.role'|trans }}</label>
+            	<select id="user_role" name="role" required="required" ng-model="userCtrl.role" class="form-control">
+            		<option value="?"></option>
+            		<option value="">{{ 'users.roles.ROLE_USER'|trans }}</option>
+            		<option value="ROLE_ADMIN">{{ 'users.roles.ROLE_ADMIN'|trans }}</option>
+            	</select>
+            </div>
+            <footer class="footer">
+                <div class="form-group">
+                	<span class="pull-right"><button type="submit" id="user_form_submit" class="btn-default btn">{{ 'users.save'|trans }}</button></span>
+            	</div>
+            </footer> 
+		</form>
+		 {% if error %}
+            <script type="text/javascript">
+            	(function(){
+            		var oneTimeRemove = function(){
+                  		this.removeChild(document.getElementById('user_error'));
+                  		this.removeEventListener('submit', oneTimeRemove);
+            		};
+                  	document.getElementById('user_form').addEventListener('submit', oneTimeRemove);
+            	})();
+            </script>
+        {% endif %}
+        {%  if user %}
+        <script type="text/javascript">
+        	document.getElementById('user_id').value = '{{ user.id }}';
+        	document.getElementById('user_username').value = '{{ user.username }}';
+        	document.getElementById('user_email').value = '{{ user.email }}';
+        	document.getElementById('user_role').value = '{{ user.role }}';
+        </script>
+        {%  endif %}
+        <script type="text/javascript">
+        	document.getElementById('user_role').firstChild.remove();
+        </script>
+    {% if notXhr %}
+    	</div>
+    {%  endif %}
+{% endblock %}

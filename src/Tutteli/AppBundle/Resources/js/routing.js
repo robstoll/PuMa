@@ -46,6 +46,14 @@ angular.module('tutteli.purchase.routing', [
         data: {
             authRoles : [USER_ROLES.admin] //user needs to be logged in
         }
+    }).state('edit_users', {
+        url : '/users/:userId/edit',
+        controller: 'tutteli.purchase.UserController',
+        controllerAs: 'userCtrl',
+        templateUrl: 'users/edit.tpl',
+        data: {
+            authRoles: [USER_ROLES.admin]
+        }
     });
   }
 ]).run(['$rootScope', '$state', function($rootScope, $state) {
@@ -61,6 +69,7 @@ angular.module('tutteli.purchase.routing', [
     get_purchase_csrf: 'purchases/new/token',
     get_categories_json: 'categories.json',
     get_users_json: 'users.json',
+    get_user_json: 'users/:userId.json'
 });
 
 })();
