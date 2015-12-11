@@ -21,7 +21,7 @@ class PurchaseController extends ATplController {
     }
     
     public function newAction(Request $request, $ending) {
-        $viewPath = '@TutteliAppBundle/Resources/views/Purchase/index.html.twig';
+        $viewPath = '@TutteliAppBundle/Resources/views/Purchase/new.html.twig';
         list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
           
         if (!$response) {
