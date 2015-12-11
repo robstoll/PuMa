@@ -65,7 +65,7 @@
             </div>
            	<div class="form-group last">
             	<label class="control-label" for="purchase_user">{{ 'purchase.user'|trans }}</label>
-            	<select id="purchase_category" name="user" required="required" ng-model="purchaseCtrl.user" ng-disabled="purchaseCtrl.disabled" ng-options="obj.id as obj.username for obj in purchaseCtrl.getUsers()" class="form-control" ng-init="purchaseCtrl.selectUser({{ app.user.id }})">
+            	<select id="purchase_category" name="user" required="required" ng-model="purchaseCtrl.user" ng-disabled="purchaseCtrl.disabled" ng-options="obj.id as obj.username for obj in purchaseCtrl.getUsers()" class="form-control" ng-init="purchaseCtrl.selectUser('{{ app.user.id }}', '{{  app.user.username }}')">
             		<option value="{{ app.user.id }}">{{ app.user.username }}</option>
             	</select>
            	</div>
