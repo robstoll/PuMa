@@ -116,9 +116,13 @@
                 <source>users.roles.</source>
                 <target>User</target>
             </trans-unit>
-            <trans-unit id="3065">
+            <trans-unit id="306">
                 <source>users.roles.ROLE_ADMIN</source>
                 <target>Admin</target>
+            </trans-unit>
+            <trans-unit id="307">
+                <source>users.add</source>
+                <target>Add user</target>
             </trans-unit>
         </body>
     </file>

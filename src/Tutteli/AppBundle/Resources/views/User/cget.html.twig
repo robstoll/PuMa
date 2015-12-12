@@ -29,7 +29,7 @@
             		<td ng-bind="user.username"></td>
             		<td ng-bind="user.email"></td>
             		<td ng-bind="user.role"></td>
-            		<td><a href="#" ui-sref="edit_users({userId: user.id})"><i class="glyphicon glyphicon-pencil"></i></a></td>
+            		<td><a href="#" ui-sref="edit_user({userId: user.id})"><i class="glyphicon glyphicon-pencil"></i></a></td>
         		</tr>
             </tbody> 
             {% if users %}
@@ -60,6 +60,9 @@
         	{% endif %}
         </table>
         <div id="users_load">{{ 'users.loading'|trans }}</div>
+        <footer class="footer">
+			<a href="{{ path('new_user') }}" ui-sref="new_user" class="btn-default btn"><i class="glyphicon glyphicon-plus"></i> {{ 'users.add'|trans }}</a>
+        </footer> 
     {% if notXhr %}
         </div>
         

@@ -31,8 +31,10 @@ angular.module('tutteli.purchase.routing', [
         controller: 'tutteli.LogoutController'
     }).state('home', {
         url: '/',
-        redirectTo: 'purchase'
-    }).state('purchase', {
+        redirectTo: 'new_purchase'
+    })
+    
+    .state('new_purchase', {
         url: '/purchases/new',
         controller: 'tutteli.purchase.PurchaseController',
         controllerAs: 'purchaseCtrl',
@@ -40,7 +42,9 @@ angular.module('tutteli.purchase.routing', [
         data: {
             authRoles: [USER_ROLES.authenticated]
         }
-    }).state('users', {
+    })
+    
+    .state('users', {
         url: '/users',
         controller: 'tutteli.purchase.UsersController',
         controllerAs: 'usersCtrl',
@@ -48,9 +52,17 @@ angular.module('tutteli.purchase.routing', [
         data: {
             authRoles : [USER_ROLES.admin] //user needs to be logged in
         }
-    }).state('edit_users', {
+    }).state('new_user', {
+        url: '/users/new',
+        controller: 'tutteli.purchase.NewUserController',
+        controllerAs: 'userCtrl',
+        templateUrl: 'users/new.tpl',
+        data: {
+            authRoles: [USER_ROLES.admin]
+        }
+    }).state('edit_user', {
         url : '/users/:userId/edit',
-        controller: 'tutteli.purchase.UserController',
+        controller: 'tutteli.purchase.EditUserController',
         controllerAs: 'userCtrl',
         templateUrl: 'users/edit.tpl',
         data: {

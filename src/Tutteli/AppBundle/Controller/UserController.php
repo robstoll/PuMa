@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Tutteli\AppBundle\Entity\User;
 use Tutteli\AppBundle\Form\UserType;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\Exception\UnsupportedException;
 
 
 class UserController extends ATplController {
@@ -89,6 +90,27 @@ class UserController extends ATplController {
         return new Response('{"user":'.$this->getJson($user).'}');
     }
 
+    public function newAction(Request $request, $ending) {
+        $viewPath = '@TutteliAppBundle/Resources/views/User/new.html.twig';
+        list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
+    
+        if (!$response) {
+            $response = $this->render($viewPath, array (
+                    'notXhr' => $ending == '',
+                    'error' => null,
+            ));
+    
+            if ($ending == '.tpl') {
+                $response->setETag($etag);
+            }
+        }
+        return $response;
+    }
+    
+    public function postAction(Request $request) {
+        throw new UnsupportedException();
+    }
+    
     public function editAction(Request $request, $userId, $ending) {
         return $this->edit($request, $ending, function() use ($userId) {
             $user = $this->loadUser($userId);
@@ -124,24 +146,9 @@ class UserController extends ATplController {
 
     
     public function putAction(Request $request) {
-        
+        throw new UnsupportedException();
     }
     
-    public function newAction() {
-        return $this->renderUserForm($this->getForm());
-    }
-
-    private function getForm(User $user = null) {
-        return $this->createForm(new UserType(), $user, ['action' => $this->generateUrl('post_users')]);
-    }
-
-    private function renderUserForm(\Symfony\Component\Form\Form $form) {
-        $view = $this->view($form, 200)
-            ->setTemplate("TutteliAppBundle:User:new.html.twig")
-            ->setTemplateVar("form");
-        return $this->handleView($view);
-    }
-
     public function cpostAction(Request $request) {
         $user = new User();
         $form = $this->createForm(new UserType(), $user);

@@ -8,7 +8,8 @@
 
 angular.module('tutteli.purchase.users', ['tutteli.preWork', 'tutteli.auth', 'tutteli.purchase.routing'])
     .controller('tutteli.purchase.UsersController', UsersController)
-    .controller('tutteli.purchase.UserController', UserController)
+    .controller('tutteli.purchase.NewUserController', NewUserController)
+    .controller('tutteli.purchase.EditUserController', EditUserController)
     .service('tutteli.purchase.UserService', UserService);
 
 UsersController.$inject = ['tutteli.PreWork', 'tutteli.purchase.UserService'];
@@ -38,12 +39,23 @@ function UsersController(PreWork, UserService) {
     }
 }
 
-UserController.$inject = [
+NewUserController.$inject = [
+    'tutteli.PreWork',
+    'tutteli.purchase.UserService'];
+function NewUserController(PreWork, UserService) {
+    var self = this;
+    
+    
+    // ----------------
+    
+    PreWork.merge('users/new.tpl', this, 'userCtrl');    
+}
+
+EditUserController.$inject = [
     '$stateParams',
     'tutteli.PreWork',
-    'tutteli.auth.USER_ROLES',
     'tutteli.purchase.UserService'];
-function UserController($stateParams, PreWork, USER_ROLES, UserService) {
+function EditUserController($stateParams, PreWork, UserService) {
     var self = this;
     
     this.loadUser = function(userId) {
@@ -57,8 +69,9 @@ function UserController($stateParams, PreWork, USER_ROLES, UserService) {
     };
     
     // ----------------
-    self.loadUser($stateParams.userId);
+    
     PreWork.merge('users/edit.tpl', this, 'userCtrl');    
+    self.loadUser($stateParams.userId);
 }
 
 UserService.$inject = ['$http', '$q', 'tutteli.purchase.ROUTES'];

@@ -41,7 +41,7 @@ new_purchase_token:
     methods: [GET]
 
 post_purchase:
-    path:   /purchases{ending}
+    path:   /purchases
     defaults: { _controller: TutteliAppBundle:Purchase:post, ending: ""}
     methods: [POST]
     
@@ -66,6 +66,16 @@ get_users:
     path:  /users{ending}
     defaults: { _controller: TutteliAppBundle:User:cget, ending: ""}
     methods: [GET]
+
+new_user:
+    path: /users/new{ending}
+    defaults: { _controller: TutteliAppBundle:User:new, ending: ""}
+    methods: [GET]    
+
+post_user:
+    path: /users
+    defaults: { _controller: TutteliAppBundle:User:post }
+    methods: [POST]
     
 edit_user:
     path: /users/{userId}/edit{ending}
