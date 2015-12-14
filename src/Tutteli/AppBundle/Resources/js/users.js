@@ -105,8 +105,8 @@ function EditUserController($stateParams, PreWork, UserService) {
     self.loadUser($stateParams.userId);
 }
 
-UserService.$inject = ['$http', '$q', 'tutteli.purchase.ROUTES'];
-function UserService($http, $q, ROUTES) {
+UserService.$inject = ['$http', '$q', '$timeout', 'tutteli.purchase.ROUTES'];
+function UserService($http, $q, $timeout, ROUTES) {
     
     this.getUsers = function() {
         return $http.get(ROUTES.get_users_json).then(function(response) {
@@ -127,13 +127,28 @@ function UserService($http, $q, ROUTES) {
     };
     
     this.addUser = function(username, email, roleId, csrf_token) {
-        var data = {
-            username: username, 
-            email: email, 
-            roleId: roleId, 
-            csrf_token: csrf_token
-        };
-        return $http.post(ROUTES.post_user, data);
+        var errors = '';
+        var emailRegExp = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+        if (email != '' && !emailRegExp.test(email)) {
+            errors = '<a href="#" onclick="document.getElementById(\'user_email\').focus(); return false">' 
+                + 'Invalid email provided'
+                + '</a>, please check it for writing mistakes.';
+        }
+        if (errors == '') {
+            var data = {
+                username: username, 
+                email: email, 
+                roleId: roleId, 
+                csrf_token: csrf_token
+            };
+            return $http.post(ROUTES.post_user, data);
+        }
+        // delay is necessary in order that alert is removed properly
+        var delay = $q.defer();
+        $timeout(function() {
+            delay.reject({error: errors});
+        }, 1);
+        return delay.promise;
     };
 }
 
