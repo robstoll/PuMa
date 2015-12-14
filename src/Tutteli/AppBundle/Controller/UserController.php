@@ -9,10 +9,7 @@ namespace Tutteli\AppBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Tutteli\AppBundle\Entity\User;
-use Tutteli\AppBundle\Form\UserType;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Serializer\Exception\UnsupportedException;
-use Symfony\Component\Security\Core\Util\SecureRandom;
 use Symfony\Component\Validator\ConstraintViolation;
 
 class UserController extends ATplController {
@@ -22,6 +19,8 @@ class UserController extends ATplController {
     }
     
     public function cgetAction(Request $request, $ending) {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
+        
         $viewPath = '@TutteliAppBundle/Resources/views/User/cget.html.twig';
         list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
     
@@ -42,7 +41,7 @@ class UserController extends ATplController {
         return $response;
     }
     
-    public function cgetJsonAction() {
+    public function cgetJsonAction() {        
         $users = $this->loadUsers();
         return new Response($this->getJsonArray($users));
     }
@@ -89,12 +88,14 @@ class UserController extends ATplController {
                 .'}';
     }
     
-    public function getJsonAction($userId) {
+    public function getJsonAction($userId) {        
         $user = $this->loadUser($userId);
         return new Response('{"user":'.$this->getJson($user).'}');
     }
-
+    
     public function newAction(Request $request, $ending) {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
+        
         $viewPath = '@TutteliAppBundle/Resources/views/User/new.html.twig';
         list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
     
@@ -112,6 +113,8 @@ class UserController extends ATplController {
     }
     
     public function postAction(Request $request) {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
+        
         if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
             return $this->createUser($request);
         }
@@ -182,6 +185,7 @@ class UserController extends ATplController {
         return implode('', $pass);
     }
     
+    
     private function sendPassword(User $user) {
         $lang = $this->get('translator')->getLocale();
         $html = $this->renderView(
@@ -211,6 +215,8 @@ class UserController extends ATplController {
     }
     
     public function editAction(Request $request, $userId, $ending) {
+        $this->denyAccessUnlessAdminOrCurrentUser($userId);
+        
         return $this->edit($request, $ending, function() use ($userId) {
             $user = $this->loadUser($userId);
             if ($user == null) {
@@ -218,6 +224,13 @@ class UserController extends ATplController {
             }
             return $user;
         });
+    }
+    
+    private function denyAccessUnlessAdminOrCurrentUser($userId) {
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')
+          && $this->get('security.token_storage')->getToken()->getUser()->getId() != $userId) {
+            throw $this->createAccessDeniedException('Unable to access this page!');
+        }
     }
     
     public function editTplAction(Request $request) {
@@ -245,6 +258,8 @@ class UserController extends ATplController {
 
     
     public function putAction(Request $request, $userId) {
+        $this->denyAccessUnlessAdminOrCurrentUser($userId);
+        
         if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
             $user = $this->loadUser($userId);
             if ($user != null) {
@@ -259,9 +274,15 @@ class UserController extends ATplController {
     private function updateUser(Request $request, User $user) {
         list($data, $response) = $this->decodeDataAndVerifyCsrf($request);
         if (!$response) {    
+            $oldRole = $user->getRole();
             $this->mapUser($user, $data);
             $validator = $this->get('validator');
             $errors = $validator->validate($user);
+            if($oldRole != $user->getRole() 
+                    && !$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
+                $errors->add(new ConstraintViolation(
+                        'users.changeRoleDenied', 'users.changeRoleDenied', [], $user, 'role', $user->getRole()));
+            }
             if (count($errors) > 0) {
                 $response = $this->getTranslatedValidationResponse($errors);
             } else {

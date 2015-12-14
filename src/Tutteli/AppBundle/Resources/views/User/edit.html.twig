@@ -15,7 +15,7 @@
     {%  endif %}
     	
     	{%  set btnText = 'users.save'|trans %}
-    	{%  set formAction = path('put_user') %}
+    	{%  set formAction = notXhr ? path('put_user', {'userId': user.id}) : '' %}
         {%  set formSubmit = 'userCtrl.saveUser($event)' %}
     	{%  include 'TutteliAppBundle:User:form.incl.twig' %}
     	

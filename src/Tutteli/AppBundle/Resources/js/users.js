@@ -71,6 +71,11 @@ function NewUserController(ROUTES, PreWork, UserService, AlertService, alertId, 
         CsrfService.reloadToken(ROUTES.get_user_csrf, self);
     }
     
+    this.isAdmin = function() {
+        //must be admin, is secured via auth routing
+        return true;
+    };
+    
     // ----------------
     
     PreWork.merge('users/new.tpl', this, 'userCtrl');    
@@ -90,7 +95,9 @@ EditUserController.$inject = [
     'tutteli.alert.AlertService',
     'tutteli.purchase.EditUserController.alertId',
     'tutteli.csrf.CsrfService',
-    'tutteli.utils.ErrorHandler'];
+    'tutteli.utils.ErrorHandler', 
+    'tutteli.auth.AuthService', 
+    'tutteli.auth.USER_ROLES'];
 function EditUserController(
         $stateParams, 
         ROUTES, 
@@ -99,7 +106,9 @@ function EditUserController(
         AlertService, 
         alertId, 
         CsrfService, 
-        ErrorHandler) {
+        ErrorHandler, 
+        AuthService, 
+        USER_ROLES) {
     var self = this;
     
     this.loadUser = function(userId) {
@@ -125,6 +134,10 @@ function EditUserController(
     function reloadCsrfToken() {
         CsrfService.reloadToken(ROUTES.get_user_csrf, self);
     }
+    
+    this.isAdmin = function() {
+        return AuthService.isAuthorised(USER_ROLES.admin);
+    };
     
     // ----------------
     

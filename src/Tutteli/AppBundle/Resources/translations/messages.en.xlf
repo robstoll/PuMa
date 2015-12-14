@@ -58,6 +58,10 @@
                 <source>nav.logout</source>
                 <target>Logout</target>
             </trans-unit>
+            <trans-unit id="121">
+                <source>nav.profile</source>
+                <target>Profile</target>
+            </trans-unit>
             
             <trans-unit id="200">
                 <source>purchase.price</source>
@@ -127,6 +131,10 @@
             <trans-unit id="308">
                 <source>users.emailSent</source>
                 <target>Could not send an email to the newly created user.</target>
+            </trans-unit>
+            <trans-unit id="309">
+                <source>users.changeRoleDenied</source>
+                <target>You are not allowed to change your own role.</target>
             </trans-unit>
         </body>
     </file>

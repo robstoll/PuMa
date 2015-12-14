@@ -66,7 +66,8 @@ angular.module('tutteli.purchase.routing', [
         controllerAs: 'userCtrl',
         templateUrl: 'users/edit.tpl',
         data: {
-            authRoles: [USER_ROLES.admin]
+            authRoles: [USER_ROLES.admin],
+            userIdParamName: 'userId'
         }
     });
   }

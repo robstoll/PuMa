@@ -10,13 +10,20 @@ angular.module('tutteli.navigation', [])
     .controller('tutteli.NavigationController', NavigationController);
 
 NavigationController.$inject = ['tutteli.auth.AuthService', 'tutteli.auth.USER_ROLES', 'tutteli.auth.Session'];
-function NavigationController(AuthService, ROLES, Session) {
+function NavigationController(AuthService, USER_ROLES, Session) {
     this.isAuthenticated = AuthService.isAuthenticated;
     this.isAdmin = function() {
-        return AuthService.isAuthorised(ROLES.admin);
+        return AuthService.isAuthorised(USER_ROLES.admin);
     };
     
-    this.username = function() {
+    this.getUserId = function(){
+        if (Session.user) {
+            return Session.user.id;
+        }
+        return 0;
+    };
+    
+    this.getUsername = function() {
         if (Session.user) {
             return Session.user.username;
         }
