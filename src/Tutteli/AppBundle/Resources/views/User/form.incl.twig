@@ -31,9 +31,10 @@
     		<option value="ROLE_ADMIN">{{ 'users.roles.ROLE_ADMIN'|trans }}</option>
     	</select>
     </div>
+   	<input type="hidden" id="csrf_token" ng-model="userCtrl.csrf_token" name="csrf_token" value="{{ csrf_token('user') }}">
     <footer class="footer">
         <div class="form-group">
-        	<span class="pull-right"><button type="submit" id="user_form_submit" class="btn-default btn">{{ btnText }}</button></span>
+        	<span class="pull-right"><button type="submit" id="user_form_submit" class="btn-default btn"><i class="glyphicon glyphicon-floppy-disk"></i> {{ btnText }}</button></span>
     	</div>
     </footer> 
 </form>
