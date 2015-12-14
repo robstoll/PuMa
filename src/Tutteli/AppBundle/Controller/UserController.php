@@ -25,7 +25,10 @@ class UserController extends ATplController {
         list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
     
         if (!$response) {
-            $users = $this->loadUsers();
+            $users = null;
+            if ($ending != '.tpl') {
+                $users = $this->loadUsers();
+            }
             $response = $this->render($viewPath, array (
                     'notXhr' => $ending == '',
                     'users' => $users

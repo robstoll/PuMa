@@ -72,7 +72,7 @@
            	<input type="hidden" id="csrf_token" ng-model="purchaseCtrl.csrf_token" name="csrf_token" value="{{ csrf_token('purchase') }}">
            	<footer class="footer">
                 <div class="form-group">
-                	<button style="display:none" type="button" id="purchase_add" class="btn-default btn" ng-disabled="purchaseCtrl.disabled" ng-click="purchaseCtrl.addPosition()">{{ 'purchase.add'|trans }}</button>
+                	<button style="display:none" type="button" id="purchase_add" class="btn-default btn" ng-disabled="purchaseCtrl.disabled" ng-click="purchaseCtrl.addPosition()"><i class="glyphicon glyphicon-plus"></i> {{ 'purchase.add'|trans }}</button>
                 	<span class="pull-right"><button type="submit" id="purchase_form_submit" ng-disabled="purchaseCtrl.disabled" class="btn-default btn">{{ 'purchase.submit'|trans }}</button></span>
             	</div>
             </footer>    
