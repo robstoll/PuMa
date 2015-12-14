@@ -51,7 +51,7 @@ function ErrorHandler(AlertService){
             var err = '';
             if (angular.isObject(data)) {
                 for (var prop in data) {
-                    err += data[prop] + '<br/>';
+                    err += prop + ': ' + data[prop] + '<br/>';
                 }
             } else {
                 err = data;

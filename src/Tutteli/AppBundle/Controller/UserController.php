@@ -12,7 +12,8 @@ use Tutteli\AppBundle\Entity\User;
 use Tutteli\AppBundle\Form\UserType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Exception\UnsupportedException;
-
+use Symfony\Component\Security\Core\Util\SecureRandom;
+use Symfony\Component\Validator\ConstraintViolation;
 
 class UserController extends ATplController {
 
@@ -111,7 +112,102 @@ class UserController extends ATplController {
     }
     
     public function postAction(Request $request) {
-        throw new UnsupportedException();
+        if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+            return $this->createUser($request);
+        }
+        return new Response('{"msg": "Wrong Content-Type"}', Response::HTTP_BAD_REQUEST);
+    }
+    
+    private function createUser(Request $request) {
+        list($data, $response) = $this->decodeDataAndVerifyCsrf($request);
+        if (!$response) {
+            $user = new User();
+            $user->setPlainPassword($this->generatePassword());
+            $password =  $this->get('security.password_encoder')->encodePassword($user, $user->getPlainPassword());
+            $user->setPassword($password);
+            $this->mapUser($user, $data);
+            $validator = $this->get('validator');
+            $errors = $validator->validate($user);
+            if (count($errors) > 0) {
+                $response = $this->getTranslatedValidationResponse($errors);
+            } else {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($user);
+                $em->flush();
+                try {
+                    $this->sendPassword($user);
+                    $response = $this->getCreateResponse($user->getId());
+                } catch(Exception $e) {
+                    $translator = $this->get('translator');
+                    $response = new Response(
+                            '{'
+                            .'"userId":"'.$user->getId().'",'
+                            .'"error": "'.$translator->trans('user.emailSent').'"'
+                            .'}', 
+                            Response::HTTP_ACCEPTED);
+                }
+            }
+        }
+        return $response;
+    }
+    
+    private function generatePassword() {
+        $special = ['_', '-', '.', '$', '!', '?', ','];
+        $digits = range(0,9);
+        $charsUpper = range('A','Z');
+        $charsLower = range('a','z');
+        $pass = [];
+        
+        $len = mt_rand(1, 2);
+        for($i = 0; $i < $len; ++$i) {
+            $pass[] = $special[mt_rand(0, count($special) - 1)];
+        }
+        
+        $len = mt_rand(1, 3);
+        for($i = 0; $i < $len; ++$i) {
+            $pass[] = $digits[mt_rand(0, count($digits) - 1)];
+        }
+        
+        $len =  mt_rand(1, 3);
+        for($i = 0; $i < $len; ++$i) {
+            $pass[] = $charsUpper[mt_rand(0, count($charsUpper) - 1)];
+        }
+        
+        $len = 10 - count($pass);
+        for($i = 0; $i < $len; ++$i) {
+            $pass[] = $charsLower[mt_rand(0, count($charsLower) - 1)];
+        }
+        
+        shuffle($pass);
+        return implode('', $pass);
+    }
+    
+    private function sendPassword(User $user) {
+        $lang = $this->get('translator')->getLocale();
+        $html = $this->renderView(
+            '@TutteliAppBundle/Resources/views/User/email.'.$lang.'.html.twig',
+            array('user' => $user)
+        );
+        $message = \Swift_Message::newInstance()
+            ->setSubject('New User Account')
+            ->setFrom('no-reply@'.$_SERVER['HTTP_HOST'])
+            ->setTo($user->getEmail())
+            ->setBody($html, 'text/html');
+        $this->get('mailer')->send($message);
+    }
+    
+    private function mapUser(User $user, array $data) {
+        if (array_key_exists('username', $data)) {
+            $user->setUsername($data['username']);
+        }
+        
+        if (array_key_exists('email', $data)) {
+            $user->setEmail($data['email']);
+        }
+        
+        if (array_key_exists('roleId', $data)) {
+            $user->setRole($data['roleId']);
+        }
     }
     
     public function editAction(Request $request, $userId, $ending) {

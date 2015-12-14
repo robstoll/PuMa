@@ -56,7 +56,8 @@ abstract class ATplController extends Controller {
         $response = null;
         $data = json_decode($request->getContent(), true);
         if ($data != null) {
-            if (!array_key_exists('csrf_token', $data) || !$this->isCsrfTokenValid('purchase', $data['csrf_token'])) {
+            if (!array_key_exists('csrf_token', $data) 
+                    || !$this->isCsrfTokenValid($this->getCsrfTokenDomain(), $data['csrf_token'])) {
                 $response = new JsonResponse('Invalid CSRF token.', Response::HTTP_UNAUTHORIZED);
             }
         } else {

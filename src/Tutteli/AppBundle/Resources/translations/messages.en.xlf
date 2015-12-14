@@ -124,6 +124,10 @@
                 <source>users.add</source>
                 <target>Add user</target>
             </trans-unit>
+            <trans-unit id="308">
+                <source>users.emailSent</source>
+                <target>Could not send an email to the newly created user.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -6,11 +6,18 @@
 (function(){
 'use strict';
 
-angular.module('tutteli.purchase.users', ['tutteli.preWork', 'tutteli.auth', 'tutteli.purchase.routing'])
+angular.module('tutteli.purchase.users', [
+    'tutteli.preWork', 
+    'tutteli.auth', 
+    'tutteli.purchase.routing', 
+    'tutteli.utils'
+])
     .controller('tutteli.purchase.UsersController', UsersController)
     .controller('tutteli.purchase.NewUserController', NewUserController)
     .controller('tutteli.purchase.EditUserController', EditUserController)
-    .service('tutteli.purchase.UserService', UserService);
+    .service('tutteli.purchase.UserService', UserService)
+    .constant('tutteli.purchase.NewUserController.alertId', 'tutteli-ctrls-NewUserController')
+    .constant('tutteli.purchase.EditUserController.alertId', 'tutteli-ctrls-EditUserController');
 
 UsersController.$inject = ['tutteli.PreWork', 'tutteli.purchase.UserService'];
 function UsersController(PreWork, UserService) {
@@ -40,16 +47,40 @@ function UsersController(PreWork, UserService) {
 }
 
 NewUserController.$inject = [
+    'tutteli.purchase.ROUTES',
     'tutteli.PreWork',
-    'tutteli.purchase.UserService'];
-function NewUserController(PreWork, UserService) {
+    'tutteli.purchase.UserService', 
+    'tutteli.alert.AlertService',
+    'tutteli.purchase.NewUserController.alertId',
+    'tutteli.csrf.CsrfService',
+    'tutteli.utils.ErrorHandler'];
+function NewUserController(ROUTES, PreWork, UserService, AlertService, alertId, CsrfService, ErrorHandler) {
     var self = this;
     
+    this.addUser = function($event) {
+        $event.preventDefault();
+        AlertService.close(alertId);
+        UserService.addUser(self.username, self.email, self.role, self.csrf_token).then(function() {
+            AlertService.add(alertId, 'User successfully added.', 'success');
+        }, function(errorResponse) {
+            ErrorHandler.handle(errorResponse, alertId, reloadCsrfToken);
+        });
+    };
+    
+    function reloadCsrfToken() {
+        CsrfService.reloadToken(ROUTES.get_user_csrf, self);
+    }
     
     // ----------------
     
     PreWork.merge('users/new.tpl', this, 'userCtrl');    
+    
+    if (self.csrf_token === undefined || self.csrf_token === '') {
+        reloadCsrfToken();
+    }
 }
+
+
 
 EditUserController.$inject = [
     '$stateParams',
@@ -93,6 +124,16 @@ function UserService($http, $q, ROUTES) {
             }
             return $q.resolve(response.data.user);
         });
+    };
+    
+    this.addUser = function(username, email, roleId, csrf_token) {
+        var data = {
+            username: username, 
+            email: email, 
+            roleId: roleId, 
+            csrf_token: csrf_token
+        };
+        return $http.post(ROUTES.post_user, data);
     };
 }
 

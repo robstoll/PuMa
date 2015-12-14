@@ -83,7 +83,9 @@ angular.module('tutteli.purchase.routing', [
     get_purchase_csrf: 'purchases/new/token',
     get_categories_json: 'categories.json',
     get_users_json: 'users.json',
-    get_user_json: 'users/:userId.json'
+    get_user_json: 'users/:userId.json',
+    get_user_csrf: 'users/new/token',
+    post_user: 'users'
 });
 
 })();
