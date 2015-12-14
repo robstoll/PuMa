@@ -21,7 +21,8 @@ PurchaseController.$inject = [
     'tutteli.purchase.PurchaseService.alertId',
     'tutteli.csrf.CsrfService',
     'tutteli.purchase.CategoryService',
-    'tutteli.purchase.UserService'];
+    'tutteli.purchase.UserService',
+    'tutteli.utils.ErrorHandler'];
 function PurchaseController(
         $parse, 
         $filter, 
@@ -32,7 +33,8 @@ function PurchaseController(
         alertId, 
         CsrfService,
         CategoryService, 
-        UserService) {
+        UserService,
+        ErrorHandler) {
 
     var self = this;
     var categories = [{id: 0, name: 'Loading categories...'}];
@@ -176,27 +178,7 @@ function PurchaseController(
         PurchaseService.add(self.user, self.dt, self.positions, self.csrf_token).then(function() {
             AlertService.add(alertId, 'Purchase successfully added', 'success');
         }, function(errorResponse) {
-            if (errorResponse.status == 401) {
-                AlertService.add(alertId, error.data, 'danger');
-                if (error.data == 'Invalid CSRF token.') {
-                    reloadCsrfToken();
-                }
-            } else if (errorResponse.status == 400) {
-                var data = errorResponse.data;
-                var err = '';
-                if (angular.isObject(data)) {
-                    for (var prop in data) {
-                        err += data[prop] + '<br/>';
-                    }
-                } else {
-                    err = data;
-                }
-                AlertService.add(alertId, err, 'danger');
-            } else if (errorResponse.error) {
-                AlertService.add(alertId, errorResponse.error);
-            } else {
-                AlertService.add(alertId, 'Unknown error occurred. Please try again.', 'danger');
-            }
+            ErrorHandler.handle(errorResponse, alertId, reloadCsrfToken);
         });
     };
 
@@ -245,13 +227,9 @@ function Position($parse, $filter) {
     };
 }
 
-PurchaseService.$inject = [
-    '$http', 
-    '$q',
-    '$timeout',
-    'tutteli.purchase.ROUTES', 
-    'tutteli.alert.AlertService'];
-function PurchaseService($http, $q, $timeout, ROUTES, AlertService) {
+PurchaseService.$inject = ['$http', '$q', '$timeout', 'tutteli.purchase.ROUTES'];
+function PurchaseService($http, $q, $timeout, ROUTES) {
+    
     this.add = function(userId, date, positions, csrf_token) {
         var errors = '';
         var positionDtos = [];
@@ -290,6 +268,7 @@ function PurchaseService($http, $q, $timeout, ROUTES, AlertService) {
         }, 1);
         return delay.promise;
     };
+    
 }
 
 })();

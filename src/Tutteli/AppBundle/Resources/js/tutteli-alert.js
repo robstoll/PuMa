@@ -18,8 +18,8 @@ function AlertController($element, AlertService) {
     this.openErrorReport = AlertService.openErrorReport;
 }
 
-AlertService.$inject =  ['$interpolate', '$timeout', 'tutteli.UtilsService'];
-function AlertService($interpolate, $timeout,  UtilsService){
+AlertService.$inject =  ['$interpolate', '$timeout', 'tutteli.utils.TextSelectService'];
+function AlertService($interpolate, $timeout,  TextSelectService){
     var self = this;  
     var alerts = {};
     
@@ -127,7 +127,7 @@ function AlertService($interpolate, $timeout,  UtilsService){
     this.openErrorReport = function(reportId) {
         var element = document.getElementById(reportId); 
         element.style.display= 'block'; 
-        UtilsService.selectText(element);
+        TextSelectService.selectText(element);
     };
 }
 
