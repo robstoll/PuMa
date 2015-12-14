@@ -60,7 +60,7 @@ function NewUserController(ROUTES, PreWork, UserService, AlertService, alertId, 
     this.addUser = function($event) {
         $event.preventDefault();
         AlertService.close(alertId);
-        UserService.addUser(self.username, self.email, self.role, self.csrf_token).then(function() {
+        UserService.createUser(self.username, self.email, self.role, self.csrf_token).then(function() {
             AlertService.add(alertId, 'User successfully added.', 'success');
         }, function(errorResponse) {
             ErrorHandler.handle(errorResponse, alertId, reloadCsrfToken);
@@ -84,9 +84,22 @@ function NewUserController(ROUTES, PreWork, UserService, AlertService, alertId, 
 
 EditUserController.$inject = [
     '$stateParams',
+    'tutteli.purchase.ROUTES',
     'tutteli.PreWork',
-    'tutteli.purchase.UserService'];
-function EditUserController($stateParams, PreWork, UserService) {
+    'tutteli.purchase.UserService',
+    'tutteli.alert.AlertService',
+    'tutteli.purchase.EditUserController.alertId',
+    'tutteli.csrf.CsrfService',
+    'tutteli.utils.ErrorHandler'];
+function EditUserController(
+        $stateParams, 
+        ROUTES, 
+        PreWork,  
+        UserService, 
+        AlertService, 
+        alertId, 
+        CsrfService, 
+        ErrorHandler) {
     var self = this;
     
     this.loadUser = function(userId) {
@@ -99,10 +112,28 @@ function EditUserController($stateParams, PreWork, UserService) {
         });
     };
     
+    this.saveUser = function($event) {
+        $event.preventDefault();
+        AlertService.close(alertId);
+        UserService.updateUser(self.id, self.username, self.email, self.role, self.csrf_token).then(function() {
+            AlertService.add(alertId, 'User ' + self.username + ' successfully updated.', 'success');
+        }, function(errorResponse) {
+            ErrorHandler.handle(errorResponse, alertId, reloadCsrfToken);
+        });
+    };
+    
+    function reloadCsrfToken() {
+        CsrfService.reloadToken(ROUTES.get_user_csrf, self);
+    }
+    
     // ----------------
     
     PreWork.merge('users/edit.tpl', this, 'userCtrl');    
     self.loadUser($stateParams.userId);
+    
+    if (self.csrf_token === undefined || self.csrf_token === '') {
+        reloadCsrfToken();
+    }
 }
 
 UserService.$inject = ['$http', '$q', '$timeout', 'tutteli.purchase.ROUTES'];
@@ -126,29 +157,52 @@ function UserService($http, $q, $timeout, ROUTES) {
         });
     };
     
-    this.addUser = function(username, email, roleId, csrf_token) {
-        var errors = '';
-        var emailRegExp = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-        if (email != '' && !emailRegExp.test(email)) {
-            errors = '<a href="#" onclick="document.getElementById(\'user_email\').focus(); return false">' 
-                + 'Invalid email provided'
-                + '</a>, please check it for writing mistakes.';
-        }
+    this.createUser = function(username, email, roleId, csrf_token) {
+        var user = {
+            username: username, 
+            email: email, 
+            roleId: roleId, 
+            csrf_token: csrf_token
+        };
+        var errors = validateUser(user);
         if (errors == '') {
-            var data = {
-                username: username, 
-                email: email, 
-                roleId: roleId, 
-                csrf_token: csrf_token
-            };
-            return $http.post(ROUTES.post_user, data);
+            return $http.post(ROUTES.post_user, user);
         }
+        return getError(errors);
+    };
+    
+    function getError(errors){
         // delay is necessary in order that alert is removed properly
         var delay = $q.defer();
         $timeout(function() {
             delay.reject({error: errors});
         }, 1);
         return delay.promise;
+    }
+    
+    function validateUser(user) {
+        var errors = '';
+        var emailRegExp = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+        if (user.email != '' && !emailRegExp.test(user.email)) {
+            errors = '<a href="#" onclick="document.getElementById(\'user_email\').focus(); return false">' 
+                + 'Invalid email provided'
+                + '</a>, please check it for writing mistakes.';
+        }
+        return errors;
+    }
+    
+    this.updateUser = function(id, username, email, roleId, csrf_token) {
+        var user = {
+            username: username, 
+            email: email, 
+            roleId: roleId, 
+            csrf_token: csrf_token
+        };
+        var errors = validateUser(user);
+        if (errors == '') {
+            return $http.put(ROUTES.put_user.replace(':userId', id), user);
+        }
+        return getError(errors);
     };
 }
 

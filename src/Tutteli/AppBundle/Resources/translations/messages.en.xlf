@@ -113,7 +113,7 @@
                 <target>Save user</target>
             </trans-unit>
             <trans-unit id="305">
-                <source>users.roles.</source>
+                <source>users.roles.ROLE_USER</source>
                 <target>User</target>
             </trans-unit>
             <trans-unit id="306">

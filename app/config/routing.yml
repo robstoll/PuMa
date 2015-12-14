@@ -93,6 +93,6 @@ edit_user_tpl:
     methods: [GET]
     
 put_user:
-    path: /users/{$userId}
+    path: /users/{userId}
     defaults: { _controller: "TutteliAppBundle:User:put" }
     methods: [PUT]

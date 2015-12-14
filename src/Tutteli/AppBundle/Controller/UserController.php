@@ -244,37 +244,34 @@ class UserController extends ATplController {
     }
 
     
-    public function putAction(Request $request) {
-        throw new UnsupportedException();
+    public function putAction(Request $request, $userId) {
+        if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+            $user = $this->loadUser($userId);
+            if ($user != null) {
+                return $this->updateUser($request, $user);
+            } else{
+                return $this->createNotFoundException('User Not Found');
+            }
+        }
+        return new Response('{"msg": "Wrong Content-Type"}', Response::HTTP_BAD_REQUEST);
     }
     
-    public function cpostAction(Request $request) {
-        $user = new User();
-        $form = $this->createForm(new UserType(), $user);
-
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            $password = $this->get('security.password_encoder')->encodePassword($user, $user->getPlainPassword());
-            $user->setPassword($password);
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
-            return $this->redirectView(
-                    $this->generateUrl('get_user', array('id' => $user->getId())), Response::HTTP_CREATED);
-
+    private function updateUser(Request $request, User $user) {
+        list($data, $response) = $this->decodeDataAndVerifyCsrf($request);
+        if (!$response) {    
+            $this->mapUser($user, $data);
+            $validator = $this->get('validator');
+            $errors = $validator->validate($user);
+            if (count($errors) > 0) {
+                $response = $this->getTranslatedValidationResponse($errors);
+            } else {
+                $em = $this->getDoctrine()->getManager();
+                $em->merge($user);
+                $em->flush();
+                $response = new Response('', Response::HTTP_NO_CONTENT);
+            }
         }
-
-        return $this->renderUserForm($form);
-    }
-
-    public function getAction($id) {
-        $repository = $this->getDoctrine()->getRepository('TutteliAppBundle:User');
-        $data = $repository->findAll();
-        $view = $this->view($data, 200)
-            ->setTemplate("TutteliAppBundle:User:cget.html.twig")
-            ->setTemplateVar('users');
-        return $this->handleView($view);
+        return $response;
     }
 
 }
