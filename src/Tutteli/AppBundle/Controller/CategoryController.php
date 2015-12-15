@@ -9,6 +9,7 @@ namespace Tutteli\AppBundle\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Tutteli\AppBundle\Entity\Category;
+use Symfony\Component\Validator\ConstraintViolation;
 class CategoryController extends ATplController {
     
     protected function getCsrfTokenDomain() {
@@ -54,10 +55,10 @@ class CategoryController extends ATplController {
     
     public function cgetJsonAction() {
         $data = $this->loadCategories();
-        return new Response($this->getJson($data));
+        return new Response($this->getJsonArray($data));
     }
     
-    private function getJson(array $data) {
+    private function getJsonArray(array $data) {
         $list = '{"categories":[';
         $count = count($data);
         if ($count > 0) {
@@ -66,14 +67,18 @@ class CategoryController extends ATplController {
                     $list .= ',';
                 }
                 $category = $data[$i]; 
-                $list .= '{'
-                        .'"id": "'.$category->getId().'",'
-                        .'"name": "'.$category->getName().'"'
-                        .'}'; 
+                $list .= $this->getJson($category);
             }
         }
         $list .= ']}';
         return $list;
+    }
+    
+    private function getJson(Category $category) {
+        return  '{'
+                .'"id": "'.$category->getId().'",'
+                .'"name": "'.$category->getName().'"'
+                .'}'; 
     }
     
     public function getJsonAction($categoryId) {
@@ -164,6 +169,38 @@ class CategoryController extends ATplController {
     
             if ($ending == '.tpl') {
                 $response->setETag($etag);
+            }
+        }
+        return $response;
+    }
+    
+    public function putAction(Request $request, $categoryId) {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
+    
+        if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+            $category = $this->loadCategory($categoryId);
+            if ($category != null) {
+                return $this->updateCategory($request, $category);
+            } else {
+                return $this->createNotFoundException('Category Not Found');
+            }
+        }
+        return new Response('{"msg": "Wrong Content-Type"}', Response::HTTP_BAD_REQUEST);
+    }
+    
+    private function updateCategory(Request $request, Category $category) {
+        list($data, $response) = $this->decodeDataAndVerifyCsrf($request);
+        if (!$response) {
+            $this->mapCategory($category, $data);
+            $validator = $this->get('validator');
+            $errors = $validator->validate($category);
+            if (count($errors) > 0) {
+                $response = $this->getTranslatedValidationResponse($errors);
+            } else {
+                $em = $this->getDoctrine()->getManager();
+                $em->merge($category);
+                $em->flush();
+                $response = new Response('', Response::HTTP_NO_CONTENT);
             }
         }
         return $response;

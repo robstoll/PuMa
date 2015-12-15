@@ -111,6 +111,7 @@ angular.module('tutteli.purchase.routing', [
     get_category_json: 'categories/:categoryId.json',
     get_category_csrf: 'categories/new/token',
     post_category: 'categories',
+    put_category: 'categories/:categoryId',
     get_users_json: 'users.json',
     get_user_json: 'users/:userId.json',
     get_user_csrf: 'users/new/token',

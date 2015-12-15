@@ -93,11 +93,11 @@ function FormHelper(AlertService, ErrorHandler, CsrfService, controller, url) {
         });
     };
     
-    this.update = function($event, alertId, obj, name, nameProp, Service){
+    this.update = function($event, alertId, obj, name, Service){
         $event.preventDefault();
         AlertService.close(alertId);
         Service['update' + name](obj).then(function() {
-            AlertService.add(alertId, name + ' ' + obj[nameProp] + ' successfully updated.', 'success');
+            AlertService.add(alertId, name + ' successfully updated.', 'success');
         }, function(errorResponse) {
             ErrorHandler.handle(errorResponse, alertId, reloadCsrfToken);
         });

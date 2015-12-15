@@ -131,7 +131,7 @@
             </trans-unit>
             <trans-unit id="307">
                 <source>users.create</source>
-                <target>Add user</target>
+                <target>Create user</target>
             </trans-unit>
             <trans-unit id="308">
                 <source>users.emailSent</source>
@@ -140,6 +140,10 @@
             <trans-unit id="309">
                 <source>users.changeRoleDenied</source>
                 <target>You are not allowed to change your own role.</target>
+            </trans-unit>
+             <trans-unit id="310">
+                <source>users.add</source>
+                <target>Add user</target>
             </trans-unit>
             
             <trans-unit id="400">
@@ -156,6 +160,10 @@
             </trans-unit>
             <trans-unit id="403">
                 <source>categories.create</source>
+                <target>Create category</target>
+            </trans-unit>
+            <trans-unit id="404">
+                <source>categories.add</source>
                 <target>Add category</target>
             </trans-unit>
         </body>

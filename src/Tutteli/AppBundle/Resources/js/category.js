@@ -96,7 +96,7 @@ function EditCategoryController(
     
     this.updateCategory = function($event) {
         var category = {id: self.id, name: self.name, csrf_token: self.csrf_token};
-        formHelper.update($event, alertId, category, 'Category', 'name', CategoryService);
+        formHelper.update($event, alertId, category, 'Category', CategoryService);
     };
     
     this.isDisabled = function() {
@@ -141,6 +141,9 @@ function CategoryService($http, $q, ROUTES) {
         return $http.post(ROUTES.post_category, category);
     };
     
+    this.updateCategory = function(category) {
+        return $http.put(ROUTES.put_category.replace(':categoryId', category.id), category);
+    };
 }
 
 })();
