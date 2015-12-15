@@ -33,9 +33,11 @@
         		</tr>
             </tbody> 
             {% if users %}
-                {% set json = '' %}
+            	<!-- pre-work-exclude-start -->
+            	<tbody id="users_rows_preload"> 
+            	{% set json = '' %}
                 {% for user in users %}
-                	{%  if not json == '' %}
+                    {%  if not json == '' %}
                 		{% set json = json ~ ',' %}
                 	{%  endif %}
                 	{% set json = json ~ '{' 
@@ -45,23 +47,24 @@
                 	    ~ '"roleId":"' ~ user.role ~ '",'  
                 	    ~ '"role":"' ~ ('users.roles.' ~ user.role)|trans ~ '"'
                 	    ~ '}' %}
-                {% endfor %}
-                {% set json = '[' ~ json ~ ']' %}
-                	<!-- pre-work-exclude-start -->
-                	<tbody id="users_rows_preload"> 
-                    {% for user in users %}
-            			<tr>
-            				<td>{{ user.id }} <input type="hidden" ng-model="usersCtrl.usersInit" value="{{ json }}"/></td>
-            				<td>{{ user.username }}</td>
-            				<td>{{ user.email }}</td>
-            				<td>{{ ('users.roles.' ~ user.role)|trans }}</td>
-            				<td><a href="{{ path('edit_user', {'userId': user.id}) }}"><i class="glyphicon glyphicon-pencil"></i></a></td>
-            			</tr>
-            		{% endfor %}
-            		</tbody>
-            		<!-- pre-work-exclude-end -->
+        			<tr>
+        				<td>{{ user.id }}</td>
+        				<td>{{ user.username }}</td>
+        				<td>{{ user.email }}</td>
+        				<td>{{ ('users.roles.' ~ user.role)|trans }}</td>
+        				<td><a href="{{ path('edit_user', {'userId': user.id}) }}"><i class="glyphicon glyphicon-pencil"></i></a></td>
+        			</tr>
+        		{% endfor %}
+        		{% set json = '[' ~ json ~ ']' %}
+        		</tbody>
+        		<!-- pre-work-exclude-end -->
         	{% endif %}
         </table>
+        {% if users %}
+            <!-- pre-work-exclude-start -->
+            <input type="hidden" ng-model="usersCtrl.usersInit" value="{{ json }}"/>
+            <!-- pre-work-exclude-end -->
+        {% endif %}
         <div id="users_load">{{ 'users.loading'|trans }}</div>
         <footer class="footer">
 			<a href="{{ path('new_user') }}" ui-sref="new_user" class="btn-default btn"><i class="glyphicon glyphicon-plus"></i> {{ 'users.add'|trans }}</a>
