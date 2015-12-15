@@ -14,7 +14,7 @@
     	<div ui-view></div>
     	<div pre-work="purchases/new.tpl">
     {%  endif %}
-        <form name="form" method="post" action="{{ path('post_purchase') }}" id="purchase_form" ng-submit="purchaseCtrl.addPurchase($event)">
+        <form name="form" method="post" action="{{ path('post_purchase') }}" id="purchase_form" ng-submit="purchaseCtrl.createPurchase($event)">
             {% if error %}
             	<div id="purchase_error" class="alert alert-danger alert-dismissible" role="alert">
                 	<button type="button" class="close" onclick="this.parentNode.parentNode.removeChild(this.parentNode)">

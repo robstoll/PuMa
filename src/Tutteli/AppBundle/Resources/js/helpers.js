@@ -87,7 +87,8 @@ function FormHelper(AlertService, ErrorHandler, CsrfService, controller, url) {
         $event.preventDefault();
         AlertService.close(alertId);
         Service['create' + name](obj).then(function() {
-            AlertService.add(alertId, name  + ' &quot;' + obj[nameProp] + '&quot; successfully created.', 'success', 3000);
+            var prop = nameProp != null ? ' &quot;' + obj[nameProp] + '&quot;' : ''; 
+            AlertService.add(alertId, name  + prop + ' successfully created.', 'success', 3000);
             controller.clearForm();
         }, function(errorResponse) {
             ErrorHandler.handle(errorResponse, alertId, reloadCsrfToken);
@@ -98,7 +99,8 @@ function FormHelper(AlertService, ErrorHandler, CsrfService, controller, url) {
         $event.preventDefault();
         AlertService.close(alertId);
         Service['update' + name](obj).then(function() {
-            AlertService.add(alertId, name + ' &quot;' + obj[nameProp] + '&quot; successfully updated.', 'success', 3000);
+            var prop = nameProp != null ? '&quot;' + obj[nameProp] + '&quot;' : '';
+            AlertService.add(alertId, name + prop + ' successfully updated.', 'success', 3000);
         }, function(errorResponse) {
             ErrorHandler.handle(errorResponse, alertId, reloadCsrfToken);
         });

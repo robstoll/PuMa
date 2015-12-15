@@ -27,24 +27,23 @@ PurchaseController.$inject = [
     'tutteli.purchase.PurchaseService',
     'tutteli.alert.AlertService',
     'tutteli.purchase.PurchaseService.alertId',
-    'tutteli.csrf.CsrfService',
     'tutteli.purchase.CategoryService',
     'tutteli.purchase.UserService',
-    'tutteli.helpers.ErrorHandler'];
+    'tutteli.helpers.FormHelperFactory'];
 function PurchaseController(
         $parse, 
         $filter, 
         ROUTES, 
         PreWork,
-        PurchaseService, 
-        AlertService, 
+        PurchaseService,
+        AlertService,
         alertId, 
-        CsrfService,
         CategoryService, 
         UserService,
-        ErrorHandler) {
+        FormHelperFactory) {
 
     var self = this;
+    var formHelper = FormHelperFactory.build(self, ROUTES.get_purchase_csrf);
     var categories = [{id: 0, name: 'Loading categories...'}];
     var users = null;
     var usersLoaded = false;
@@ -180,19 +179,21 @@ function PurchaseController(
         self.positions.splice(index, 1);
     };
 
-    this.addPurchase = function($event) {
-        $event.preventDefault();
-        AlertService.close(alertId);
-        PurchaseService.add(self.user, self.dt, self.positions, self.csrf_token).then(function() {
-            AlertService.add(alertId, 'Purchase successfully added', 'success');
-        }, function(errorResponse) {
-            ErrorHandler.handle(errorResponse, alertId, reloadCsrfToken);
-        });
+    this.createPurchase = function($event) {
+        var purchase = {
+            userId : self.user,
+            dt : self.dt,
+            positions : self.positions,
+            csrf_token : self.csrf_token
+        };
+        formHelper.create($event, alertId, purchase, 'Purchase', null, PurchaseService);
     };
-
-    function reloadCsrfToken() {
-        CsrfService.reloadToken(ROUTES.get_purchase_csrf, self);
-    }
+    
+    this.clearForm = function() {
+        self.positions = [];
+        self.addPosition();
+        document.getElementById('purchase_expression0').focus();
+    };
 
     // -------------------
 
@@ -204,9 +205,7 @@ function PurchaseController(
     }
     PreWork.merge('purchase.tpl', this, 'purchaseCtrl');
 
-    if (self.csrf_token === undefined || self.csrf_token === '') {
-        reloadCsrfToken();
-    }
+    formHelper.reloadCsrfIfNecessary();
 
     self.loadCategories();
     self.loadUsers();
@@ -238,11 +237,11 @@ function Position($parse, $filter) {
 PurchaseService.$inject = ['$http', '$q', '$timeout', 'tutteli.purchase.ROUTES'];
 function PurchaseService($http, $q, $timeout, ROUTES) {
     
-    this.add = function(userId, date, positions, csrf_token) {
+    this.createPurchase = function(purchase) {
         var errors = '';
         var positionDtos = [];
-        for (var i = 0; i < positions.length; ++i) {
-            var position = positions[i];
+        for (var i = 0; i < purchase.positions.length; ++i) {
+            var position = purchase.positions[i];
             if (position.expression == '0') {
                 errors += 'The <a href="#" onclick="document.getElementById(\'purchase_expression' + i + '\').focus(); return false">'
                             + 'price of position ' + (i + 1) 
@@ -260,14 +259,10 @@ function PurchaseService($http, $q, $timeout, ROUTES) {
                 };
             }
         }
+        
         if (errors == '') {
-            var data = {
-                userId : userId,
-                dt : date,
-                positions : positionDtos,
-                csrf_token : csrf_token
-            };
-            return $http.post(ROUTES.post_purchase, data);
+            purchase.positions = positionDtos;
+            return $http.post(ROUTES.post_purchase, purchase);
         }
         // delay is necessary in order that alert is removed properly
         var delay = $q.defer();

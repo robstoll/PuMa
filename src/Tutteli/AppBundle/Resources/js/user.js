@@ -40,26 +40,28 @@ NewUserController.$inject = [
     'tutteli.purchase.ROUTES',
     'tutteli.PreWork',
     'tutteli.purchase.UserService', 
-    'tutteli.alert.AlertService',
     'tutteli.purchase.NewUserController.alertId',
-    'tutteli.csrf.CsrfService',
-    'tutteli.helpers.ErrorHandler'];
-function NewUserController(ROUTES, PreWork, UserService, AlertService, alertId, CsrfService, ErrorHandler) {
+    'tutteli.helpers.FormHelperFactory'];
+function NewUserController(ROUTES, PreWork, UserService, alertId, FormHelperFactory) {
     var self = this;
+    var formHelper = FormHelperFactory.build(self, ROUTES.get_user_csrf);
     
     this.createUser = function($event) {
-        $event.preventDefault();
-        AlertService.close(alertId);
-        UserService.createUser(self.username, self.email, self.role, self.csrf_token).then(function() {
-            AlertService.add(alertId, 'User successfully added.', 'success');
-        }, function(errorResponse) {
-            ErrorHandler.handle(errorResponse, alertId, reloadCsrfToken);
-        });
+        var user = {
+            username: self.username, 
+            email: self.email, 
+            roleId: self.role, 
+            csrf_token: self.csrf_token
+        };
+        formHelper.create($event, alertId, user, 'User', 'username', UserService);
     };
     
-    function reloadCsrfToken() {
-        CsrfService.reloadToken(ROUTES.get_user_csrf, self);
-    }
+    this.clearForm = function() {
+        document.getElementById('user_username').focus();
+        self.username = '';
+        self.email = '';
+        self.role = '';
+    };
     
     this.isAdmin = function() {
         //must be admin, is secured via auth routing
@@ -74,10 +76,7 @@ function NewUserController(ROUTES, PreWork, UserService, AlertService, alertId, 
     // ----------------
     
     PreWork.merge('users/new.tpl', this, 'userCtrl');    
-    
-    if (self.csrf_token === undefined || self.csrf_token === '') {
-        reloadCsrfToken();
-    }
+    formHelper.reloadCsrfIfNecessary();
 }
 
 EditUserController.$inject = [
@@ -85,24 +84,21 @@ EditUserController.$inject = [
     'tutteli.purchase.ROUTES',
     'tutteli.PreWork',
     'tutteli.purchase.UserService',
-    'tutteli.alert.AlertService',
     'tutteli.purchase.EditUserController.alertId',
-    'tutteli.csrf.CsrfService',
-    'tutteli.helpers.ErrorHandler', 
     'tutteli.auth.AuthService', 
-    'tutteli.auth.USER_ROLES'];
+    'tutteli.auth.USER_ROLES',
+    'tutteli.helpers.FormHelperFactory'];
 function EditUserController(
         $stateParams, 
         ROUTES, 
         PreWork,  
         UserService, 
-        AlertService, 
-        alertId, 
-        CsrfService, 
-        ErrorHandler, 
+        alertId,        
         AuthService, 
-        USER_ROLES) {
+        USER_ROLES, 
+        FormHelperFactory) {
     var self = this;
+    var formHelper = FormHelperFactory.build(self, ROUTES.get_user_csrf);
     var isNotLoaded = true;
     
     this.loadUser = function(userId) {
@@ -117,22 +113,21 @@ function EditUserController(
     };
     
     this.updateUser = function($event) {
+        var user = {
+            id: self.id,
+            username: self.username, 
+            email: self.email, 
+            roleId: self.role, 
+            csrf_token: self.csrf_token
+        };
+    
         $event.preventDefault();
-        AlertService.close(alertId);
-        UserService.updateUser(self.id, self.username, self.email, self.role, self.csrf_token).then(function() {
-            AlertService.add(alertId, 'User ' + self.username + ' successfully updated.', 'success');
-        }, function(errorResponse) {
-            ErrorHandler.handle(errorResponse, alertId, reloadCsrfToken);
-        });
+        formHelper.update($event, alertId, user, 'User', 'username', UserService);
     };
     
     this.isDisabled = function() {
         return isNotLoaded;
     };
-    
-    function reloadCsrfToken() {
-        CsrfService.reloadToken(ROUTES.get_user_csrf, self);
-    }
     
     this.isAdmin = function() {
         return AuthService.isAuthorised(USER_ROLES.admin);
@@ -147,9 +142,7 @@ function EditUserController(
         self.loadUser($stateParams.userId);
     }
     
-    if (self.csrf_token === undefined || self.csrf_token === '') {
-        reloadCsrfToken();
-    }
+    formHelper.reloadCsrfIfNecessary();
 }
 
 UserService.$inject = ['$http', '$q', '$timeout', 'tutteli.purchase.ROUTES'];
@@ -173,13 +166,7 @@ function UserService($http, $q, $timeout, ROUTES) {
         });
     };
     
-    this.createUser = function(username, email, roleId, csrf_token) {
-        var user = {
-            username: username, 
-            email: email, 
-            roleId: roleId, 
-            csrf_token: csrf_token
-        };
+    this.createUser = function(user) {
         var errors = validateUser(user);
         if (errors == '') {
             return $http.post(ROUTES.post_user, user);
@@ -207,16 +194,10 @@ function UserService($http, $q, $timeout, ROUTES) {
         return errors;
     }
     
-    this.updateUser = function(id, username, email, roleId, csrf_token) {
-        var user = {
-            username: username, 
-            email: email, 
-            roleId: roleId, 
-            csrf_token: csrf_token
-        };
+    this.updateUser = function(user) {
         var errors = validateUser(user);
         if (errors == '') {
-            return $http.put(ROUTES.put_user.replace(':userId', id), user);
+            return $http.put(ROUTES.put_user.replace(':userId', user.id), user);
         }
         return getError(errors);
     };
