@@ -33,8 +33,11 @@
         		</tr>
             </tbody> 
             {% if users %}
-                {% set json = '[' %}
+                {% set json = '' %}
                 {% for user in users %}
+                	{%  if not json == '' %}
+                		{% set json = json ~ ',' %}
+                	{%  endif %}
                 	{% set json = json ~ '{' 
                 	    ~ '"id":"' ~ user.id ~ '",' 
                 	    ~ '"username":"' ~ user.username ~ '",'
@@ -43,7 +46,7 @@
                 	    ~ '"role":"' ~ ('users.roles.' ~ user.role)|trans ~ '"'
                 	    ~ '}' %}
                 {% endfor %}
-                {% set json = json ~ ']' %}
+                {% set json = '[' ~ json ~ ']' %}
                 	<!-- pre-work-exclude-start -->
                 	<tbody id="users_rows_preload"> 
                     {% for user in users %}
