@@ -48,16 +48,11 @@ function NewCategoryController(ROUTES, PreWork, CategoryService, alertId, FormHe
     
     this.createCategory = function($event) {
         var category = {name: self.name, csrf_token: self.csrf_token};
-        formHelper.create($event, alertId, category, 'Category', CategoryService);
-    };
-        
-    this.isAdmin = function() {
-        //must be admin, is secured via auth routing
-        return true;
+        formHelper.create($event, alertId, category, 'Category', 'name', CategoryService);
     };
     
     this.isDisabled = function() {
-        //no need to load data when creating an new user hence can always be enabled
+        //no need to load data when creating an new category hence can always be enabled
         return false;
     };
     
@@ -96,7 +91,7 @@ function EditCategoryController(
     
     this.updateCategory = function($event) {
         var category = {id: self.id, name: self.name, csrf_token: self.csrf_token};
-        formHelper.update($event, alertId, category, 'Category', CategoryService);
+        formHelper.update($event, alertId, category, 'Category', 'name', CategoryService);
     };
     
     this.isDisabled = function() {

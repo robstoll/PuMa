@@ -83,21 +83,21 @@ function FormHelperFactory(AlertService, ErrorHandler, CsrfService) {
 
 function FormHelper(AlertService, ErrorHandler, CsrfService, controller, url) {
     
-    this.create = function($event, alertId, obj, name, Service) {
+    this.create = function($event, alertId, obj, name, nameProp, Service) {
         $event.preventDefault();
         AlertService.close(alertId);
         Service['create' + name](obj).then(function() {
-            AlertService.add(alertId, name + ' successfully created.', 'success');
+            AlertService.add(alertId, name  + ' &quot;' + obj[nameProp] + '&quot; successfully created.', 'success', 3000);
         }, function(errorResponse) {
             ErrorHandler.handle(errorResponse, alertId, reloadCsrfToken);
         });
     };
     
-    this.update = function($event, alertId, obj, name, Service){
+    this.update = function($event, alertId, obj, name, nameProp, Service){
         $event.preventDefault();
         AlertService.close(alertId);
         Service['update' + name](obj).then(function() {
-            AlertService.add(alertId, name + ' successfully updated.', 'success');
+            AlertService.add(alertId, name + ' &quot;' + obj[nameProp] + '&quot; successfully updated.', 'success', 3000);
         }, function(errorResponse) {
             ErrorHandler.handle(errorResponse, alertId, reloadCsrfToken);
         });
