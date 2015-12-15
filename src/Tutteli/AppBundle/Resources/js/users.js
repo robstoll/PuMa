@@ -76,6 +76,11 @@ function NewUserController(ROUTES, PreWork, UserService, AlertService, alertId, 
         return true;
     };
     
+    this.isDisabled = function() {
+        //no need to load data when creating an new user hence can always be enabled
+        return false;
+    };
+    
     // ----------------
     
     PreWork.merge('users/new.tpl', this, 'userCtrl');    
@@ -110,6 +115,7 @@ function EditUserController(
         AuthService, 
         USER_ROLES) {
     var self = this;
+    var isNotLoaded = true;
     
     this.loadUser = function(userId) {
         UserService.getUser(userId).then(function(user) {
@@ -118,6 +124,7 @@ function EditUserController(
             self.email = user.email;
             self.role = user.roleId;
             document.querySelector('#user_role > option').remove();
+            isNotLoaded = false;
         });
     };
     
@@ -131,6 +138,10 @@ function EditUserController(
         });
     };
     
+    this.isDisabled = function() {
+        return isNotLoaded;
+    };
+    
     function reloadCsrfToken() {
         CsrfService.reloadToken(ROUTES.get_user_csrf, self);
     }
@@ -141,8 +152,12 @@ function EditUserController(
     
     // ----------------
     
-    PreWork.merge('users/edit.tpl', this, 'userCtrl');    
-    self.loadUser($stateParams.userId);
+    PreWork.merge('users/edit.tpl', this, 'userCtrl');
+    
+    isNotLoaded = self.username === undefined;
+    if (isNotLoaded) {
+        self.loadUser($stateParams.userId);
+    }
     
     if (self.csrf_token === undefined || self.csrf_token === '') {
         reloadCsrfToken();
