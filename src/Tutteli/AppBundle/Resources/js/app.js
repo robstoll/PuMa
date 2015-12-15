@@ -14,8 +14,9 @@ angular.module('tutteli.purchase', [
     'tutteli.navigation',
     'tutteli.calc',
     'tutteli.purchase.core',
-    'tutteli.purchase.category',
+    'tutteli.purchase.categories',
     'tutteli.purchase.users',
+    'tutteli.helpers',
     
     'ui.router',
     'ui.bootstrap',

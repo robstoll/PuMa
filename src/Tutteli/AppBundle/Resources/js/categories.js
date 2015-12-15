@@ -6,11 +6,34 @@
 (function(){
 'use strict';
 
-angular.module('tutteli.purchase.category', [])
+angular.module('tutteli.purchase.categories', [
+    'tutteli.preWork', 
+    'tutteli.purchase.routing',
+    'tutteli.helpers'
+])
+    .controller('tutteli.purchase.CategoriesController', CategoriesController)
     .service('tutteli.purchase.CategoryService', CategoryService);
+
+CategoriesController.$inject = ['tutteli.PreWork', 'tutteli.purchase.CategoryService', 'tutteli.helpers.InitHelper'];
+function CategoriesController(PreWork, CategoryService, InitHelper) {
+    var self = this;
+    
+    this.categories = null;
+    
+    this.initCategories = function(data) {
+        InitHelper.initTableData('categories', self, data);
+    };
+    
+    // ----------------
+    
+    InitHelper.initTable('categories', this, function(){
+       CategoryService.getCategories().then(self.initCategories);
+    });
+}
 
 CategoryService.$inject = ['$http', '$q', 'tutteli.purchase.ROUTES'];
 function CategoryService($http, $q, ROUTES) {
+    
     this.getCategories = function() {
         return $http.get(ROUTES.get_categories_json).then(function(response) {
             if (response.data.categories === undefined) {
@@ -19,6 +42,7 @@ function CategoryService($http, $q, ROUTES) {
             return $q.resolve(response.data.categories);
         });
     };
+    
 }
 
 })();

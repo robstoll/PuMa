@@ -96,3 +96,19 @@ put_user:
     path: /users/{userId}
     defaults: { _controller: "TutteliAppBundle:User:put" }
     methods: [PUT]
+    
+    
+get_categories:
+    path:  /categories{ending}
+    defaults: { _controller: "TutteliAppBundle:Category:cget", ending: ""}
+    methods: [GET]
+
+new_category:
+    path: /categories/new{ending}
+    defaults: { _controller: "TutteliAppBundle:Category:new", ending: ""}
+    methods: [GET]  
+    
+edit_category:
+    path: /categories/{categoryId}/edit{ending}
+    defaults: { _controller: "TutteliAppBundle:Category:edit", ending: ""}
+    methods: [GET]    

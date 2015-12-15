@@ -50,6 +50,10 @@
                 <source>nav.users</source>
                 <target>Users</target>
             </trans-unit>
+            <trans-unit id="103">
+                <source>nav.categories</source>
+                <target>Categories</target>
+            </trans-unit>
             <trans-unit id="110">
                 <source>nav.settings</source>
                 <target>Settings</target>
@@ -62,6 +66,7 @@
                 <source>nav.profile</source>
                 <target>Profile</target>
             </trans-unit>
+         
             
             <trans-unit id="200">
                 <source>purchase.price</source>
@@ -135,6 +140,23 @@
             <trans-unit id="309">
                 <source>users.changeRoleDenied</source>
                 <target>You are not allowed to change your own role.</target>
+            </trans-unit>
+            
+            <trans-unit id="400">
+                <source>categories.name</source>
+                <target>Name</target>
+            </trans-unit>
+            <trans-unit id="401">
+                <source>categories.loading</source>
+                <target>Loading categories...</target>
+            </trans-unit>
+            <trans-unit id="402">
+                <source>categories.save</source>
+                <target>Save category</target>
+            </trans-unit>
+            <trans-unit id="403">
+                <source>categories.add</source>
+                <target>Add category</target>
             </trans-unit>
         </body>
     </file>

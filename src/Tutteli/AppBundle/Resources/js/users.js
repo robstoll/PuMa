@@ -10,7 +10,7 @@ angular.module('tutteli.purchase.users', [
     'tutteli.preWork', 
     'tutteli.auth', 
     'tutteli.purchase.routing', 
-    'tutteli.utils'
+    'tutteli.helpers'
 ])
     .controller('tutteli.purchase.UsersController', UsersController)
     .controller('tutteli.purchase.NewUserController', NewUserController)
@@ -19,31 +19,21 @@ angular.module('tutteli.purchase.users', [
     .constant('tutteli.purchase.NewUserController.alertId', 'tutteli-ctrls-NewUserController')
     .constant('tutteli.purchase.EditUserController.alertId', 'tutteli-ctrls-EditUserController');
 
-UsersController.$inject = ['tutteli.PreWork', 'tutteli.purchase.UserService'];
-function UsersController(PreWork, UserService) {
+UsersController.$inject = ['tutteli.PreWork', 'tutteli.purchase.UserService', 'tutteli.helpers.InitHelper'];
+function UsersController(PreWork, UserService, InitHelper) {
     var self = this;
     
     this.users = null;
     
-    this.loadUsers = function() {
-        UserService.getUsers().then(self.initUsers);
-    };
-  
     this.initUsers = function(data) {
-        self.users = data;
-        document.getElementById('users_rows').className = '';
-        document.getElementById('users_load').style.display = 'none';
+        InitHelper.initTableData('users', self, data);
     };
     
     // ----------------
     
-    PreWork.merge('users.tpl', this, 'usersCtrl');
-    if (self.usersInit !== undefined) {
-        self.initUsers(JSON.parse(self.usersInit));
-    } else {
-        document.getElementById('users_load').style.display = 'block';
-        self.loadUsers();
-    }
+    InitHelper.initTable('users', this, function(){
+        UserService.getUsers().then(self.initUsers);
+    });
 }
 
 NewUserController.$inject = [
@@ -53,7 +43,7 @@ NewUserController.$inject = [
     'tutteli.alert.AlertService',
     'tutteli.purchase.NewUserController.alertId',
     'tutteli.csrf.CsrfService',
-    'tutteli.utils.ErrorHandler'];
+    'tutteli.helpers.ErrorHandler'];
 function NewUserController(ROUTES, PreWork, UserService, AlertService, alertId, CsrfService, ErrorHandler) {
     var self = this;
     
@@ -100,7 +90,7 @@ EditUserController.$inject = [
     'tutteli.alert.AlertService',
     'tutteli.purchase.EditUserController.alertId',
     'tutteli.csrf.CsrfService',
-    'tutteli.utils.ErrorHandler', 
+    'tutteli.helpers.ErrorHandler', 
     'tutteli.auth.AuthService', 
     'tutteli.auth.USER_ROLES'];
 function EditUserController(

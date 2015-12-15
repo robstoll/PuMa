@@ -40,6 +40,7 @@ angular.module('tutteli.purchase.routing', [
         controllerAs: 'purchaseCtrl',
         templateUrl: 'purchases/new.tpl',
         data: {
+            //user needs to be logged in
             authRoles: [USER_ROLES.authenticated]
         }
     })
@@ -50,7 +51,7 @@ angular.module('tutteli.purchase.routing', [
         controllerAs: 'usersCtrl',
         templateUrl : 'users.tpl',
         data: {
-            authRoles : [USER_ROLES.admin] //user needs to be logged in
+            authRoles : [USER_ROLES.admin] 
         }
     }).state('new_user', {
         url: '/users/new',
@@ -68,6 +69,14 @@ angular.module('tutteli.purchase.routing', [
         data: {
             authRoles: [USER_ROLES.admin],
             userIdParamName: 'userId'
+        }
+    }).state('categories', {
+        url: '/categories',
+        controller: 'tutteli.purchase.CategoriesController',
+        controllerAs: 'categoriesCtrl',
+        templateUrl : 'categories.tpl',
+        data: {
+            authRoles : [USER_ROLES.admin] 
         }
     });
   }

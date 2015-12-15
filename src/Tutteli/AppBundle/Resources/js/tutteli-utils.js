@@ -8,8 +8,7 @@
 
 angular.module('tutteli.utils', [])
     .directive('compile', CompileDirective)
-    .service('tutteli.utils.TextSelectService', TextSelectService)
-    .service('tutteli.utils.ErrorHandler', ErrorHandler);
+    .service('tutteli.utils.TextSelectService', TextSelectService);
 
 CompileDirective.$inject = ['$compile'];
 function CompileDirective($compile) {
@@ -34,33 +33,6 @@ function TextSelectService() {
             range.selectNodeContents(element);
             selection.removeAllRanges();
             selection.addRange(range);
-        }
-    };
-}
-
-ErrorHandler.$inject = ['tutteli.alert.AlertService'];
-function ErrorHandler(AlertService){
-    this.handle = function(errorResponse, alertId, reloadCsrfTokenCallback) {
-        if (errorResponse.status == 401) {
-            AlertService.add(alertId, errorResponse.data, 'danger');
-            if (errorResponse.data == 'Invalid CSRF token.') {
-                reloadCsrfTokenCallback();
-            }
-        } else if (errorResponse.status == 400) {
-            var data = errorResponse.data;
-            var err = '';
-            if (angular.isObject(data)) {
-                for (var prop in data) {
-                    err += prop + ': ' + data[prop] + '<br/>';
-                }
-            } else {
-                err = data;
-            }
-            AlertService.add(alertId, err, 'danger');
-        } else if (errorResponse.error) {
-            AlertService.add(alertId, errorResponse.error);
-        } else {
-            AlertService.add(alertId, 'Unknown error occurred. Please try again.', 'danger');
         }
     };
 }

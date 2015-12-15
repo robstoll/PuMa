@@ -6,7 +6,15 @@
 (function(){
 'use strict';
 
-angular.module('tutteli.purchase.core', ['tutteli.purchase.routing'])
+angular.module('tutteli.purchase.core', [
+    'tutteli.purchase.routing', 
+    'tutteli.preWork',
+    'tutteli.alert',
+    'tutteli.csrf',
+    'tutteli.purchase.categories',
+    'tutteli.purchase.users',
+    'tutteli.helpers',
+])
     .controller('tutteli.purchase.PurchaseController', PurchaseController)
     .service('tutteli.purchase.PurchaseService', PurchaseService)
     .constant('tutteli.purchase.PurchaseService.alertId', 'tutteli-ctrls-Purchase');
@@ -22,7 +30,7 @@ PurchaseController.$inject = [
     'tutteli.csrf.CsrfService',
     'tutteli.purchase.CategoryService',
     'tutteli.purchase.UserService',
-    'tutteli.utils.ErrorHandler'];
+    'tutteli.helpers.ErrorHandler'];
 function PurchaseController(
         $parse, 
         $filter, 

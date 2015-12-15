@@ -7,15 +7,43 @@
 namespace Tutteli\AppBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 class CategoryController extends ATplController {
     
     protected function getCsrfTokenDomain() {
         return 'category';
     }
     
-    public function cgetJsonAction() {
+    public function cgetAction(Request $request, $ending) {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
+    
+        $viewPath = '@TutteliAppBundle/Resources/views/Category/cget.html.twig';
+        list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
+    
+        if (!$response) {
+            $categories = null;
+            if ($ending != '.tpl') {
+                $categories = $this->loadCategories();
+            }
+            $response = $this->render($viewPath, array (
+                    'notXhr' => $ending == '',
+                    'categories' => $categories
+            ));
+    
+            if ($ending == '.tpl') {
+                $response->setETag($etag);
+            }
+        }
+        return $response;
+    }
+    
+    private function loadCategories() {
         $repository = $this->getDoctrine()->getRepository('TutteliAppBundle:Category');
-        $data = $repository->findAll();
+        return $repository->findAll();
+    }
+    
+    public function cgetJsonAction() {
+        $data = $this->loadCategories();
         return new Response($this->getJson($data));
     }
     

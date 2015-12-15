@@ -1,0 +1,70 @@
+{#
+ * This file is part of the project tutteli/purchase published under the Apache License 2.0
+ * For the full copyright and license information, please have a look at LICENSE in the
+ * root folder or visit https://github.com/robstoll/purchase
+ #}
+ {% extends notXhr ? 'TutteliAppBundle::layout.html.twig' : 'xhr.twig' %}
+
+{% block title %} Categories | {{ parent() }}{% endblock %}
+
+
+{% block content %}
+    {% if notXhr %}
+    <div ui-view></div>
+    	<div pre-work="categories.tpl">
+    {%  endif %}
+    	<table class="table table-striped">
+    		<thead>
+    			<tr>
+    				<th>#</th>
+    				<th>{{ 'categories.name'|trans }}</th>
+    				<th>{{ 'general.edit'|trans }}</th>
+				</tr>
+    		</thead>
+    		<tbody id="categories_rows" class="hidden">
+            	<tr ng-repeat="category in categoriesCtrl.categories">
+            		<td ng-bind="category.id"></td>
+            		<td ng-bind="category.name"></td>
+            		<td><a href="#" ui-sref="edit_category({categoryId: category.id})"><i class="glyphicon glyphicon-pencil"></i></a></td>
+        		</tr>
+            </tbody> 
+            {% if categories %}
+            	<!-- pre-work-exclude-start -->
+            	<tbody id="categories_rows_preload">
+            	{% set json = '' %} 
+                {% for category in categories %}
+                    {%  if not json == '' %}
+                		{% set json = json ~ ',' %}
+                	{%  endif %}
+                	{% set json = json ~ '{' 
+                	    ~ '"id":"' ~ category.id ~ '",' 
+                	    ~ '"name":"' ~ category.name ~ '"'
+                	    ~ '}' %}
+        			<tr>
+        				<td>{{ category.id }} </td>
+        				<td>{{ category.name }}</td>
+        				<td><a href="{{ path('edit_category', {'categoryId': category.id}) }}"><i class="glyphicon glyphicon-pencil"></i></a></td>
+        			</tr>
+        		{% endfor %}
+        		{% set json = '[' ~ json ~ ']' %}
+        		</tbody>
+        		<!-- pre-work-exclude-end -->
+        	{% endif %}
+        </table>
+        {% if categories %}
+            <!-- pre-work-exclude-start -->
+        	<input type="hidden" ng-model="categoriesCtrl.categoriesInit" value="{{ json }}"/>
+            <!-- pre-work-exclude-end -->
+        {% endif %}
+        <div id="categories_load">{{ 'categories.loading'|trans }}</div>
+        <footer class="footer">
+			<a href="{{ path('new_category') }}" ui-sref="new_category" class="btn-default btn"><i class="glyphicon glyphicon-plus"></i> {{ 'categories.add'|trans }}</a>
+        </footer> 
+    {% if notXhr %}
+        </div>
+        
+        <script type="text/javascript">
+        	document.getElementById('categories_load').style.display = 'none';
+		</script>
+    {%  endif %}
+{% endblock %}
