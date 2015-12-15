@@ -12,7 +12,9 @@ angular.module('tutteli.purchase.category', [
     'tutteli.helpers'
 ])
     .controller('tutteli.purchase.CategoriesController', CategoriesController)
-    .service('tutteli.purchase.CategoryService', CategoryService);
+    .controller('tutteli.purchase.NewCategoryController', NewCategoryController)
+    .service('tutteli.purchase.CategoryService', CategoryService)
+    .constant('tutteli.purchase.NewCategoryController.alertId', 'tutteli-ctrls-NewCategoryController');
 
 CategoriesController.$inject = ['tutteli.PreWork', 'tutteli.purchase.CategoryService', 'tutteli.helpers.InitHelper'];
 function CategoriesController(PreWork, CategoryService, InitHelper) {
@@ -31,6 +33,38 @@ function CategoriesController(PreWork, CategoryService, InitHelper) {
     });
 }
 
+
+NewCategoryController.$inject = [
+    'tutteli.purchase.ROUTES',
+    'tutteli.PreWork',
+    'tutteli.purchase.CategoryService', 
+    'tutteli.purchase.NewCategoryController.alertId',
+    'tutteli.helpers.FormHelperFactory'];
+function NewCategoryController(ROUTES, PreWork, CategoryService, alertId, FormHelperFactory) {
+    var self = this;
+    var formHelper = FormHelperFactory.build(self, ROUTES.get_category_csrf);
+    
+    this.addCategory = function($event) {
+        var category = {name: self.name, csrf_token: self.csrf_token};
+        formHelper.create($event, alertId, category, 'Category', CategoryService);
+    };
+        
+    this.isAdmin = function() {
+        //must be admin, is secured via auth routing
+        return true;
+    };
+    
+    this.isDisabled = function() {
+        //no need to load data when creating an new user hence can always be enabled
+        return false;
+    };
+    
+    // ----------------
+    
+    PreWork.merge('categories/new.tpl', this, 'categoryCtrl');
+    formHelper.reloadCsrfIfNecessary();
+}
+
 CategoryService.$inject = ['$http', '$q', 'tutteli.purchase.ROUTES'];
 function CategoryService($http, $q, ROUTES) {
     
@@ -41,6 +75,10 @@ function CategoryService($http, $q, ROUTES) {
             }
             return $q.resolve(response.data.categories);
         });
+    };
+    
+    this.createCategory = function(category) {
+        return $http.post(ROUTES.post_category, category);
     };
     
 }

@@ -65,5 +65,23 @@ class CategoryController extends ATplController {
         $list .= ']}';
         return $list;
     }
+ 
+    public function newAction(Request $request, $ending) {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
     
+        $viewPath = '@TutteliAppBundle/Resources/views/Category/new.html.twig';
+        list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
+    
+        if (!$response) {
+            $response = $this->render($viewPath, array (
+                    'notXhr' => $ending == '',
+                    'error' => null,
+            ));
+    
+            if ($ending == '.tpl') {
+                $response->setETag($etag);
+            }
+        }
+        return $response;
+    }
 }

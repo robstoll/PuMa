@@ -78,6 +78,14 @@ angular.module('tutteli.purchase.routing', [
         data: {
             authRoles : [USER_ROLES.admin] 
         }
+    }).state('new_category', {
+        url: '/categories/new',
+        controller: 'tutteli.purchase.NewCategoryController',
+        controllerAs: 'categoryCtrl',
+        templateUrl: 'categories/new.tpl',
+        data: {
+            authRoles: [USER_ROLES.admin]
+        }
     });
   }
 ]).run(['$rootScope', '$state', function($rootScope, $state) {
@@ -90,8 +98,10 @@ angular.module('tutteli.purchase.routing', [
 }]).constant('tutteli.purchase.ROUTES', {
     get_login_csrf: 'login/token',
     post_purchase : 'purchases',
-    get_purchase_csrf: 'purchases/new/token',
+    get_purchase_csrf: 'purchases/new/token',    
     get_categories_json: 'categories.json',
+    get_category_csrf: 'categories/new/token',
+    post_category: 'categories',
     get_users_json: 'users.json',
     get_user_json: 'users/:userId.json',
     get_user_csrf: 'users/new/token',

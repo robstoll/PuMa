@@ -8,7 +8,8 @@
 
 angular.module('tutteli.helpers', ['tutteli.alert', 'tutteli.preWork'])
     .service('tutteli.helpers.ErrorHandler', ErrorHandler)       
-    .service('tutteli.helpers.InitHelper', InitHelper);
+    .service('tutteli.helpers.InitHelper', InitHelper)
+    .service('tutteli.helpers.FormHelperFactory', FormHelperFactory);
 
 
 ErrorHandler.$inject = ['tutteli.alert.AlertService'];
@@ -68,7 +69,38 @@ function InitHelper(PreWork) {
                 load.style.display = 'block';
             }
             loadFunc();
-        }  
+        }
+    };
+}
+
+FormHelperFactory.$inject = ['tutteli.alert.AlertService', 'tutteli.helpers.ErrorHandler', 'tutteli.csrf.CsrfService'];
+function FormHelperFactory(AlertService, ErrorHandler, CsrfService) {
+    
+    this.build = function(controller, url){
+        return new FormHelper(AlertService, ErrorHandler, CsrfService, controller, url);
+    };
+}
+
+function FormHelper(AlertService, ErrorHandler, CsrfService, controller, url) {
+    
+    this.create = function($event, alertId, obj, name, Service) {
+        $event.preventDefault();
+        AlertService.close(alertId);
+        Service['create' + name](obj).then(function() {
+            AlertService.add(alertId, name + ' successfully created.', 'success');
+        }, function(errorResponse) {
+            ErrorHandler.handle(errorResponse, alertId, reloadCsrfToken);
+        });
+    };
+    
+    function reloadCsrfToken(){
+        CsrfService.reloadToken(url, controller);
+    }
+    
+    this.reloadCsrfIfNecessary = function() {
+        if (controller.csrf_token === undefined || controller.csrf_token === '') {
+            reloadCsrfToken();
+        }
     };
 }
 

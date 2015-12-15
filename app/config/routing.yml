@@ -108,6 +108,16 @@ new_category:
     defaults: { _controller: "TutteliAppBundle:Category:new", ending: ""}
     methods: [GET]  
     
+new_category_csrf:
+    path:   /categories/new/token
+    defaults: { _controller: "TutteliAppBundle:Category:csrfToken", ending: ""}
+    methods: [GET]
+
+post_category:
+    path: /categories
+    defaults: { _controller: "TutteliAppBundle:Category:post" }
+    methods: [POST]    
+    
 edit_category:
     path: /categories/{categoryId}/edit{ending}
     defaults: { _controller: "TutteliAppBundle:Category:edit", ending: ""}
