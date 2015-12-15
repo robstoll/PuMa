@@ -8,6 +8,7 @@ namespace Tutteli\AppBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Tutteli\AppBundle\Entity\Category;
 class CategoryController extends ATplController {
     
     protected function getCsrfTokenDomain() {
@@ -83,5 +84,39 @@ class CategoryController extends ATplController {
             }
         }
         return $response;
+    }
+    
+    public function postAction(Request $request) {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
+    
+        if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+            return $this->createCategory($request);
+        }
+        return new Response('{"msg": "Wrong Content-Type"}', Response::HTTP_BAD_REQUEST);
+    }
+    
+    private function createCategory(Request $request) {
+        list($data, $response) = $this->decodeDataAndVerifyCsrf($request);
+        if (!$response) {
+            $category = new Category();
+            $this->mapCategory($category, $data);
+            $validator = $this->get('validator');
+            $errors = $validator->validate($category);
+            if (count($errors) > 0) {
+                $response = $this->getTranslatedValidationResponse($errors);
+            } else {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($category);
+                $em->flush();
+                $response = $this->getCreateResponse($category->getId());
+            }
+        }
+        return $response;
+    }
+    
+    private function mapCategory(Category $category, array $data) {
+        if (array_key_exists('name', $data)) {
+            $category->setName($data['name']);
+        }
     }
 }
