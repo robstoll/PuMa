@@ -86,6 +86,14 @@ angular.module('tutteli.purchase.routing', [
         data: {
             authRoles: [USER_ROLES.admin]
         }
+    }).state('edit_category', {
+        url : '/categories/:categoryId/edit',
+        controller: 'tutteli.purchase.EditCategoryController',
+        controllerAs: 'categoryCtrl',
+        templateUrl: 'categories/edit.tpl',
+        data: {
+            authRoles: [USER_ROLES.admin]
+        }
     });
   }
 ]).run(['$rootScope', '$state', function($rootScope, $state) {
@@ -100,6 +108,7 @@ angular.module('tutteli.purchase.routing', [
     post_purchase : 'purchases',
     get_purchase_csrf: 'purchases/new/token',    
     get_categories_json: 'categories.json',
+    get_category_json: 'categories/:categoryId.json',
     get_category_csrf: 'categories/new/token',
     post_category: 'categories',
     get_users_json: 'users.json',

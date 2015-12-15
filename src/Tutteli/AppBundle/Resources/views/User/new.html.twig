@@ -14,9 +14,9 @@
     	<div pre-work="users/new.tpl">
     {%  endif %}
     	
-    	{%  set btnText = 'users.add'|trans %}
+    	{%  set btnText = 'users.create'|trans %}
         {%  set formAction = path('post_user') %}
-        {%  set formSubmit = 'userCtrl.addUser($event)' %}
+        {%  set formSubmit = 'userCtrl.createUser($event)' %}
     	{%  include 'TutteliAppBundle:User:form.incl.twig' %}
     	
     {% if notXhr %}

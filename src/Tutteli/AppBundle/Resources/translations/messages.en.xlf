@@ -118,7 +118,7 @@
                 <target>Loading users...</target>
             </trans-unit>
             <trans-unit id="304">
-                <source>users.save</source>
+                <source>users.update</source>
                 <target>Save user</target>
             </trans-unit>
             <trans-unit id="305">
@@ -130,7 +130,7 @@
                 <target>Admin</target>
             </trans-unit>
             <trans-unit id="307">
-                <source>users.add</source>
+                <source>users.create</source>
                 <target>Add user</target>
             </trans-unit>
             <trans-unit id="308">
@@ -151,11 +151,11 @@
                 <target>Loading categories...</target>
             </trans-unit>
             <trans-unit id="402">
-                <source>categories.save</source>
+                <source>categories.update</source>
                 <target>Save category</target>
             </trans-unit>
             <trans-unit id="403">
-                <source>categories.add</source>
+                <source>categories.create</source>
                 <target>Add category</target>
             </trans-unit>
         </body>

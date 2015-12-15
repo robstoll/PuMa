@@ -47,7 +47,7 @@ NewUserController.$inject = [
 function NewUserController(ROUTES, PreWork, UserService, AlertService, alertId, CsrfService, ErrorHandler) {
     var self = this;
     
-    this.addUser = function($event) {
+    this.createUser = function($event) {
         $event.preventDefault();
         AlertService.close(alertId);
         UserService.createUser(self.username, self.email, self.role, self.csrf_token).then(function() {
@@ -79,8 +79,6 @@ function NewUserController(ROUTES, PreWork, UserService, AlertService, alertId, 
         reloadCsrfToken();
     }
 }
-
-
 
 EditUserController.$inject = [
     '$stateParams',
@@ -118,7 +116,7 @@ function EditUserController(
         });
     };
     
-    this.saveUser = function($event) {
+    this.updateUser = function($event) {
         $event.preventDefault();
         AlertService.close(alertId);
         UserService.updateUser(self.id, self.username, self.email, self.role, self.csrf_token).then(function() {

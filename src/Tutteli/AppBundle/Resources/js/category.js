@@ -13,8 +13,10 @@ angular.module('tutteli.purchase.category', [
 ])
     .controller('tutteli.purchase.CategoriesController', CategoriesController)
     .controller('tutteli.purchase.NewCategoryController', NewCategoryController)
+    .controller('tutteli.purchase.EditCategoryController', EditCategoryController)
     .service('tutteli.purchase.CategoryService', CategoryService)
-    .constant('tutteli.purchase.NewCategoryController.alertId', 'tutteli-ctrls-NewCategoryController');
+    .constant('tutteli.purchase.NewCategoryController.alertId', 'tutteli-ctrls-NewCategoryController')
+    .constant('tutteli.purchase.EditCategoryController.alertId', 'tutteli-ctrls-EditCategoryController');
 
 CategoriesController.$inject = ['tutteli.PreWork', 'tutteli.purchase.CategoryService', 'tutteli.helpers.InitHelper'];
 function CategoriesController(PreWork, CategoryService, InitHelper) {
@@ -44,7 +46,7 @@ function NewCategoryController(ROUTES, PreWork, CategoryService, alertId, FormHe
     var self = this;
     var formHelper = FormHelperFactory.build(self, ROUTES.get_category_csrf);
     
-    this.addCategory = function($event) {
+    this.createCategory = function($event) {
         var category = {name: self.name, csrf_token: self.csrf_token};
         formHelper.create($event, alertId, category, 'Category', CategoryService);
     };
@@ -65,6 +67,55 @@ function NewCategoryController(ROUTES, PreWork, CategoryService, alertId, FormHe
     formHelper.reloadCsrfIfNecessary();
 }
 
+
+EditCategoryController.$inject = [
+    '$stateParams',
+    'tutteli.purchase.ROUTES',
+    'tutteli.PreWork',
+    'tutteli.purchase.CategoryService',
+    'tutteli.purchase.EditCategoryController.alertId',
+    'tutteli.helpers.FormHelperFactory'];
+function EditCategoryController(
+        $stateParams, 
+        ROUTES, 
+        PreWork,  
+        CategoryService,  
+        alertId, 
+        FormHelperFactory) {
+    var self = this;
+    var formHelper = FormHelperFactory.build(self, ROUTES.get_category_csrf);
+    var isNotLoaded = true;
+    
+    this.loadCategory = function(categoryId) {
+        CategoryService.getCategory(categoryId).then(function(category) {
+            self.id = category.id;
+            self.name = category.name;
+            isNotLoaded = false;
+        });
+    };
+    
+    this.updateCategory = function($event) {
+        var category = {id: self.id, name: self.name, csrf_token: self.csrf_token};
+        formHelper.update($event, alertId, category, 'Category', 'name', CategoryService);
+    };
+    
+    this.isDisabled = function() {
+        return isNotLoaded;
+    };
+    
+    // ----------------
+    
+    PreWork.merge('categories/edit.tpl', this, 'categoryCtrl');
+    
+    isNotLoaded = self.name === undefined;
+    if (isNotLoaded) {
+        self.loadCategory($stateParams.categoryId);
+    }
+    
+    formHelper.reloadCsrfIfNecessary();
+}
+
+
 CategoryService.$inject = ['$http', '$q', 'tutteli.purchase.ROUTES'];
 function CategoryService($http, $q, ROUTES) {
     
@@ -74,6 +125,15 @@ function CategoryService($http, $q, ROUTES) {
                 return $q.reject({msg:'The property "categories" was not defined in the returned data.', data: response.data});
             }
             return $q.resolve(response.data.categories);
+        });
+    };
+    
+    this.getCategory = function(categoryId) {
+        return $http.get(ROUTES.get_category_json.replace(':categoryId', categoryId)).then(function(response) {
+            if (response.data.category === undefined) {
+                return $q.reject({msg:'The property "category was not defined in the returned data.', data: response.data});
+            }
+            return $q.resolve(response.data.category);
         });
     };
     

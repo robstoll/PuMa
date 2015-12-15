@@ -14,9 +14,9 @@
     	<div pre-work="users/edit.tpl">
     {%  endif %}
     	
-    	{%  set btnText = 'users.save'|trans %}
+    	{%  set btnText = 'users.update'|trans %}
     	{%  set formAction = notXhr ? path('put_user', {'userId': user.id}) : '' %}
-        {%  set formSubmit = 'userCtrl.saveUser($event)' %}
+        {%  set formSubmit = 'userCtrl.updateUser($event)' %}
     	{%  include 'TutteliAppBundle:User:form.incl.twig' %}
     	
     {% if notXhr %}

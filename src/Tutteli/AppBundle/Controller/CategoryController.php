@@ -39,8 +39,17 @@ class CategoryController extends ATplController {
     }
     
     private function loadCategories() {
-        $repository = $this->getDoctrine()->getRepository('TutteliAppBundle:Category');
+        $repository = $this->getCategoryRepository();
         return $repository->findAll();
+    }
+    
+    private function getCategoryRepository() {
+        return $this->getDoctrine()->getRepository('TutteliAppBundle:Category');
+    }
+    
+    private function loadCategory($categoryId) {
+        $repository = $this->getCategoryRepository();
+        return $repository->find($categoryId);
     }
     
     public function cgetJsonAction() {
@@ -65,6 +74,11 @@ class CategoryController extends ATplController {
         }
         $list .= ']}';
         return $list;
+    }
+    
+    public function getJsonAction($categoryId) {
+        $category = $this->loadCategory($categoryId);
+        return new Response('{"category":'.$this->getJson($category).'}');
     }
  
     public function newAction(Request $request, $ending) {
@@ -118,5 +132,40 @@ class CategoryController extends ATplController {
         if (array_key_exists('name', $data)) {
             $category->setName($data['name']);
         }
+    }
+    
+    public function editAction(Request $request, $categoryId, $ending) {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
+    
+        return $this->edit($request, $ending, function() use ($categoryId) {
+            $category = $this->loadCategory($categoryId);
+            if ($category == null) {
+                throw $this->createNotFoundException('Category with id '.$categoryId. ' not found.');
+            }
+            return $category;
+        });
+    }
+    
+    public function editTplAction(Request $request) {
+        return $this->edit($request, '.tpl', function(){return null;});
+    }
+    
+    private function edit(Request $request, $ending, callable $getCategory) {
+        $viewPath = '@TutteliAppBundle/Resources/views/Category/edit.html.twig';
+        list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
+    
+        if (!$response) {
+            $category = $getCategory();
+            $response = $this->render($viewPath, array (
+                    'notXhr' => $ending == '',
+                    'error' => null,
+                    'category' => $category,
+            ));
+    
+            if ($ending == '.tpl') {
+                $response->setETag($etag);
+            }
+        }
+        return $response;
     }
 }

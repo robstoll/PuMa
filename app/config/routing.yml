@@ -51,15 +51,55 @@ get_categories_json:
     defaults: { _controller: "TutteliAppBundle:Category:cgetJson" }
     methods: [GET]
 
+get_category_json: 
+    path: /categories/{categoryId}.json
+    defaults: { _controller: "TutteliAppBundle:Category:getJson"}
+    methods: [GET] 
+
+get_categories:
+    path:  /categories{ending}
+    defaults: { _controller: "TutteliAppBundle:Category:cget", ending: ""}
+    methods: [GET]
+
+new_category:
+    path: /categories/new{ending}
+    defaults: { _controller: "TutteliAppBundle:Category:new", ending: ""}
+    methods: [GET]  
+    
+new_category_csrf:
+    path:   /categories/new/token
+    defaults: { _controller: "TutteliAppBundle:Category:csrfToken", ending: ""}
+    methods: [GET]
+
+post_category:
+    path: /categories
+    defaults: { _controller: "TutteliAppBundle:Category:post" }
+    methods: [POST]    
+    
+edit_category:
+    path: /categories/{categoryId}/edit{ending}
+    defaults: { _controller: "TutteliAppBundle:Category:edit", ending: ""}
+    methods: [GET]    
+    
+edit_categeory_tpl:
+    path: /categories/edit.tpl
+    defaults: { _controller: "TutteliAppBundle:Category:editTpl" }
+    methods: [GET]    
+
+put_category:
+    path: /categories/{categoryId}
+    defaults: { _controller: "TutteliAppBundle:Category:put" }
+    methods: [PUT]
+        
 
 get_users_json:
     path:  /users.json
     defaults: { _controller: "TutteliAppBundle:User:cgetJson" }
     methods: [GET]
 
-get_user: 
+get_user_json: 
     path: /users/{userId}.json
-    defaults: { _controller: "TutteliAppBundle:User:getJson", ending: ""}
+    defaults: { _controller: "TutteliAppBundle:User:getJson" }
     methods: [GET]
 
 get_users:
@@ -98,27 +138,3 @@ put_user:
     methods: [PUT]
     
     
-get_categories:
-    path:  /categories{ending}
-    defaults: { _controller: "TutteliAppBundle:Category:cget", ending: ""}
-    methods: [GET]
-
-new_category:
-    path: /categories/new{ending}
-    defaults: { _controller: "TutteliAppBundle:Category:new", ending: ""}
-    methods: [GET]  
-    
-new_category_csrf:
-    path:   /categories/new/token
-    defaults: { _controller: "TutteliAppBundle:Category:csrfToken", ending: ""}
-    methods: [GET]
-
-post_category:
-    path: /categories
-    defaults: { _controller: "TutteliAppBundle:Category:post" }
-    methods: [POST]    
-    
-edit_category:
-    path: /categories/{categoryId}/edit{ending}
-    defaults: { _controller: "TutteliAppBundle:Category:edit", ending: ""}
-    methods: [GET]    

@@ -5,21 +5,26 @@
  #}
  {% extends notXhr ? 'TutteliAppBundle::layout.html.twig' : 'xhr.twig' %}
 
-{% block title %} Add Category | {{ parent() }}{% endblock %}
+{% block title %} Edit Category | {{ parent() }}{% endblock %}
 
 
 {% block content %}
     {% if notXhr %}
     <div ui-view></div>
-    	<div pre-work="categories/new.tpl">
+    	<div pre-work="categories/edit.tpl">
     {%  endif %}
     	
-    	{%  set btnText = 'categories.create'|trans %}
-        {%  set formAction = path('post_category') %}
-        {%  set formSubmit = 'categoryCtrl.createCategory($event)' %}
+    	{%  set btnText = 'categories.update'|trans %}
+    	{%  set formAction = notXhr ? path('put_category', {'categoryId': category.id}) : '' %}
+        {%  set formSubmit = 'categoryCtrl.updateCategory($event)' %}
     	{%  include 'TutteliAppBundle:Category:form.incl.twig' %}
     	
     {% if notXhr %}
     	</div>
+    	
+        <script type="text/javascript">
+        	document.getElementById('category_id').value = '{{ category.id }}';
+        	document.getElementById('category_name').value = '{{ category.name }}';
+        </script>
     {%  endif %}
 {% endblock %}
