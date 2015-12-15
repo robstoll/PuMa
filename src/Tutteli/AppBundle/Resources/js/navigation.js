@@ -33,6 +33,13 @@ function NavigationController(AuthService, USER_ROLES, Session) {
     this.closeNavi = function() {
         angular.element(document.getElementById('navbar')).removeClass('in');
     };
+    
+    // -----------------
+    angular.element(document.getElementById('navbar')).find('li').on('click', hideMenu);
+    angular.element(document.getElementById('navbar')).find('li.dropdown').off('click', hideMenu);
+    function hideMenu(){
+        angular.element(document.getElementById('navbar')).removeClass('in');
+    }
 }
 
 })();

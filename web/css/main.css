@@ -97,6 +97,14 @@ body {
 	padding-right: 2px;
 }
 
+.footer {
+	margin-top:20px;
+}
+
+.clear {
+	clear: both;
+}
+
 @media (max-width: 768px) {
 	.footer {
 	  position: fixed;
