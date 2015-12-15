@@ -56,6 +56,11 @@ function NewCategoryController(ROUTES, PreWork, CategoryService, alertId, FormHe
         return false;
     };
     
+    this.clearForm = function() {
+        document.getElementById('category_name').focus();
+        self.name = '';
+    };
+    
     // ----------------
     
     PreWork.merge('categories/new.tpl', this, 'categoryCtrl');

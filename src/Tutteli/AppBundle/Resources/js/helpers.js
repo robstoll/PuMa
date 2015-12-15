@@ -88,6 +88,7 @@ function FormHelper(AlertService, ErrorHandler, CsrfService, controller, url) {
         AlertService.close(alertId);
         Service['create' + name](obj).then(function() {
             AlertService.add(alertId, name  + ' &quot;' + obj[nameProp] + '&quot; successfully created.', 'success', 3000);
+            controller.clearForm();
         }, function(errorResponse) {
             ErrorHandler.handle(errorResponse, alertId, reloadCsrfToken);
         });
