@@ -11,8 +11,8 @@ angular.module('tutteli.purchase.core', [
     'tutteli.preWork',
     'tutteli.alert',
     'tutteli.csrf',
-    'tutteli.purchase.categories',
-    'tutteli.purchase.users',
+    'tutteli.purchase.category',
+    'tutteli.purchase.user',
     'tutteli.helpers',
 ])
     .controller('tutteli.purchase.PurchaseController', PurchaseController)

@@ -6,7 +6,7 @@
 (function(){
 'use strict';
 
-angular.module('tutteli.purchase.users', [
+angular.module('tutteli.purchase.user', [
     'tutteli.preWork', 
     'tutteli.auth', 
     'tutteli.purchase.routing', 

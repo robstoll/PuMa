@@ -6,7 +6,7 @@
 (function(){
 'use strict';
 
-angular.module('tutteli.purchase.categories', [
+angular.module('tutteli.purchase.category', [
     'tutteli.preWork', 
     'tutteli.purchase.routing',
     'tutteli.helpers'
