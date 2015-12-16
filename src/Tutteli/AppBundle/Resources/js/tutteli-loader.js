@@ -37,19 +37,19 @@ function HttpInterceptorProvider() {
         
         request: function(config){
             angular.element(selector).addClass(className);
-            angular.element(document.body).addClass(bodyClassName);
+            angular.element(document.querySelector('html')).addClass(bodyClassName);
             return config;
         },
 
         response: function(response) {
             angular.element(selector).removeClass(className);
-            angular.element(document.body).removeClass(bodyClassName);
+            angular.element(document.querySelector('html')).removeClass(bodyClassName);
             return response;
         },
         
         responseError: function(rejection) {
             angular.element(selector).removeClass(className);
-            angular.element(document.body).removeClass(bodyClassName);
+            angular.element(document.querySelector('html')).removeClass(bodyClassName);
             return $q.reject(rejection);
         }
     
