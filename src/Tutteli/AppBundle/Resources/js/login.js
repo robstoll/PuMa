@@ -25,50 +25,36 @@ LoginController.$inject = [
     'tutteli.auth.AuthService',
     'tutteli.alert.AlertService', 
     'tutteli.LoginController.alertId',
-    'tutteli.csrf.CsrfService'];
-function LoginController($http, ROUTES, PreWork, AuthService, AlertService, alertId, CsrfService) {
+    'tutteli.helpers.FormHelperFactory'];
+function LoginController($http, ROUTES, PreWork, AuthService, AlertService, alertId, FormHelperFactory) {
     var self = this;
-    
-    this.credentials = {
-        username: '',
-        password: '',
-        csrf_token: ''
+    var formHelper = FormHelperFactory.build(self, ROUTES.get_user_csrf);
+        
+    this.login = function ($event) {
+        var credentials = {
+            username: self.username,
+            password: self.password,
+            csrf_token: self.csrf_token
+        };
+        formHelper.call('login', $event, alertId, credentials, AuthService, function unknownErrorHandler(errorResponse) {
+            var msg = 'Unexpected error occured. Please log in again in a few minutes. '
+                + 'If the error should occurr again (this message does not disappear), '
+                + 'then please {{reportLink}} and report the shown error to the admin.<br/>'
+                + '{{reportContent}}';
+            
+            var report = AlertService.getHttpErrorReport(errorResponse);
+            AlertService.addErrorReport(alertId, msg, 'warning', 
+                    null, null, 
+                    '_login_report', 'click here', report);                            
+        
+        });
     };
     
-    this.login = login;
+    // ------------------
     
     PreWork.merge('login.tpl', this, 'loginCtrl');
        
-    if (self.credentials.csrf_token === undefined || self.credentials.csrf_token === '') {
-        reloadCsrfToken();
-    }
-    
-    function login($event) {
-        AlertService.close(alertId);
-        $event.preventDefault();
-        AuthService.login(self.credentials).then(null, function(error){
-            if (error.status == 401) {
-                AlertService.add(alertId, error.data, 'danger');
-                if (error.data == 'Invalid CSRF token.') {
-                    reloadCsrfToken();
-                }
-            } else {
-                var msg = 'Unexpected error occured. '
-                    + 'Please log in again in a few minutes. If the error should occurr again (this message does not disappear), '
-                    + 'then please {{reportLink}} and report the shown error to the admin.<br/>'
-                    + '{{reportContent}}';
-                
-                var report = AlertService.getHttpErrorReport(error);
-                AlertService.addErrorReport(alertId, msg, 'warning', 
-                        null, null, 
-                        '_login_report', 'click here', report);                            
-            }
-        });
-    }
-    
-    function reloadCsrfToken() {
-        CsrfService.reloadToken(ROUTES.get_login_csrf, self.credentials);
-    }
+    formHelper.reloadCsrfIfNecessary();    
 }
 
 LoginModalController.$inject = ['$scope', 'tutteli.auth.AuthService'];
@@ -88,10 +74,10 @@ function LoginModalController($scope, AuthService) {
 LoginModalService.$inject = ['$rootScope','$uibModal'];
 function LoginModalService($rootScope, $uibModal) {
 
-    return function() {
+    this.open = function() {
       var instance = $uibModal.open({
         templateUrl: 'login.tpl',
-        controller: 'tutteli.LoginModalCtrl',
+        controller: 'tutteli.LoginModalController',
         backgrop: false
       });
 

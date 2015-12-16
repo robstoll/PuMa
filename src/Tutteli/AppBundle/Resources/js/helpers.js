@@ -14,7 +14,8 @@ angular.module('tutteli.helpers', ['tutteli.alert', 'tutteli.preWork'])
 
 ErrorHandler.$inject = ['tutteli.alert.AlertService'];
 function ErrorHandler(AlertService){
-    this.handle = function(errorResponse, alertId, reloadCsrfTokenCallback) {
+
+    this.handle = function(errorResponse, alertId, reloadCsrfTokenCallback, unknownErrorHandler) {
         if (errorResponse.status == 401) {
             AlertService.add(alertId, errorResponse.data, 'danger');
             if (errorResponse.data == 'Invalid CSRF token.') {
@@ -33,8 +34,10 @@ function ErrorHandler(AlertService){
             AlertService.add(alertId, err, 'danger');
         } else if (errorResponse.error) {
             AlertService.add(alertId, errorResponse.error);
+        } else if(unknownErrorHandler === undefined) {
+            AlertService.add(alertId, 'Unknown error occurred. Please try again in a few minutes.', 'danger');
         } else {
-            AlertService.add(alertId, 'Unknown error occurred. Please try again.', 'danger');
+            unknownErrorHandler(errorResponse);
         }
     };
 }
@@ -82,6 +85,7 @@ function FormHelperFactory($q, AlertService, ErrorHandler, CsrfService) {
 }
 
 function FormHelper($q, AlertService, ErrorHandler, CsrfService, controller, url) {
+    var self = this;
     
     this.create = function($event, alertId, obj, name, nameProp, Service) {
         $event.preventDefault();
@@ -91,30 +95,39 @@ function FormHelper($q, AlertService, ErrorHandler, CsrfService, controller, url
             AlertService.add(alertId, name  + prop + ' successfully created.', 'success', 3000);
             controller.clearForm();
         }, function(errorResponse) {
-            ErrorHandler.handle(errorResponse, alertId, reloadCsrfToken);
+            ErrorHandler.handle(errorResponse, alertId, self.reloadCsrfToken);
             return $q.reject(errorResponse);
         });
     };
     
-    this.update = function($event, alertId, obj, name, nameProp, Service){
+    this.update = function($event, alertId, obj, name, nameProp, Service) {
         $event.preventDefault();
         AlertService.close(alertId);
         return Service['update' + name](obj).then(function() {
             var prop = nameProp != null ? '&quot;' + obj[nameProp] + '&quot;' : '';
             AlertService.add(alertId, name + prop + ' successfully updated.', 'success', 3000);
         }, function(errorResponse) {
-            ErrorHandler.handle(errorResponse, alertId, reloadCsrfToken);
+            ErrorHandler.handle(errorResponse, alertId, self.reloadCsrfToken);
             return $q.reject(errorResponse);
         });
     };
     
-    function reloadCsrfToken(){
+    this.call = function(methodName, $event, alertId, obj, Service, unknownErrorHandler) {
+        $event.preventDefault();
+        AlertService.close(alertId);
+        return Service[methodName](obj).then(null, function(errorResponse) {
+            ErrorHandler.handle(errorResponse, alertId, self.reloadCsrfToken, unknownErrorHandler);
+            return $q.reject(errorResponse);
+        });
+    };
+    
+    this.reloadCsrfToken = function(){
         CsrfService.reloadToken(url, controller);
-    }
+    };
     
     this.reloadCsrfIfNecessary = function() {
         if (controller.csrf_token === undefined || controller.csrf_token === '') {
-            reloadCsrfToken();
+            self.reloadCsrfToken();
         }
     };
 }
