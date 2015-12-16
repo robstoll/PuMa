@@ -39,6 +39,7 @@
                         	<span class="glyphicon glyphicon-user" aria-hidden="true"></span> <span ng-bind="naviCtrl.getUsername()">{% if app.user %} {{app.user.username}} {% else %} anon {% endif %}</span><span class="caret"></span></a>
                         <ul class="dropdown-menu">
                         	<li><a ui-sref="edit_user({userId: naviCtrl.getUserId()})" href="{{ path('edit_user', {'userId': app.user != null ? app.user.id : 0}) }}">{{ 'nav.profile'|trans }}</a></li>
+                        	<li><a ui-sref="edit_user_password({userId: naviCtrl.getUserId()})" href="{{ path('edit_user_password', {'userId': app.user != null ? app.user.id : 0}) }}">{{ 'nav.changePassword'|trans }}</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a ui-sref="logout" href="{{ path('logout') }}">{{ 'nav.logout'|trans }}</a></li>
                         </ul>

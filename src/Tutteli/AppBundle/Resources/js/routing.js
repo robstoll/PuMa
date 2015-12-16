@@ -18,20 +18,19 @@ angular.module('tutteli.purchase.routing', [
   function($locationProvider, $stateProvider,  USER_ROLES) {
       
     $locationProvider.html5Mode(true);
-    $stateProvider.state('login', {
+    $stateProvider.state('home', {
+        url: '/',
+        redirectTo: 'new_purchase'
+    })
+    
+    .state('login', {
         url: '/login',
         controller: 'tutteli.LoginController',
         controllerAs: 'loginCtrl',
         templateUrl: 'login.tpl',
-        data: {
-            authRoles : []
-        }
     }).state('logout', {
         url: '/logout',
         controller: 'tutteli.LogoutController'
-    }).state('home', {
-        url: '/',
-        redirectTo: 'new_purchase'
     })
     
     .state('new_purchase', {
@@ -70,7 +69,19 @@ angular.module('tutteli.purchase.routing', [
             authRoles: [USER_ROLES.admin],
             userIdParamName: 'userId'
         }
-    }).state('categories', {
+    }).state('edit_user_password', {
+        url: '/users/:userId/password/edit',
+        controller: 'tutteli.purchase.ChangePasswordController',
+        controllerAs: 'passwordCtrl',
+        templateUrl: 'users/password.tpl',
+        data: {
+            //force that only current user is allowed
+            authRoles: [USER_ROLES.noOne], 
+            userIdParamName: 'userId'
+        }
+    })
+    
+    .state('categories', {
         url: '/categories',
         controller: 'tutteli.purchase.CategoriesController',
         controllerAs: 'categoriesCtrl',
@@ -116,7 +127,8 @@ angular.module('tutteli.purchase.routing', [
     get_user_json: 'users/:userId.json',
     get_user_csrf: 'users/new/token',
     post_user: 'users',
-    put_user: 'users/:userId'
+    put_user: 'users/:userId',
+    put_user_password: 'users/:userId/password'
 });
 
 })();

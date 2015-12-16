@@ -15,9 +15,12 @@ angular.module('tutteli.purchase.user', [
     .controller('tutteli.purchase.UsersController', UsersController)
     .controller('tutteli.purchase.NewUserController', NewUserController)
     .controller('tutteli.purchase.EditUserController', EditUserController)
+    .controller('tutteli.purchase.ChangePasswordController', ChangePasswordController)
     .service('tutteli.purchase.UserService', UserService)
+    .service('tutteli.purchase.ChangePasswordService', ChangePasswordService)
     .constant('tutteli.purchase.NewUserController.alertId', 'tutteli-ctrls-NewUserController')
-    .constant('tutteli.purchase.EditUserController.alertId', 'tutteli-ctrls-EditUserController');
+    .constant('tutteli.purchase.EditUserController.alertId', 'tutteli-ctrls-EditUserController')
+    .constant('tutteli.purchase.ChangePasswordController.alertId', 'tutteli-ctrls-ChangePasswordController');
 
 UsersController.$inject = ['tutteli.PreWork', 'tutteli.purchase.UserService', 'tutteli.helpers.InitHelper'];
 function UsersController(PreWork, UserService, InitHelper) {
@@ -145,6 +148,83 @@ function EditUserController(
     formHelper.reloadCsrfIfNecessary();
 }
 
+ChangePasswordController.$inject = [
+    '$stateParams',
+    'tutteli.purchase.ROUTES',
+    'tutteli.PreWork',
+    'tutteli.purchase.ChangePasswordService',
+    'tutteli.purchase.ChangePasswordController.alertId',
+    'tutteli.helpers.FormHelperFactory'];
+function ChangePasswordController($stateParams, ROUTES, PreWork, ChangePasswordService, alertId, FormHelperFactory) {
+    var self = this;
+    var formHelper = FormHelperFactory.build(self, ROUTES.get_user_csrf);
+    
+    this.changePassword = function($event) {
+        var data = {
+            id: self.id,
+            oldPw: self.oldPw,
+            newPw: self.newPw,
+            repeatPw: self.repeatPw,
+            csrf_token: self.csrf_token
+        };
+        formHelper.update($event, alertId, data, 'Password', null, ChangePasswordService).then(function(){
+           self.clearForm(); 
+        });
+    };
+    
+    this.clearForm = function() {
+        document.getElementById('password_oldPw').focus();
+        self.oldPw = '';
+        self.newPw = '';
+        self.repeatPw = '';
+    };
+    
+    // -------------
+    
+    PreWork.merge('users/password.tpl', this, 'passwordCtrl');
+    if (this.id === undefined || this.id == '') {
+        this.id = $stateParams.userId;
+    }
+    formHelper.reloadCsrfIfNecessary();
+}
+
+ChangePasswordService.$inject = ['$http', '$q', '$timeout', 'tutteli.purchase.ROUTES'];
+function ChangePasswordService($http, $q, $timeout, ROUTES) {
+    
+    this.updatePassword = function(data) {
+        var errors = '';
+        var pwRegExp = /(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{7,}/;
+        if (data.oldPw == data.newPw) {
+            errors = 'The <a href="#" onclick="document.getElementById(\'password_newPw\').focus(); return false">'
+                + 'new password'
+                + '</a> cannot be the same as the old password.';
+        } else if(!pwRegExp.test(data.newPw)) {
+            errors = 'The <a href="#" onclick="document.getElementById(\'password_newPw\').focus(); return false">'
+                + 'new password'
+                + '</a> must be seven or more characters long and '
+                + 'contain at least one digit, one upper- and one lowercase character.';
+        } else if (data.newPw != data.repeatPw) {
+            errors = 'The two <a href="#" onclick="document.getElementById(\'password_newPw\').focus(); return false">' 
+                + 'passwords do not match'
+                + '</a>.';
+        }
+        if (errors == '') {
+            return $http.put(ROUTES.put_user_password.replace(':userId', data.id), data);
+        }
+        return getError($q, $timeout, errors);
+    };
+    
+}
+
+function getError($q, $timeout, errors) {
+    // delay is necessary in order that alert is removed properly
+    var delay = $q.defer();
+    $timeout(function() {
+        delay.reject({error: errors});
+    }, 1);
+    return delay.promise;
+}
+
 UserService.$inject = ['$http', '$q', '$timeout', 'tutteli.purchase.ROUTES'];
 function UserService($http, $q, $timeout, ROUTES) {
     
@@ -171,17 +251,9 @@ function UserService($http, $q, $timeout, ROUTES) {
         if (errors == '') {
             return $http.post(ROUTES.post_user, user);
         }
-        return getError(errors);
+        return getError($q, $timeout, errors);
     };
     
-    function getError(errors){
-        // delay is necessary in order that alert is removed properly
-        var delay = $q.defer();
-        $timeout(function() {
-            delay.reject({error: errors});
-        }, 1);
-        return delay.promise;
-    }
     
     function validateUser(user) {
         var errors = '';

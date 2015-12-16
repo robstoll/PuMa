@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Tutteli\AppBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
+use Tutteli\AppBundle\Entity\ChangePasswordDto;
 
 class UserController extends ATplController {
 
@@ -126,8 +128,7 @@ class UserController extends ATplController {
         if (!$response) {
             $user = new User();
             $user->setPlainPassword($this->generatePassword());
-            $password =  $this->get('security.password_encoder')->encodePassword($user, $user->getPlainPassword());
-            $user->setPassword($password);
+            $this->encodePassword($user);
             $this->mapUser($user, $data);
             $validator = $this->get('validator');
             $errors = $validator->validate($user);
@@ -152,6 +153,11 @@ class UserController extends ATplController {
             }
         }
         return $response;
+    }
+    
+    private function encodePassword(User $user){
+        $password =  $this->get('security.password_encoder')->encodePassword($user, $user->getPlainPassword());
+        $user->setPassword($password);
     }
     
     private function generatePassword() {
@@ -227,10 +233,13 @@ class UserController extends ATplController {
     }
     
     private function denyAccessUnlessAdminOrCurrentUser($userId) {
-        if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')
-          && $this->get('security.token_storage')->getToken()->getUser()->getId() != $userId) {
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN') && !$this->isCurrentUser($userId)) {
             throw $this->createAccessDeniedException('Unable to access this page!');
         }
+    }
+    
+    private function isCurrentUser($userId) {
+        return $this->get('security.token_storage')->getToken()->getUser()->getId() == $userId;
     }
     
     public function editTplAction(Request $request) {
@@ -295,4 +304,79 @@ class UserController extends ATplController {
         return $response;
     }
 
+    public function editPasswordAction(Request $request, $userId, $ending) {
+        if (!$this->isCurrentUser($userId)) {
+            throw $this->createAccessDeniedException('Unable to access this page!');
+        }
+        return $this->editPassword($request, $userId, $ending);
+    }
+        
+    private function editPassword(Request $request, $userId, $ending) {        
+        $viewPath = '@TutteliAppBundle/Resources/views/User/pass.html.twig';
+        list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
+        
+        if (!$response) {
+            $response = $this->render($viewPath, array (
+                    'notXhr' => $ending == '',
+                    'error' => null,
+                    'userId' => $userId
+            ));
+        
+            if ($ending == '.tpl') {
+                $response->setETag($etag);
+            }
+        }
+        return $response;
+    }
+    
+    public function editPasswordTplAction(Request $request) {
+        return $this->editPassword($request, 0, '.tpl');
+    }
+    
+    public function putPasswordAction(Request $request, $userId) {
+        if (!$this->isCurrentUser($userId)) {
+            throw $this->createAccessDeniedException('Unable to access this page!');
+        }
+        
+        if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+            $user = $this->loadUser($userId);
+            return $this->changePassword($request, $user);        
+        }
+        return new Response('{"msg": "Wrong Content-Type"}', Response::HTTP_BAD_REQUEST);
+    }
+    
+    public function changePassword(Request $request, User $user) {
+        list($data, $response) = $this->decodeDataAndVerifyCsrf($request);
+        if (!$response) {
+            $changePw = new ChangePasswordDto();
+            $this->mapPw($changePw, $data);
+            $validator = $this->get('validator');
+            $errors = $validator->validate($changePw);
+            if (count($errors) > 0) {
+                $response = $this->getTranslatedValidationResponse($errors);
+            } else {
+                $user->setPlainPassword($data['newPw']);
+                $this->encodePassword($user);
+                $em = $this->getDoctrine()->getManager();
+                $em->merge($user);
+                $em->flush();
+                $response = new Response('', Response::HTTP_NO_CONTENT);
+            }
+        }
+        return $response;       
+    }
+    
+    private function mapPw(ChangePasswordDto $dto, $data) {
+        if(array_key_exists('oldPw', $data)) {
+            $dto->oldPw = $data['oldPw'];
+        }
+        
+        if(array_key_exists('newPw', $data)) {
+            $dto->newPw = $data['newPw'];
+        }
+        
+        if(array_key_exists('repeatPw', $data)) {
+            $dto->repeatPw = $data['repeatPw'];
+        }
+    }
 }

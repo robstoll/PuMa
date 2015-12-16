@@ -20,7 +20,7 @@ login_csrf:
     
 logout:
     path: /logout
-    methods: [GET]
+    methods: [GET]    
 
 home:
     path:   /
@@ -135,6 +135,20 @@ edit_user_tpl:
 put_user:
     path: /users/{userId}
     defaults: { _controller: "TutteliAppBundle:User:put" }
-    methods: [PUT]
+    methods: [PUT]    
     
+edit_user_password:
+    path: /users/{userId}/password/edit{ending}
+    defaults: { _controller: "TutteliAppBundle:User:editPassword", ending: ""}
+    methods: [GET]
+
+edit_user_password_tpl:
+    path: /users/password.tpl
+    defaults: { _controller: "TutteliAppBundle:User:editPasswordTpl" }
+    methods: [GET]    
+    
+put_user_password:
+    path: /users/{userId}/password
+    defaults: { _controller: "TutteliAppBundle:User:putPassword" }
+    methods: [PUT]
     

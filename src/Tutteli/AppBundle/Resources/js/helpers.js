@@ -73,36 +73,38 @@ function InitHelper(PreWork) {
     };
 }
 
-FormHelperFactory.$inject = ['tutteli.alert.AlertService', 'tutteli.helpers.ErrorHandler', 'tutteli.csrf.CsrfService'];
-function FormHelperFactory(AlertService, ErrorHandler, CsrfService) {
+FormHelperFactory.$inject = ['$q', 'tutteli.alert.AlertService', 'tutteli.helpers.ErrorHandler', 'tutteli.csrf.CsrfService'];
+function FormHelperFactory($q, AlertService, ErrorHandler, CsrfService) {
     
     this.build = function(controller, url){
-        return new FormHelper(AlertService, ErrorHandler, CsrfService, controller, url);
+        return new FormHelper($q, AlertService, ErrorHandler, CsrfService, controller, url);
     };
 }
 
-function FormHelper(AlertService, ErrorHandler, CsrfService, controller, url) {
+function FormHelper($q, AlertService, ErrorHandler, CsrfService, controller, url) {
     
     this.create = function($event, alertId, obj, name, nameProp, Service) {
         $event.preventDefault();
         AlertService.close(alertId);
-        Service['create' + name](obj).then(function() {
+        return Service['create' + name](obj).then(function() {
             var prop = nameProp != null ? ' &quot;' + obj[nameProp] + '&quot;' : ''; 
             AlertService.add(alertId, name  + prop + ' successfully created.', 'success', 3000);
             controller.clearForm();
         }, function(errorResponse) {
             ErrorHandler.handle(errorResponse, alertId, reloadCsrfToken);
+            return $q.reject(errorResponse);
         });
     };
     
     this.update = function($event, alertId, obj, name, nameProp, Service){
         $event.preventDefault();
         AlertService.close(alertId);
-        Service['update' + name](obj).then(function() {
+        return Service['update' + name](obj).then(function() {
             var prop = nameProp != null ? '&quot;' + obj[nameProp] + '&quot;' : '';
             AlertService.add(alertId, name + prop + ' successfully updated.', 'success', 3000);
         }, function(errorResponse) {
             ErrorHandler.handle(errorResponse, alertId, reloadCsrfToken);
+            return $q.reject(errorResponse);
         });
     };
     

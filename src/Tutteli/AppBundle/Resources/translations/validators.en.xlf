@@ -11,6 +11,7 @@
                 <source>login.password</source>
                 <target>Password must be seven or more characters long and contain at least one digit, one upper- and one lowercase character.</target>
             </trans-unit>
+            
             <trans-unit id="10">
                 <source>purchase.expr</source>
                 <target>Position {{pos}}: The entered expression for price was erroneous. Only the following operators are allowed: plus (+), minus (-), multiply (*).</target>
@@ -24,6 +25,14 @@
                 <target>No positions provided for the given purchase.</target>
             </trans-unit>
             
+            <trans-unit id="20">
+                <source>password.notCurrent</source>
+                <target>The current password is wrong.</target>
+            </trans-unit>
+            <trans-unit id="21">
+                <source>password.notSame</source>
+                <target>The two passwords do not match.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
