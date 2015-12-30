@@ -32,7 +32,7 @@
                 		<div style="float:clear"></div>
                 	</div>
                 	<div class="input-group">
-                	 	<input type="text" id="purchase_expression{{ '{{$index}}' }}" name="expression" required="required" ng-model="position.expression" ng-disabled="purchaseCtrl.disabled" class="form-control"/>
+                	 	<input type="text" id="purchase_expression{{ '{{$index}}' }}" name="expression" required="required" ng-model="position.expression" ng-disabled="purchaseCtrl.disabled" class="form-control" autocomplete="off"/>
                 	 	<span class="input-group-addon"><span ng-bind="position.calc()">CHF 0.00</span></span>
                      </div>
                	</div>
