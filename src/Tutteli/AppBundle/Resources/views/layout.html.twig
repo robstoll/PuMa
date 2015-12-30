@@ -6,9 +6,21 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
-	
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ asset('css/main.css') }}">
+	{% stylesheets output="css/lib.css" 
+		'../bower_components/bootstrap/dist/css/bootstrap.min.css' %}
+	    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+    {# fonts required by bootstrap, copy it from components to the web-folder #}
+    {% stylesheets output="fonts/glyphicons-halflings-regular.ttf" 
+		'../bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf' %}
+    {% endstylesheets %}
+    {% stylesheets output="fonts/glyphicons-halflings-regular.woff" 
+		'../bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.woff' %}
+    {% endstylesheets %}
+    {% stylesheets output="fonts/glyphicons-halflings-regular.woff2" 
+		'../bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2' %}
+    {% endstylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/main.css') }}" />
 {% endblock %}    
 
 {% block body %}
@@ -63,23 +75,23 @@
 	 # hence comment it only out if a lib has changed and dump the assetic again 
 	 # php app/console assetic:dump --env=prod
      #}
-	<script src="{{ asset('js/lib.js') }}"></script>
-{#     {% javascripts filter="?uglifyjs2" output="js/lib.js" #}
-{#     	'../bower_components/jquery/dist/jquery.js'#}
-{#         '../bower_components/bootstrap/dist/js/bootstrap.js' #}
-{#     	'../bower_components/angular/angular.js'#}
-{#     	'../bower_components/angular-resource/angular-resource.js'#}
-{#     	'../bower_components/angular-cookies/angular-cookies.js'#}
-{#     	'../bower_components/angular-ui-router/release/angular-ui-router.js'#}
-{#     	'../bower_components/angular-bootstrap/ui-bootstrap-tpls.js'#}
-{#     	'../bower_components/tutteli-angular-pre-work/src/pre-work.js'#}
-{#     	'../bower_components/tutteli-angular-auth/src/auth.js'#}
-{#     	'../bower_components/tutteli-angular-auth/src/auth-login-form.js'#}
-{#     	'../bower_components/tutteli-angular-auth/src/auth-http.js'#}
-{#     	'../bower_components/tutteli-angular-auth/src/auth-routing.js'#}
-{#     	 %}#}
-{#         <script src="{{ asset_url }}"></script>#}
-{#     {% endjavascripts %}#}
+{# 	<script src="{{ asset('js/lib.js') }}"></script>#}
+    {% javascripts filter="?uglifyjs2" output="js/lib.js" 
+    	'../bower_components/jquery/dist/jquery.js'
+        '../bower_components/bootstrap/dist/js/bootstrap.js' 
+    	'../bower_components/angular/angular.js'
+    	'../bower_components/angular-resource/angular-resource.js'
+    	'../bower_components/angular-cookies/angular-cookies.js'
+    	'../bower_components/angular-ui-router/release/angular-ui-router.js'
+    	'../bower_components/angular-bootstrap/ui-bootstrap-tpls.js'
+    	'../bower_components/tutteli-angular-pre-work/src/pre-work.js'
+    	'../bower_components/tutteli-angular-auth/src/auth.js'
+    	'../bower_components/tutteli-angular-auth/src/auth-login-form.js'
+    	'../bower_components/tutteli-angular-auth/src/auth-http.js'
+    	'../bower_components/tutteli-angular-auth/src/auth-routing.js'
+    	 %}
+        <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
     {% javascripts filter="?uglifyjs2" output="js/app.js" 
         '@TutteliAppBundle/Resources/js/*.js'
 	     %}

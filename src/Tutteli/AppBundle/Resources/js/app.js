@@ -56,25 +56,36 @@ authEventHandler.$inject =  [
     'tutteli.auth.EVENTS', 
     'tutteli.alert.AlertService', 
     'tutteli.LoginController.alertId', 
+    'tutteli.LoginModalService',
     'tutteli.baseHref'];
-function authEventHandler($rootScope, $location, $state, AUTH_EVENTS, AlertService, alertId, baseHref) {
+function authEventHandler(
+        $rootScope, 
+        $location, 
+        $state, 
+        AUTH_EVENTS, 
+        AlertService, 
+        alertId, 
+        LoginModalService, 
+        baseHref) {
       
     $rootScope.$on(AUTH_EVENTS.notAuthorised, function(event, response) {
         AlertService.add('tutteli.purchase.notAuthorised', 
                 'You are not authorised to visit ' + response.url, 'danger');
     });   
     
-    $rootScope.$on(AUTH_EVENTS.notAuthenticated, function(event, response) {
+    $rootScope.$on(AUTH_EVENTS.notAuthenticated, function(event, data) {
         if ($location.path() != '/login') {
-//          if (requireLogin && $rootScope.currentUser === undefined) {
-//              event.preventDefault();
-//              
-//              LoginModal().then(function () {
-//                return $state.go(toState.name, toParams);
-//              }).catch(function (reason) {
-//                  console.log(reason)
-//              });
-//          }   
+          event.preventDefault();
+          
+          LoginModalService.open().then(function() {
+              if (data.toState) {
+                  $state.go(data.toState, data.toParams);
+              } else if (data.response) {
+                  
+              }
+          }, function (reason) {
+              console.log(reason);
+          });
         } else {
             AlertService.add(alertId, 'You are not yet logged in, please use the form below.', 'warning');
         }
@@ -86,7 +97,7 @@ function authEventHandler($rootScope, $location, $state, AUTH_EVENTS, AlertServi
         
         var baseUrl = $location.protocol() + '://' + $location.host() + baseHref;
         
-        var url = result.url || '';
+        var url = result.data.url || '';
         if (url != ""){
             if (baseUrl == url.substr(0, baseUrl.length)) {
                 $location.path(url.substr(baseUrl.length));

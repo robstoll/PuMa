@@ -11,6 +11,8 @@
 /web/bundles/
 /web/config.php
 /web/js
+/web/css
+/web/fonts
 /bower_components
 /node_modules
 /.buildpath

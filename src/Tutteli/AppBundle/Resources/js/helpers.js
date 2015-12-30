@@ -13,12 +13,16 @@ angular.module('tutteli.helpers', ['tutteli.alert', 'tutteli.preWork'])
 
 
 ErrorHandler.$inject = ['tutteli.alert.AlertService'];
-function ErrorHandler(AlertService){
+function ErrorHandler(AlertService) {
 
     this.handle = function(errorResponse, alertId, reloadCsrfTokenCallback, unknownErrorHandler) {
         if (errorResponse.status == 401) {
-            AlertService.add(alertId, errorResponse.data, 'danger');
-            if (errorResponse.data == 'Invalid CSRF token.') {
+            var errorMsg = errorResponse.data;
+            if (errorMsg.msg) {
+               errorMsg = errorMsg.msg; 
+            }
+            AlertService.add(alertId, errorMsg, 'danger');
+            if (errorMsg == 'Invalid CSRF token.') {
                 reloadCsrfTokenCallback();
             }
         } else if (errorResponse.status == 400) {

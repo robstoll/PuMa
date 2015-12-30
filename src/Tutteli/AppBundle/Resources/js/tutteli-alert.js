@@ -19,7 +19,7 @@ function AlertController($element, AlertService) {
 }
 
 AlertService.$inject =  ['$interpolate', '$timeout', 'tutteli.utils.TextSelectService'];
-function AlertService($interpolate, $timeout,  TextSelectService){
+function AlertService($interpolate, $timeout, TextSelectService){
     var self = this;  
     var alerts = {};
     

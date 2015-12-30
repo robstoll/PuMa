@@ -28,26 +28,10 @@ LoginController.$inject = [
     'tutteli.helpers.FormHelperFactory'];
 function LoginController($http, ROUTES, PreWork, AuthService, AlertService, alertId, FormHelperFactory) {
     var self = this;
-    var formHelper = FormHelperFactory.build(self, ROUTES.get_user_csrf);
+    var formHelper = FormHelperFactory.build(self, ROUTES.get_login_csrf);
         
     this.login = function ($event) {
-        var credentials = {
-            username: self.username,
-            password: self.password,
-            csrf_token: self.csrf_token
-        };
-        formHelper.call('login', $event, alertId, credentials, AuthService, function unknownErrorHandler(errorResponse) {
-            var msg = 'Unexpected error occured. Please log in again in a few minutes. '
-                + 'If the error should occurr again (this message does not disappear), '
-                + 'then please {{reportLink}} and report the shown error to the admin.<br/>'
-                + '{{reportContent}}';
-            
-            var report = AlertService.getHttpErrorReport(errorResponse);
-            AlertService.addErrorReport(alertId, msg, 'warning', 
-                    null, null, 
-                    '_login_report', 'click here', report);                            
-        
-        });
+        login(self, $event, formHelper, AuthService, AlertService, alertId);
     };
     
     // ------------------
@@ -57,32 +41,84 @@ function LoginController($http, ROUTES, PreWork, AuthService, AlertService, aler
     formHelper.reloadCsrfIfNecessary();    
 }
 
-LoginModalController.$inject = ['$scope', 'tutteli.auth.AuthService'];
-function LoginModalController($scope, AuthService) {
-    this.cancel = $scope.$dismiss;
-
-    this.submit = function (credentials) {
-        AuthService.login(credentials).then(function (user) {
-            $scope.$close(user);
-        }, function() {
-            
-        }); 
-        
+function login(self, $event, formHelper, AuthService, AlertService, alertId) {
+    var credentials = {
+        username: self.username,
+        password: self.password,
+        csrf_token: self.csrf_token
     };
+    return formHelper.call('login', $event, alertId, credentials, AuthService, function unknownErrorHandler(errorResponse) {
+        var msg = 'Unexpected error occured. Please log in again in a few minutes. '
+            + 'If the error should occurr again (this message does not disappear), '
+            + 'then please {{reportLink}} and report the shown error to the admin.<br/>'
+            + '{{reportContent}}';
+        
+        var report = AlertService.getHttpErrorReport(errorResponse);
+        AlertService.addErrorReport(alertId, msg, 'warning', 
+                null, null, 
+                '_login_report', 'click here', report);                            
+    
+    });
 }
 
-LoginModalService.$inject = ['$rootScope','$uibModal'];
-function LoginModalService($rootScope, $uibModal) {
+LoginModalController.$inject = [
+    '$scope', 
+    'tutteli.purchase.ROUTES',
+    'tutteli.PreWork', 
+    'tutteli.auth.AuthService', 
+    'tutteli.alert.AlertService', 
+    'tutteli.LoginController.alertId',
+    'tutteli.helpers.FormHelperFactory'];
+function LoginModalController($scope, ROUTES, PreWork, AuthService, AlertService, alertId, FormHelperFactory) {
+    var self = this;
+    var formHelper = FormHelperFactory.build(self, ROUTES.get_login_csrf);
+    
+    this.cancel = $scope.$dismiss;
+
+    this.login = function ($event) {
+        login(self, $event, formHelper, AuthService, AlertService, alertId).then(function() {
+            $scope.$close();
+            AlertService.clear();
+            AlertService.add(alertId, 'Login successful, please repeat your last action.', 'success');
+        }); 
+    };
+    
+    // ------------------
+    
+    PreWork.merge('login.tpl', this, 'loginCtrl');
+       
+    formHelper.reloadCsrfIfNecessary(); 
+}
+
+LoginModalService.$inject = ['$uibModal'];
+function LoginModalService($uibModal) {
 
     this.open = function() {
+      var alerts = document.querySelector('div[ng-controller=\'tutteli.alert.AlertController as alertCtrl\']');
+      var parent = alerts.parentElement;
       var instance = $uibModal.open({
         templateUrl: 'login.tpl',
         controller: 'tutteli.LoginModalController',
-        backgrop: false
+        controllerAs: 'loginCtrl',
+        backdrop: 'static'
       });
-
-      return instance.result.then(function(){
-          console.error('TODO not yet implemented, LoginModalService.js');
+      
+      var dialog = null;
+      instance.rendered.then(function() {
+          dialog = document.querySelector('.modal-dialog');
+          parent.removeChild(alerts);
+          dialog.insertBefore(alerts, dialog.firstChild);
+      });  
+      
+      function resetAlert() {
+          dialog.removeChild(alerts);
+          parent.insertBefore(alerts, parent.firstChild);
+      }      
+      
+      return instance.result.then(function() {
+          resetAlert();
+      }, function() {
+          resetAlert();
       });
     };
 
