@@ -15,6 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Table(name="app_users")
  * @ORM\Entity(repositoryClass="Tutteli\AppBundle\Entity\UserRepository")
+ * @ORM\HasLifecycleCallbacks
 
  * @UniqueEntity("username")
  */
@@ -54,15 +55,21 @@ class User implements UserInterface, \Serializable {
     private $role;
     
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="datetime", nullable=false)
      */
     private $createdAt;
     
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="datetime")
      */
     private $updatedAt;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumn(name="updated_by_user", nullable=false)
+     */
+    private $updatedBy;
+    
     public function __construct() {
         // may not be needed, see section on salt below
         // $this->salt = md5(uniqid(null, true));
@@ -71,7 +78,7 @@ class User implements UserInterface, \Serializable {
     /**
      * @ORM\PrePersist
      */
-    public function doStuffOnPrePersist() {
+    public function onPrePersist() {
         $this->createdAt = new \DateTime();
     }
     
@@ -263,5 +270,29 @@ class User implements UserInterface, \Serializable {
     public function getUpdatedAt()
     {
         return $this->updatedAt;
+    }
+
+    /**
+     * Set updatedBy
+     *
+     * @param \Tutteli\AppBundle\Entity\User $updatedBy
+     *
+     * @return User
+     */
+    public function setUpdatedBy(\Tutteli\AppBundle\Entity\User $updatedBy)
+    {
+        $this->updatedBy = $updatedBy;
+
+        return $this;
+    }
+
+    /**
+     * Get updatedBy
+     *
+     * @return \Tutteli\AppBundle\Entity\User
+     */
+    public function getUpdatedBy()
+    {
+        return $this->updatedBy;
     }
 }

@@ -136,6 +136,7 @@ class UserController extends ATplController {
                 $response = $this->getTranslatedValidationResponse($errors);
             } else {
                 $em = $this->getDoctrine()->getManager();
+                $this->setUpdatedByCurrentUser($user);
                 $em->persist($user);
                 $em->flush();
                 try {
@@ -296,6 +297,7 @@ class UserController extends ATplController {
                 $response = $this->getTranslatedValidationResponse($errors);
             } else {
                 $em = $this->getDoctrine()->getManager();
+                $this->setUpdatedByCurrentUser($user);
                 $em->merge($user);
                 $em->flush();
                 $response = new Response('', Response::HTTP_NO_CONTENT);

@@ -52,19 +52,25 @@ class PurchasePosition {
     private $purchase;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="datetime", nullable=false)
      */
     private $createdAt;
     
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="datetime")
      */
     private $updatedAt;
     
     /**
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumn(name="updated_by_user", nullable=false)
+     */
+    private $updatedBy;
+    
+    /**
      * @ORM\PrePersist
      */
-    public function doStuffOnPrePersist() {
+    public function onPrePersist() {
         $this->createdAt = new \DateTime();
     }
     
@@ -251,5 +257,29 @@ class PurchasePosition {
     public function getUpdatedAt()
     {
         return $this->updatedAt;
+    }
+
+    /**
+     * Set updatedBy
+     *
+     * @param \Tutteli\AppBundle\Entity\User $updatedBy
+     *
+     * @return PurchasePosition
+     */
+    public function setUpdatedBy(\Tutteli\AppBundle\Entity\User $updatedBy)
+    {
+        $this->updatedBy = $updatedBy;
+
+        return $this;
+    }
+
+    /**
+     * Get updatedBy
+     *
+     * @return \Tutteli\AppBundle\Entity\User
+     */
+    public function getUpdatedBy()
+    {
+        return $this->updatedBy;
     }
 }

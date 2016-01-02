@@ -125,6 +125,7 @@ class CategoryController extends ATplController {
                 $response = $this->getTranslatedValidationResponse($errors);
             } else {
                 $em = $this->getDoctrine()->getManager();
+                $this->setUpdatedByCurrentUser($category);
                 $em->persist($category);
                 $em->flush();
                 $response = $this->getCreateResponse($category->getId());

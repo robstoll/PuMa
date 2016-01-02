@@ -87,4 +87,7 @@ abstract class ATplController extends Controller {
         return new Response('{"id": "'.$id.'"}', Response::HTTP_CREATED);
     }
 
+    protected function setUpdatedByCurrentUser($obj) {
+        $obj->setUpdatedBy($this->get('security.token_storage')->getToken()->getUser());
+    }
 }
