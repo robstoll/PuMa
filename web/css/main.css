@@ -70,6 +70,9 @@ body {
     }
 }	
 
+.hidden.showBlock {
+	display: block !important;
+}
 .hidden.showList {
     display: list-item !important;
 }
@@ -109,6 +112,16 @@ body {
 	clear: both;
 }
 
+.total {
+    border: 1px solid #CCC;
+    font-weight: 700;
+    background-color: #eee;
+    border-radius: 5px;
+    padding: 6px;
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
 @media (max-width: 768px) {
 	.footer {
 	  position: fixed;
@@ -125,6 +138,32 @@ body {
 	
 	.form-group.last {
 	   margin-bottom: 85px;
+	}
+	.form-group.last.extraMargin {
+	   margin-bottom: 145px;
+	}
+	
+	div.totalContainer {
+	   position: fixed;
+	   bottom: 60px;
+	   left: 0;
+	   right: 0;
+	   background-color: #EEE;
+	   padding-left: 20px;
+	   padding-right: 20px;
+	   padding-bottom: 5px;
+	   padding-top: 10px;
+	   z-index: 2;
+	   border-top: 1px solid #CCC;
+	}
+	
+	div.totalContainer hr {
+	   display: none;
+	}
+	
+	div.totalContainer .total {
+	   border:0;
+	   padding:0;
 	}
 	
 	.calc {

@@ -63,13 +63,19 @@
                     </div>
                 </div>
             </div>
-           	<div class="form-group last">
+           	<div class="form-group last extraMargin">
             	<label class="control-label" for="purchase_user">{{ 'purchase.user'|trans }}</label>
             	<select id="purchase_category" name="user" required="required" ng-model="purchaseCtrl.user" ng-disabled="purchaseCtrl.disabled" ng-options="obj.id as obj.username for obj in purchaseCtrl.getUsers()" class="form-control" ng-init="purchaseCtrl.selectUser('{{ app.user.id }}', '{{  app.user.username }}')">
             		<option value="{{ app.user.id }}">{{ app.user.username }}</option>
             	</select>
            	</div>
            	<input type="hidden" id="csrf_token" ng-model="purchaseCtrl.csrf_token" name="csrf_token" value="{{ csrf_token('purchase') }}">
+           	<div class="totalContainer hidden" ng-class="{showBlock: purchaseCtrl.positions.length > 1}">
+           		<hr/>
+           		<label>{{ 'purchase.total'|trans }}</label>
+           		<span class="total pull-right" ng-bind="purchaseCtrl.getTotal()"></span>
+           		<div class="clear"></div>
+           	</div>
            	<footer class="footer">
                 <div class="form-group">
                 	<button style="display:none" type="button" id="purchase_add" class="btn-default btn" ng-disabled="purchaseCtrl.disabled" ng-click="purchaseCtrl.addPosition()"><i class="glyphicon glyphicon-plus"></i> {{ 'purchase.add'|trans }}</button>
@@ -87,11 +93,7 @@
               	document.getElementById('purchase_form').addEventListener('submit', oneTimeRemove);
         	})();
         </script>
-        {% endif %}
-        <script type="text/javascript">
-      		document.getElementById('purchase_add').style.display = 'inline';
-      	</script>
-                      	
+        {% endif %}          	
     {% if notXhr %}
     	</div>
     {%  endif %}

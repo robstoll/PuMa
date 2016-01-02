@@ -104,6 +104,10 @@
                 <source>purchase.submit</source>
                 <target>End purchase</target>
             </trans-unit>
+            <trans-unit id="208">
+                <source>purchase.total</source>
+                <target>Total of the purchase</target>
+            </trans-unit>
             
             <trans-unit id="300">
                 <source>users.username</source>

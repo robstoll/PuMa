@@ -194,6 +194,24 @@ function PurchaseController(
         self.addPosition();
         document.getElementById('purchase_expression0').focus();
     };
+    
+    this.getTotal = function() {
+        var total = 0;
+        var dummy = {};
+        for (var i = 0; i < self.positions.length; ++i) {
+            var val  = 0;
+            try {
+                val = $parse(self.positions[i].expression)(dummy);
+            } catch (err) {
+                // that's fine
+            }
+            if (!val) {
+                val = 0;
+            }
+            total += val;
+        }
+        return $filter('currency')(total, 'CHF ');
+    };
 
     // -------------------
 
@@ -209,6 +227,7 @@ function PurchaseController(
 
     self.loadCategories();
     self.loadUsers();
+    document.getElementById('purchase_add').style.display = 'inline';
 }
 
 function Position($parse, $filter) {
