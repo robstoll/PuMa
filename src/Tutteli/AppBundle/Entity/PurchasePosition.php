@@ -50,11 +50,6 @@ class PurchasePosition {
      * @ORM\JoinColumn(nullable=false)
      */
     private $purchase;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=false)
-     */
-    private $createdAt;
     
     /**
      * @ORM\Column(type="datetime")
@@ -71,14 +66,18 @@ class PurchasePosition {
      * @ORM\PrePersist
      */
     public function onPrePersist() {
-        $this->createdAt = new \DateTime();
+        $this->preSave();
+    }
+    
+    private function preSave() {
+        $this->updatedAt = new \DateTime();
     }
     
     /**
      * @ORM\PreUpdate
      */
     public function onPreUpdate() {
-        $this->updatedAt = new \DateTime();
+        $this->preSave();
     }
     
     /**
@@ -209,30 +208,6 @@ class PurchasePosition {
     public function getExpression()
     {
         return $this->expression;
-    }
-
-    /**
-     * Set createdAt
-     *
-     * @param \DateTime $createdAt
-     *
-     * @return PurchasePosition
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * Get createdAt
-     *
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
     }
 
     /**

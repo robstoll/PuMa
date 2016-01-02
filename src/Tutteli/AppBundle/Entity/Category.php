@@ -30,11 +30,6 @@ class Category
     private $name;
     
     /**
-     * @ORM\Column(type="datetime", nullable=false)
-     */
-    private $createdAt;
-    
-    /**
      * @ORM\Column(type="datetime")
      */
     private $updatedAt;
@@ -49,14 +44,18 @@ class Category
      * @ORM\PrePersist
      */
     public function onPrePersist() {
-        $this->createdAt = new \DateTime();
+        $this->preSave();
+    }
+    
+    private function preSave() {
+        $this->updatedAt = new \DateTime();
     }
     
     /**
      * @ORM\PreUpdate
      */
     public function onPreUpdate() {
-        $this->updatedAt = new \DateTime();
+        $this->preSave();
     }
     
     
@@ -92,30 +91,6 @@ class Category
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * Set createdAt
-     *
-     * @param \DateTime $createdAt
-     *
-     * @return Category
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * Get createdAt
-     *
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
     }
 
     /**

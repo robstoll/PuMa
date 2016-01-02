@@ -39,12 +39,7 @@ class Purchase
      * @ORM\OneToMany(targetEntity="PurchasePosition", mappedBy="purchase")
      */
     private $positions;
-    
-    /** 
-     * @ORM\Column(type="datetime", nullable=false) 
-     */
-    private $createdAt;
-    
+        
     /**
      * @ORM\Column(type="datetime")
      */
@@ -64,20 +59,24 @@ class Purchase
         $this->positions = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
-    /** 
+    /**
      * @ORM\PrePersist
      */
     public function onPrePersist() {
-        $this->createdAt = new \DateTime();
+        $this->preSave();
+    }
+    
+    private function preSave() {
+        $this->updatedAt = new \DateTime();
     }
     
     /**
      * @ORM\PreUpdate
      */
     public function onPreUpdate() {
-        $this->updatedAt = new \DateTime();
+        $this->preSave();
     }
-
+    
     /**
      * Get id
      *
@@ -168,30 +167,6 @@ class Purchase
     public function getPositions()
     {
         return $this->positions;
-    }
-
-    /**
-     * Set createdAt
-     *
-     * @param \DateTime $createdAt
-     *
-     * @return Purchase
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * Get createdAt
-     *
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
     }
 
     /**

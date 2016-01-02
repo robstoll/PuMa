@@ -55,11 +55,6 @@ class User implements UserInterface, \Serializable {
     private $role;
     
     /**
-     * @ORM\Column(type="datetime", nullable=false)
-     */
-    private $createdAt;
-    
-    /**
      * @ORM\Column(type="datetime")
      */
     private $updatedAt;
@@ -79,14 +74,18 @@ class User implements UserInterface, \Serializable {
      * @ORM\PrePersist
      */
     public function onPrePersist() {
-        $this->createdAt = new \DateTime();
+        $this->preSave();
+    }
+    
+    private function preSave() {
+        $this->updatedAt = new \DateTime();
     }
     
     /**
      * @ORM\PreUpdate
      */
     public function onPreUpdate() {
-        $this->updatedAt = new \DateTime();
+        $this->preSave();
     }
     
     public function getUsername() {
@@ -221,31 +220,6 @@ class User implements UserInterface, \Serializable {
 
     public function setPlainPassword($newPassword) {
         $this->plainPassword = $newPassword;
-    }
-
-
-    /**
-     * Set createdAt
-     *
-     * @param \DateTime $createdAt
-     *
-     * @return User
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * Get createdAt
-     *
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
     }
 
     /**
