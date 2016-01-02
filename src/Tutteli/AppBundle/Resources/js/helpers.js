@@ -108,7 +108,7 @@ function FormHelper($q, AlertService, ErrorHandler, CsrfService, controller, url
         $event.preventDefault();
         AlertService.close(alertId);
         return Service['update' + name](obj).then(function() {
-            var prop = nameProp != null ? '&quot;' + obj[nameProp] + '&quot;' : '';
+            var prop = nameProp != null ? ' &quot;' + obj[nameProp] + '&quot;' : '';
             AlertService.add(alertId, name + prop + ' successfully updated.', 'success', 3000);
         }, function(errorResponse) {
             ErrorHandler.handle(errorResponse, alertId, self.reloadCsrfToken);
