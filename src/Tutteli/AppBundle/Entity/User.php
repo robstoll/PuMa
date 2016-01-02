@@ -52,10 +52,34 @@ class User implements UserInterface, \Serializable {
      * @ORM\Column(type="string", length=20, nullable=true)
      */
     private $role;
+    
+    /**
+     * @ORM\Column(type="date")
+     */
+    private $createdAt;
+    
+    /**
+     * @ORM\Column(type="date")
+     */
+    private $updatedAt;
 
     public function __construct() {
         // may not be needed, see section on salt below
         // $this->salt = md5(uniqid(null, true));
+    }
+    
+    /**
+     * @ORM\PrePersist
+     */
+    public function doStuffOnPrePersist() {
+        $this->createdAt = new \DateTime();
+    }
+    
+    /**
+     * @ORM\PreUpdate
+     */
+    public function onPreUpdate() {
+        $this->updatedAt = new \DateTime();
     }
     
     public function getUsername() {
@@ -192,4 +216,52 @@ class User implements UserInterface, \Serializable {
         $this->plainPassword = $newPassword;
     }
 
+
+    /**
+     * Set createdAt
+     *
+     * @param \DateTime $createdAt
+     *
+     * @return User
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * Set updatedAt
+     *
+     * @param \DateTime $updatedAt
+     *
+     * @return User
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get updatedAt
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
 }

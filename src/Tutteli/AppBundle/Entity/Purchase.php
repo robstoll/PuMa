@@ -13,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Table(name="purchase")
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  */
 class Purchase 
 {
@@ -39,12 +40,36 @@ class Purchase
      */
     private $positions;
     
+    /** 
+     * @ORM\Column(type="date") 
+     */
+    private $createdAt;
+    
+    /**
+     * @ORM\Column(type="date")
+     */
+    private $updatedAt;
+    
     /**
      * Constructor
      */
     public function __construct()
     {
         $this->positions = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /** 
+     * @ORM\PrePersist
+     */
+    public function doStuffOnPrePersist() {
+        $this->createdAt = new \DateTime();
+    }
+    
+    /**
+     * @ORM\PreUpdate
+     */
+    public function onPreUpdate() {
+        $this->updatedAt = new \DateTime();
     }
 
     /**
@@ -137,5 +162,53 @@ class Purchase
     public function getPositions()
     {
         return $this->positions;
+    }
+
+    /**
+     * Set createdAt
+     *
+     * @param \DateTime $createdAt
+     *
+     * @return Purchase
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * Set updatedAt
+     *
+     * @param \DateTime $updatedAt
+     *
+     * @return Purchase
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get updatedAt
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
     }
 }

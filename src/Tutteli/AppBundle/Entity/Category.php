@@ -27,7 +27,32 @@ class Category
      * @ORM\Column(type="string", length=30, unique=true)
      */
     private $name;
+    
+    /**
+     * @ORM\Column(type="date")
+     */
+    private $createdAt;
+    
+    /**
+     * @ORM\Column(type="date")
+     */
+    private $updatedAt;
 
+    /**
+     * @ORM\PrePersist
+     */
+    public function doStuffOnPrePersist() {
+        $this->createdAt = new \DateTime();
+    }
+    
+    /**
+     * @ORM\PreUpdate
+     */
+    public function onPreUpdate() {
+        $this->updatedAt = new \DateTime();
+    }
+    
+    
     /**
      * Get id
      *
@@ -60,5 +85,53 @@ class Category
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set createdAt
+     *
+     * @param \DateTime $createdAt
+     *
+     * @return Category
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * Set updatedAt
+     *
+     * @param \DateTime $updatedAt
+     *
+     * @return Category
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get updatedAt
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
     }
 }
