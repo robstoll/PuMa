@@ -26,5 +26,11 @@
         	document.getElementById('category_id').value = '{{ category.id }}';
         	document.getElementById('category_name').value = '{{ category.name }}';
         </script>
+        {%  include 'TutteliAppBundle:tpl:updateBlock.js.twig' 
+            with {
+            	'controllerName': 'categoryCtrl',
+                'updatedAt': category.updatedAt|date('general.dateTimeFormat.php'|trans), 
+                'updatedBy': category.updatedBy.username
+            } only %}        
     {%  endif %}
 {% endblock %}

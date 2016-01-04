@@ -75,23 +75,23 @@
 	 # hence comment it only out if a lib has changed and dump the assetic again 
 	 # php app/console assetic:dump --env=prod
      #}
-{# 	<script src="{{ asset('js/lib.js') }}"></script>#}
-    {% javascripts filter="?uglifyjs2" output="js/lib.js" 
-    	'../bower_components/jquery/dist/jquery.js'
-        '../bower_components/bootstrap/dist/js/bootstrap.js' 
-    	'../bower_components/angular/angular.js'
-    	'../bower_components/angular-resource/angular-resource.js'
-    	'../bower_components/angular-cookies/angular-cookies.js'
-    	'../bower_components/angular-ui-router/release/angular-ui-router.js'
-    	'../bower_components/angular-bootstrap/ui-bootstrap-tpls.js'
-    	'../bower_components/tutteli-angular-pre-work/src/pre-work.js'
-    	'../bower_components/tutteli-angular-auth/src/auth.js'
-    	'../bower_components/tutteli-angular-auth/src/auth-login-form.js'
-    	'../bower_components/tutteli-angular-auth/src/auth-http.js'
-    	'../bower_components/tutteli-angular-auth/src/auth-routing.js'
-    	 %}
-        <script src="{{ asset_url }}"></script>
-    {% endjavascripts %}
+	<script src="{{ asset('js/lib.js') }}"></script>
+{#     {% javascripts filter="?uglifyjs2" output="js/lib.js" #}
+{#     	'../bower_components/jquery/dist/jquery.js'#}
+{#         '../bower_components/bootstrap/dist/js/bootstrap.js' #}
+{#     	'../bower_components/angular/angular.js'#}
+{#     	'../bower_components/angular-resource/angular-resource.js'#}
+{#     	'../bower_components/angular-cookies/angular-cookies.js'#}
+{#     	'../bower_components/angular-ui-router/release/angular-ui-router.js'#}
+{#     	'../bower_components/angular-bootstrap/ui-bootstrap-tpls.js'#}
+{#     	'../bower_components/tutteli-angular-pre-work/src/pre-work.js'#}
+{#     	'../bower_components/tutteli-angular-auth/src/auth.js'#}
+{#     	'../bower_components/tutteli-angular-auth/src/auth-login-form.js'#}
+{#     	'../bower_components/tutteli-angular-auth/src/auth-http.js'#}
+{#     	'../bower_components/tutteli-angular-auth/src/auth-routing.js'#}
+{#     	 %}#}
+{#         <script src="{{ asset_url }}"></script>#}
+{#     {% endjavascripts %}#}
     {% javascripts filter="?uglifyjs2" output="js/app.js" 
         '@TutteliAppBundle/Resources/js/*.js'
 	     %}

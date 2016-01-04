@@ -87,7 +87,14 @@ abstract class ATplController extends Controller {
         return new Response('{"id": "'.$id.'"}', Response::HTTP_CREATED);
     }
 
-    protected function setUpdatedByCurrentUser($obj) {
-        $obj->setUpdatedBy($this->get('security.token_storage')->getToken()->getUser());
+    protected function setUpdatedByCurrentUser($entity) {
+        $entity->setUpdatedBy($this->get('security.token_storage')->getToken()->getUser());
     }
+    
+    protected function getMetaJsonRows($entity) {
+        $format = $this->get('translator')->trans('general.dateTimeFormat.php');
+        return ',"updatedAt":"'.$entity->getUpdatedAt()->format($format).'"'
+              .',"updatedBy": "'.$entity->getUpdatedBy()->getUsername().'"';
+    }
+    
 }

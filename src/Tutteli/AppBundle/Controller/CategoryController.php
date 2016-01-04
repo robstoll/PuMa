@@ -9,7 +9,6 @@ namespace Tutteli\AppBundle\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Tutteli\AppBundle\Entity\Category;
-use Symfony\Component\Validator\ConstraintViolation;
 class CategoryController extends ATplController {
     
     protected function getCsrfTokenDomain() {
@@ -76,8 +75,9 @@ class CategoryController extends ATplController {
     
     private function getJson(Category $category) {
         return  '{'
-                .'"id": "'.$category->getId().'",'
-                .'"name": "'.$category->getName().'"'
+                .'"id": "'.$category->getId().'"'
+                .',"name": "'.$category->getName().'"'
+                .$this->getMetaJsonRows($category)
                 .'}'; 
     }
     

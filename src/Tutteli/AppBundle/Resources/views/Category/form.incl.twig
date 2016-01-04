@@ -19,7 +19,11 @@
     	<label class="control-label" for="category_name">{{ 'categories.name'|trans }}</label>
     	<input type="text" id="category_name" name="username" required="required" ng-model="categoryCtrl.name" ng-disabled="categoryCtrl.isDisabled()" class="form-control" />
 	</div>                    
-   	<input type="hidden" id="csrf_token" ng-model="categoryCtrl.csrf_token" name="csrf_token" value="{{ csrf_token('category') }}">
+	
+   	<input type="hidden" id="csrf_token" ng-model="categoryCtrl.csrf_token" name="csrf_token" value="{{ csrf_token('category') }}" />
+   	<div class="notice beforeFooter">
+   	    {% include 'TutteliAppBundle:tpl:updateBlock.html.twig' with {'controllerName': 'categoryCtrl'} only  %}
+   	</div>
     <footer class="footer">
         <div class="form-group">
         	<span class="pull-right"><button type="submit" id="category_form_submit" class="btn-default btn" ng-disabled="categoryCtrl.isDisabled()"><i class="glyphicon glyphicon-floppy-disk"></i> {{ btnText }}</button></span>

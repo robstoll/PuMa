@@ -18,14 +18,17 @@ angular.module('tutteli.purchase.category', [
     .constant('tutteli.purchase.NewCategoryController.alertId', 'tutteli-ctrls-NewCategoryController')
     .constant('tutteli.purchase.EditCategoryController.alertId', 'tutteli-ctrls-EditCategoryController');
 
-CategoriesController.$inject = ['tutteli.PreWork', 'tutteli.purchase.CategoryService', 'tutteli.helpers.InitHelper'];
-function CategoriesController(PreWork, CategoryService, InitHelper) {
+CategoriesController.$inject = ['$filter', 'tutteli.PreWork', 'tutteli.purchase.CategoryService', 'tutteli.helpers.InitHelper'];
+function CategoriesController($filter, PreWork, CategoryService, InitHelper) {
     var self = this;
     
     this.categories = null;
     
     this.initCategories = function(data) {
         InitHelper.initTableData('categories', self, data);
+        var latestEntry = $filter('orderBy')(data, 'updatedAt')[0];
+        self.updatedAt = latestEntry.updatedAt;
+        self.updatedBy = latestEntry.updatedBy;
     };
     
     // ----------------
@@ -90,6 +93,8 @@ function EditCategoryController(
         CategoryService.getCategory(categoryId).then(function(category) {
             self.id = category.id;
             self.name = category.name;
+            self.updatedAt = category.updatedAt;
+            self.updatedBy = category.updatedBy;
             isNotLoaded = false;
         });
     };

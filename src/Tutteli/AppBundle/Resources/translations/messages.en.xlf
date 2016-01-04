@@ -24,6 +24,10 @@
                 <source>general.dateFormat.php</source>
                 <target>d.m.Y</target>
             </trans-unit>  
+            <trans-unit id="15">
+                <source>general.dateTimeFormat.php</source>
+                <target>d.m.Y H:i:s</target>
+            </trans-unit>
             <trans-unit id="11">
                 <source>general.dateFormat.angularjs</source>
                 <target>dd.MM.yyyy</target>
@@ -35,6 +39,14 @@
             <trans-unit id="13">
                 <source>general.edit</source>
                 <target>Edit</target>
+            </trans-unit>
+            <trans-unit id="14">
+                <source>general.updatedAt</source>
+                <target>Last update on</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>general.updatedBy</source>
+                <target>by</target>
             </trans-unit>
             
             

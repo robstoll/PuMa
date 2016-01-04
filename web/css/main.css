@@ -122,6 +122,11 @@ body {
     padding-right: 12px;
 }
 
+.notice {
+	color: #AAA;
+	font-size: 0.9em;
+}
+
 @media (max-width: 768px) {
 	.footer {
 	  position: fixed;
@@ -136,7 +141,8 @@ body {
 	  z-index: 2;
 	}
 	
-	.form-group.last {
+	.form-group.last,
+	.beforeFooter {
 	   margin-bottom: 85px;
 	}
 	.form-group.last.extraMargin {
