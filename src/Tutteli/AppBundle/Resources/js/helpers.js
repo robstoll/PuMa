@@ -67,7 +67,7 @@ function InitHelper(PreWork) {
         var initName = name + 'Init';
         var nameUpper = name.substr(0, 1).toUpperCase() + name.substr(1);
         
-        PreWork.merge(name + '.tpl', this, name + 'Ctrl');
+        PreWork.merge(name + '.tpl', controller, name + 'Ctrl');
         if (controller[initName] !== undefined) {
             self.initTableData(name, controller, JSON.parse(controller[initName]));
         } else {
