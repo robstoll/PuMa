@@ -113,6 +113,8 @@ function EditUserController(
             self.email = user.email;
             self.role = user.roleId;
             document.querySelector('#user_role > option').remove();
+            self.updatedAt = user.updatedAt;
+            self.updatedBy = user.updatedBy;
             isNotLoaded = false;
         });
     };

@@ -28,5 +28,11 @@
         	document.getElementById('user_email').value = '{{ user.email }}';
         	document.getElementById('user_role').value = '{{ user.role }}';
         </script>
+        {%  include 'TutteliAppBundle:tpl:updateBlock.js.twig' 
+            with {
+            	'controllerName': 'userCtrl',
+                'updatedAt': user.updatedAt, 
+                'updatedBy': user.updatedBy
+            } only %}   
     {%  endif %}
 {% endblock %}
