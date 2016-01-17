@@ -18,17 +18,16 @@ angular.module('tutteli.purchase.category', [
     .constant('tutteli.purchase.NewCategoryController.alertId', 'tutteli-ctrls-NewCategoryController')
     .constant('tutteli.purchase.EditCategoryController.alertId', 'tutteli-ctrls-EditCategoryController');
 
-CategoriesController.$inject = ['$filter', 'tutteli.PreWork', 'tutteli.purchase.CategoryService', 'tutteli.helpers.InitHelper'];
-function CategoriesController($filter, PreWork, CategoryService, InitHelper) {
+CategoriesController.$inject = ['tutteli.PreWork', 'tutteli.purchase.CategoryService', 'tutteli.helpers.InitHelper'];
+function CategoriesController(PreWork, CategoryService, InitHelper) {
     var self = this;
     
     this.categories = null;
     
     this.initCategories = function(data) {
-        InitHelper.initTableData('categories', self, data);
-        var latestEntry = $filter('orderBy')(data, 'updatedAt')[0];
-        self.updatedAt = latestEntry.updatedAt;
-        self.updatedBy = latestEntry.updatedBy;
+        InitHelper.initTableData('categories', self, data.categories);
+        self.updatedAt = data.updatedAt;
+        self.updatedBy = data.updatedBy;
     };
     
     // ----------------
@@ -120,7 +119,6 @@ function EditCategoryController(
     formHelper.reloadCsrfIfNecessary();
 }
 
-
 CategoryService.$inject = ['$http', '$q', 'tutteli.purchase.ROUTES'];
 function CategoryService($http, $q, ROUTES) {
     
@@ -129,7 +127,13 @@ function CategoryService($http, $q, ROUTES) {
             if (response.data.categories === undefined) {
                 return $q.reject({msg:'The property "categories" was not defined in the returned data.', data: response.data});
             }
-            return $q.resolve(response.data.categories);
+            if (response.data.updatedAt === undefined) {
+                return $q.reject({msg:'The property "updatedAt" was not defined in the returned data.', data: response.data});
+            }
+            if (response.data.updatedBy === undefined) {
+                return $q.reject({msg:'The property "updatedBy" was not defined in the returned data.', data: response.data});
+            }
+            return $q.resolve(response.data);
         });
     };
     

@@ -42,7 +42,9 @@ class CategoryController extends ATplController {
         $repository = $this->getCategoryRepository();
         return $repository->findAll();
     }
-    
+    /**
+     * @return \Tutteli\AppBundle\Entity\CategoryRepository
+     */
     private function getCategoryRepository() {
         return $this->getDoctrine()->getRepository('TutteliAppBundle:Category');
     }
@@ -52,25 +54,37 @@ class CategoryController extends ATplController {
         return $repository->find($categoryId);
     }
     
-    public function cgetJsonAction() {
-        $data = $this->loadCategories();
-        return new Response($this->getJsonArray($data));
+    public function cgetJsonAction(Request $request) {
+        $repository = $this->getCategoryRepository();
+        $lastUpdatedCategory = $repository->getLastUpdated();
+        $updatedAt = $lastUpdatedCategory->getUpdatedAt();
+        $response = $this->checkUpdatedAt($request, $updatedAt);
+        if ($response === null) {
+            $data = $this->loadCategories();
+            $jsonArray = $this->getJsonArray($data);
+            $response = new Response(
+                    '{'
+                    .'"categories":'.$jsonArray.','
+                    .'"updatedAt":"'.$this->getFormattedDate($updatedAt).'",'
+                     .'"updatedBy":"'.$lastUpdatedCategory->getUpdatedBy()->getUsername().'"'
+                    .'}');
+            $response->setLastModified($updatedAt);
+        }
+        return $response;
     }
     
     private function getJsonArray(array $data) {
-        $list = '{"categories":[';
+        $list = '';
         $count = count($data);
-        if ($count > 0) {
-            for ($i = 0; $i < $count; ++$i) {
-                if ($i != 0) {
-                    $list .= ',';
-                }
-                $category = $data[$i]; 
-                $list .= $this->getJson($category);
+        for ($i = 0; $i < $count; ++$i) {
+            if ($i != 0) {
+                $list .= ',';
             }
+            /* @var $category \Tutteli\AppBundle\Entity\Category */
+            $category = $data[$i]; 
+            $list .= $this->getJson($category);
         }
-        $list .= ']}';
-        return $list;
+        return '['.$list.']';
     }
     
     private function getJson(Category $category) {

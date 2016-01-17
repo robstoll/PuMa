@@ -6,10 +6,16 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
-	{% stylesheets output="css/lib.css" 
-		'../bower_components/bootstrap/dist/css/bootstrap.min.css' %}
-	    <link rel="stylesheet" href="{{ asset_url }}" />
-    {% endstylesheets %}
+    {# No need to render it everytime in dev mode, it's too slow 
+	 # hence comment it only out if a lib has changed and dump the assetic again 
+	 # php app/console assetic:dump --env=prod
+     #}
+	<link rel="stylesheet" href="{{ asset('css/lib.css') }}" />
+{# 	{% stylesheets output="css/lib.css" #}
+{# 		'../bower_components/bootstrap/dist/css/bootstrap.min.css' %}#}
+{# 	    <link rel="stylesheet" href="{{ asset_url }}" />#}
+{#     {% endstylesheets %}#}
+    
     {# fonts required by bootstrap, copy it from components to the web-folder #}
     {% stylesheets output="fonts/glyphicons-halflings-regular.ttf" 
 		'../bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf' %}

@@ -13,6 +13,7 @@
     <div ui-view></div>
     	<div pre-work="users.tpl">
     {%  endif %}
+    
     	<table class="table table-striped">
     		<thead>
     			<tr>
@@ -36,7 +37,13 @@
             	<!-- pre-work-exclude-start -->
             	<tbody id="users_rows_preload"> 
             	{% set json = '' %}
+            	{% set updatedAt = date('0000-00-00') %}
+            	{% set updatedBy = {username:''} %}
                 {% for user in users %}
+                    {% if (updatedAt < user.updatedAt) %}
+                		{% set updatedAt = user.updatedAt %}
+                		{% set updatedBy = user.updatedBy %}
+                	{% endif %}
                     {%  if not json == '' %}
                 		{% set json = json ~ ',' %}
                 	{%  endif %}
@@ -65,12 +72,25 @@
             <input type="hidden" ng-model="usersCtrl.usersInit" value="{{ json }}"/>
             <!-- pre-work-exclude-end -->
         {% endif %}
+        <div class="notice beforeFooter">
+        	{% include 'TutteliAppBundle:tpl:updateBlock.html.twig' with {'controllerName': 'usersCtrl'} only  %}
+       	</div>
         <div id="users_load">{{ 'users.loading'|trans }}</div>
         <footer class="footer">
 			<a href="{{ path('new_user') }}" ui-sref="new_user" class="btn-default btn"><i class="glyphicon glyphicon-plus"></i> {{ 'users.add'|trans }}</a>
         </footer> 
+        
     {% if notXhr %}
         </div>
+        
+         {% if users %}
+            {%  include 'TutteliAppBundle:tpl:updateBlock.js.twig' 
+                with {
+                	'controllerName': 'usersCtrl',
+                    'updatedAt': updatedAt, 
+                    'updatedBy': updatedBy
+                } only %}             	
+        {% endif %}
         
         <script type="text/javascript">
         	document.getElementById('users_load').style.display = 'none';

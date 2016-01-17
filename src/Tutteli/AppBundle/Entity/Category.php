@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="category")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Tutteli\AppBundle\Entity\CategoryRepository")
  * @ORM\HasLifecycleCallbacks
  */
 class Category 

@@ -4,8 +4,9 @@
  * root folder or visit https://github.com/robstoll/purchase
  #}
  <script type="text/javascript">
-    document.getElementById('{{ controllerName }}_updatedAt').value = '{{ updatedAt }}';
-    document.getElementById('updatedAt').innerHTML = '{{ updatedAt }}';
-    document.getElementById('{{ controllerName }}_updatedBy').value = '{{ updatedBy }}';
-    document.getElementById('updatedBy').innerHTML = '{{ updatedBy }}';
+ {% set updatedAtFormatted = updatedAt|date('general.dateTimeFormat.php'|trans) %}
+    document.getElementById('{{ controllerName }}_updatedAt').value = '{{ updatedAtFormatted }}';
+    document.getElementById('updatedAt').innerHTML = '{{ updatedAtFormatted }}';
+    document.getElementById('{{ controllerName }}_updatedBy').value = '{{ updatedBy.username }}';
+    document.getElementById('updatedBy').innerHTML = '{{ updatedBy.username }}';
 </script>

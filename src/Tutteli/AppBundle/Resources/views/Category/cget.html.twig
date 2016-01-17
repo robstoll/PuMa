@@ -78,8 +78,8 @@
             {%  include 'TutteliAppBundle:tpl:updateBlock.js.twig' 
                 with {
                 	'controllerName': 'categoriesCtrl',
-                    'updatedAt': updatedAt|date('general.dateTimeFormat.php'|trans), 
-                    'updatedBy': updatedBy.username
+                    'updatedAt': updatedAt, 
+                    'updatedBy': updatedBy
                 } only %}             	
         {% endif %}
         

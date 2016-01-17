@@ -75,9 +75,9 @@ function PurchaseController(
 
     this.loadCategories = function() {
         CategoryService.getCategories().then(function(data) {
-            categoriesLoaded = data.length > 0;
+            categoriesLoaded = data.categories.length > 0;
             checkDisabled();
-            categories = data;
+            categories = data.categories;
             if (!categoriesLoaded) {
                 self.disabled = true;
                 var alertIdCategories = alertId + '-categories';

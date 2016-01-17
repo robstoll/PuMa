@@ -52,6 +52,16 @@ abstract class ATplController extends Controller {
         return [$etag, $response];
     }
     
+    protected function checkUpdatedAt(Request $request, \DateTime $updatedAt){
+        $response = new Response();
+        $response->setLastModified($updatedAt);
+        if (!$response->isNotModified($request)) {
+            //is newer, need to generate a new response and cannot use the old one
+            $response = null;
+        }
+        return $response;
+    }
+    
     protected function decodeDataAndVerifyCsrf(Request $request) {
         $response = null;
         $data = json_decode($request->getContent(), true);
@@ -91,9 +101,13 @@ abstract class ATplController extends Controller {
         $entity->setUpdatedBy($this->get('security.token_storage')->getToken()->getUser());
     }
     
-    protected function getMetaJsonRows($entity) {
+    protected function getFormattedDate($date) {
         $format = $this->get('translator')->trans('general.dateTimeFormat.php');
-        return ',"updatedAt":"'.$entity->getUpdatedAt()->format($format).'"'
+        return $date->format($format);
+    }
+    
+    protected function getMetaJsonRows($entity) {
+        return ',"updatedAt":"'.$this->getFormattedDate($entity->getUpdatedAt()).'"'
               .',"updatedBy": "'.$entity->getUpdatedBy()->getUsername().'"';
     }
     
