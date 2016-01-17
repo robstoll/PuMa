@@ -43,9 +43,23 @@ class UserController extends ATplController {
         return $response;
     }
     
-    public function cgetJsonAction() {        
-        $users = $this->loadUsers();
-        return new Response($this->getJsonArray($users));
+    public function cgetJsonAction(Request $request) {
+        $repository = $this->getDoctrine()->getRepository('TutteliAppBundle:User');
+        $lastUpdatedUser = $repository->getLastUpdated();
+        $updatedAt = $lastUpdatedUser->getUpdatedAt();
+        $response = $this->checkUpdatedAt($request, $updatedAt);
+        if ($response === null) {
+            $data = $repository->findAll();
+            $jsonArray = $this->getJsonArray($data);
+            $response = new Response(
+                    '{'
+                    .'"users":'.$jsonArray.','
+                    .'"updatedAt":"'.$this->getFormattedDate($updatedAt).'",'
+                    .'"updatedBy":"'.$lastUpdatedUser->getUpdatedBy()->getUsername().'"'
+                    .'}');
+            $response->setLastModified($updatedAt);
+        }
+        return $response;
     }
         
     private function loadUsers() {
@@ -63,7 +77,7 @@ class UserController extends ATplController {
     }
 
     private function getJsonArray(array $data) {
-        $list = '{"users":[';
+        $list = '';
         $count = count($data);
         if ($count > 0) {
             for ($i = 0; $i < $count; ++$i) {
@@ -75,18 +89,18 @@ class UserController extends ATplController {
                 $list .= $this->getJson($user);
             }
         }
-        $list .= ']}';
-        return $list;
+        return '['.$list.']';
     }
     
     private function getJson(User $user) {
          $translator = $this->get('translator');
         return '{'
-                .'"id":"'.$user->getId().'",'
-                .'"username":"'.$user->getUsername().'",'
-                .'"email":"'.$user->getEmail().'",'
-                .'"roleId":"'.$user->getRole().'",'
-                .'"role":"'.$translator->trans('users.roles.'.$user->getRole()).'"'                        
+                .'"id":"'.$user->getId().'"'
+                .',"username":"'.$user->getUsername().'"'
+                .',"email":"'.$user->getEmail().'"'
+                .',"roleId":"'.$user->getRole().'"'
+                .',"role":"'.$translator->trans('users.roles.'.$user->getRole()).'"'
+                .$this->getMetaJsonRows($user) 
                 .'}';
     }
     

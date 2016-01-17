@@ -60,7 +60,7 @@ class CategoryController extends ATplController {
         $updatedAt = $lastUpdatedCategory->getUpdatedAt();
         $response = $this->checkUpdatedAt($request, $updatedAt);
         if ($response === null) {
-            $data = $this->loadCategories();
+            $data = $repository->findAll();
             $jsonArray = $this->getJsonArray($data);
             $response = new Response(
                     '{'

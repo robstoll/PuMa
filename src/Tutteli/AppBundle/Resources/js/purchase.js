@@ -141,7 +141,7 @@ function PurchaseController(
         UserService.getUsers().then(function(data) {
             usersLoaded = true;
             checkDisabled();
-            users = data;
+            users = data.users;
         }, function(errorResponse) {
             self.disabled = true;
             var alertIdUsers = alertId + '-users';

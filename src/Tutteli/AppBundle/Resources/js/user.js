@@ -29,7 +29,9 @@ function UsersController(PreWork, UserService, InitHelper) {
     this.users = null;
     
     this.initUsers = function(data) {
-        InitHelper.initTableData('users', self, data);
+        InitHelper.initTableData('users', self, data.users);
+        self.updatedAt = data.updatedAt;
+        self.updatedBy = data.updatedBy;
     };
     
     // ----------------
@@ -233,7 +235,13 @@ function UserService($http, $q, $timeout, ROUTES) {
             if (response.data.users === undefined) {
                 return $q.reject({msg:'The property "users" was not defined in the returned data.', data: response.data});
             }
-            return $q.resolve(response.data.users);
+            if (response.data.updatedAt === undefined) {
+                return $q.reject({msg:'The property "updatedAt" was not defined in the returned data.', data: response.data});
+            }
+            if (response.data.updatedBy === undefined) {
+                return $q.reject({msg:'The property "updatedBy" was not defined in the returned data.', data: response.data});
+            }
+            return $q.resolve(response.data);
         });
     };
     

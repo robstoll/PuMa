@@ -15,4 +15,14 @@ namespace Tutteli\AppBundle\Entity;
  */
 class UserRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function getLastUpdated() {
+        $result = $this->getEntityManager()
+            ->createQuery("SELECT u FROM TutteliAppBundle:User u ORDER BY u.updatedAt DESC")
+            ->setMaxResults(1)
+            ->getResult();
+        if (count($result) > 0) {
+            return $result[0];
+        }
+        return null;
+    }
 }
