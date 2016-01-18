@@ -57,7 +57,6 @@ class PurchaseController extends ATplController {
                 $response = $this->getValidationResponse($errors);
             } else {
                 $em = $this->getDoctrine()->getManager();
-                $this->setUpdatedByCurrentUser($purchase);
                 $em->persist($purchase);
                 foreach($purchase->getPositions() as $position) {
                     $em->persist($position);
@@ -110,7 +109,6 @@ class PurchaseController extends ATplController {
     
     private function createPosition(array $dataPos) {
         $position = new PurchasePosition();
-        $this->setUpdatedByCurrentUser($position);
         $em = $this->getDoctrine()->getManager();
         $position->setCategory($em->getReference('TutteliAppBundle:Category', $dataPos['categoryId']));
         $position->setExpression($dataPos['expression']);

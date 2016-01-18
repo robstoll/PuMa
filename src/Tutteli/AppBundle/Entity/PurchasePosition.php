@@ -61,25 +61,7 @@ class PurchasePosition {
      * @ORM\JoinColumn(name="updated_by_user", nullable=false)
      */
     private $updatedBy;
-    
-    /**
-     * @ORM\PrePersist
-     */
-    public function onPrePersist() {
-        $this->preSave();
-    }
-    
-    private function preSave() {
-        $this->updatedAt = new \DateTime();
-    }
-    
-    /**
-     * @ORM\PreUpdate
-     */
-    public function onPreUpdate() {
-        $this->preSave();
-    }
-    
+        
     /**
      * Get id
      *

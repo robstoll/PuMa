@@ -8,11 +8,10 @@
 namespace Tutteli\AppBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use Tutteli\AppBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\ConstraintViolation;
-use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 use Tutteli\AppBundle\Entity\ChangePasswordDto;
+use Tutteli\AppBundle\Entity\User;
 
 class UserController extends ATplController {
 
@@ -150,7 +149,6 @@ class UserController extends ATplController {
                 $response = $this->getTranslatedValidationResponse($errors);
             } else {
                 $em = $this->getDoctrine()->getManager();
-                $this->setUpdatedByCurrentUser($user);
                 $em->persist($user);
                 $em->flush();
                 try {
@@ -311,7 +309,6 @@ class UserController extends ATplController {
                 $response = $this->getTranslatedValidationResponse($errors);
             } else {
                 $em = $this->getDoctrine()->getManager();
-                $this->setUpdatedByCurrentUser($user);
                 $em->merge($user);
                 $em->flush();
                 $response = new Response('', Response::HTTP_NO_CONTENT);

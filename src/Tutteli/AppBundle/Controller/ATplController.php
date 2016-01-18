@@ -96,10 +96,6 @@ abstract class ATplController extends Controller {
     protected function getCreateResponse($id){
         return new Response('{"id": "'.$id.'"}', Response::HTTP_CREATED);
     }
-
-    protected function setUpdatedByCurrentUser($entity) {
-        $entity->setUpdatedBy($this->get('security.token_storage')->getToken()->getUser());
-    }
     
     protected function getFormattedDate($date) {
         $format = $this->get('translator')->trans('general.dateTimeFormat.php');

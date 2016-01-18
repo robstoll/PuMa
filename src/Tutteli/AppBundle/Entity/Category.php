@@ -13,7 +13,6 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Table(name="category")
  * @ORM\Entity(repositoryClass="Tutteli\AppBundle\Entity\CategoryRepository")
- * @ORM\HasLifecycleCallbacks
  */
 class Category 
 {
@@ -39,25 +38,6 @@ class Category
      * @ORM\JoinColumn(name="updated_by_user", nullable=false)
      */
     private $updatedBy;
-    
-    /**
-     * @ORM\PrePersist
-     */
-    public function onPrePersist() {
-        $this->preSave();
-    }
-    
-    private function preSave() {
-        $this->updatedAt = new \DateTime();
-    }
-    
-    /**
-     * @ORM\PreUpdate
-     */
-    public function onPreUpdate() {
-        $this->preSave();
-    }
-    
     
     /**
      * Get id

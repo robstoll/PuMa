@@ -15,8 +15,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Table(name="app_users")
  * @ORM\Entity(repositoryClass="Tutteli\AppBundle\Entity\UserRepository")
- * @ORM\HasLifecycleCallbacks
-
  * @UniqueEntity("username")
  */
 class User implements UserInterface, \Serializable {
@@ -68,24 +66,6 @@ class User implements UserInterface, \Serializable {
     public function __construct() {
         // may not be needed, see section on salt below
         // $this->salt = md5(uniqid(null, true));
-    }
-    
-    /**
-     * @ORM\PrePersist
-     */
-    public function onPrePersist() {
-        $this->preSave();
-    }
-    
-    private function preSave() {
-        $this->updatedAt = new \DateTime();
-    }
-    
-    /**
-     * @ORM\PreUpdate
-     */
-    public function onPreUpdate() {
-        $this->preSave();
     }
     
     public function getUsername() {

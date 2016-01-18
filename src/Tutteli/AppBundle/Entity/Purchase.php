@@ -13,7 +13,6 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Table(name="purchase")
  * @ORM\Entity
- * @ORM\HasLifecycleCallbacks
  */
 class Purchase 
 {
@@ -57,24 +56,6 @@ class Purchase
     public function __construct()
     {
         $this->positions = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-    
-    /**
-     * @ORM\PrePersist
-     */
-    public function onPrePersist() {
-        $this->preSave();
-    }
-    
-    private function preSave() {
-        $this->updatedAt = new \DateTime();
-    }
-    
-    /**
-     * @ORM\PreUpdate
-     */
-    public function onPreUpdate() {
-        $this->preSave();
     }
     
     /**
