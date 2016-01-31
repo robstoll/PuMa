@@ -39,4 +39,12 @@ services:
         class: Tutteli\AppBundle\Listener\DbLastUpdateListener
         tags:
             - { name: doctrine.event_listener, event: prePersist }
-            - { name: doctrine.event_listener, event: preUpdate }        
+            - { name: doctrine.event_listener, event: preUpdate }
+
+    db.listeners.crypto:
+        class: Tutteli\AppBundle\Listener\DbCryptoListener
+        arguments: [@session]
+        tags: 
+          - { name: doctrine.event_listener, event: prePersist }
+          - { name: doctrine.event_listener, event: preUpdate }    
+          - { name: doctrine.event_listener, event: postLoad }
