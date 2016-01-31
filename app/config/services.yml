@@ -12,7 +12,7 @@ parameters:
 services:
     tutteli.auth_success_handler:
         class: Tutteli\AppBundle\Handler\AuthSuccessHandler
-        arguments: ["@security.http_utils", {}]
+        arguments: ['%salt_key%', "@security.http_utils", {}]
         tags: 
           - {name: 'monolog.logger', channel: 'security' }
           
@@ -37,9 +37,6 @@ services:
             
     db.listeners.lastUpdated:
         class: Tutteli\AppBundle\Listener\DbLastUpdateListener
-        arguments:
-            - "@security.token_storage"
         tags:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: preUpdate }        
-
