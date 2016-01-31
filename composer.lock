@@ -4,9 +4,58 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f5cca6e9b7d736bc9477598f6815884c",
-    "content-hash": "52299d85b3c2b6a3704da07e7267112f",
+    "hash": "8bdc72bf1380a6d980caa98eb315ee71",
+    "content-hash": "db8552fcf6a48b41e9bc50359ae843b4",
     "packages": [
+        {
+            "name": "defuse/php-encryption",
+            "version": "2.0.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/defuse/php-encryption.git",
+                "reference": "afda73a6b20d09ab5ec73830e2fd8b21b581fac8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/defuse/php-encryption/zipball/afda73a6b20d09ab5ec73830e2fd8b21b581fac8",
+                "reference": "afda73a6b20d09ab5ec73830e2fd8b21b581fac8",
+                "shasum": ""
+            },
+            "require": {
+                "ext-openssl": "*",
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "autoload.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Hornby",
+                    "email": "havoc@defuse.ca"
+                }
+            ],
+            "description": "Secure PHP Encryption Library",
+            "keywords": [
+                "aes",
+                "authenticated encryption",
+                "cipher",
+                "crypto",
+                "cryptography",
+                "encrypt",
+                "encryption",
+                "openssl",
+                "security",
+                "symmetric key cryptography"
+            ],
+            "time": "2016-01-17 08:40:45"
+        },
         {
             "name": "doctrine/annotations",
             "version": "v1.2.7",
@@ -2369,7 +2418,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "defuse/php-encryption": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
