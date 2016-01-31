@@ -18,25 +18,25 @@ services:
           
     tutteli.auth_failure_handler:
         class: Tutteli\AppBundle\Handler\AuthFailureHandler
-        arguments:  ["@http_kernel", "@security.http_utils", {}, "@logger"]
+        arguments: ["@http_kernel", "@security.http_utils", {}, "@logger"]
         tags:
             - { name: 'monolog.logger', channel: 'security' }
             
     tutteli.logout_success_handler:
         class: Tutteli\AppBundle\Handler\LogoutSuccessHandler
-        arguments:  ["@security.http_utils"]
+        arguments: ["@security.http_utils"]
         tags: 
           - {name: 'monolog.logger', channel: 'security' }
             
     app.exception_listener:
         class: Tutteli\AppBundle\Listener\ExceptionListener
-        arguments:
-            - "@security.token_storage"
+        arguments: [@security.token_storage]
         tags:
             - { name: kernel.event_listener, event: kernel.exception, priority: 50  }
             
     db.listeners.lastUpdated:
         class: Tutteli\AppBundle\Listener\DbLastUpdateListener
+        arguments: [@security.token_storage]
         tags:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: preUpdate }
