@@ -25,7 +25,7 @@ class PurchasePosition {
     
     /**
      * @ORM\Column(type="blob")
-     * @Assert\Regex(pattern="#^[0-9]+(.[0-9]+)?(\s*(\+|-|\*)\s*[0-9]+(.[0-9]+)?)*$#", message="purchase.expr")
+     * @Assert\Regex(pattern="#^[0-9]+(.[0-9]{1,2})?(\s*(\+|-|\*)\s*[0-9]+(.[0-9]{1,2})?)*$#", message="purchase.expr")
      */
     private $expression;
     

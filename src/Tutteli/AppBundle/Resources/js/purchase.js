@@ -265,7 +265,7 @@ function PurchaseService($http, $q, $timeout, ROUTES) {
                 errors += 'The <a href="#" onclick="document.getElementById(\'purchase_expression' + i + '\').focus(); return false">'
                             + 'price of position ' + (i + 1) 
                         + '</a> needs to be greater than 0.<br/>';
-            } else if (!position.expression.match(/^[0-9]+(.[0-9]+)?(\s*(\+|-|\*)\s*[0-9]+(.[0-9]+)?)*$/)) {
+            } else if (!position.expression.match(/^[0-9]+(.[0-9]{1,2})?(\s*(\+|-|\*)\s*[0-9]+(.[0-9]{1,2})?)*$/)) {
                 errors += 'The <a href="#" onclick="document.getElementById(\'purchase_expression' + i + '\').focus(); return false">'
                             +'price expression of position ' + (i + 1)
                         + '</a> is erroneous. '
