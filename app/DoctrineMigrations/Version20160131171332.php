@@ -56,7 +56,7 @@ class Version20160131171332 extends AbstractMigration implements ContainerAwareI
         $this->addSql('ALTER TABLE purchase_position ADD CONSTRAINT FK_6FEEF7A7A7F6CB27 FOREIGN KEY (updated_by_user) REFERENCES app_users (id)');
         $this->addSql('ALTER TABLE app_users ADD CONSTRAINT FK_C2502824A7F6CB27 FOREIGN KEY (updated_by_user) REFERENCES app_users (id)');
         
-        $now = date('d.m.YTH:i:s', time());
+        $now = date('Y-m-d\\TH:i:s', time());
         $this->addSql('INSERT INTO app_users (username, password, role, data_key, updated_by_user, updated_at) '
                 .'VALUES (\'admin\', :password, \'ROLE_ADMIN\', :data_key, \'1\', :updated_at)',
                 array('password' => $hash, 'data_key' => $encryptedDataKey, 'updated_at'=> $now));
