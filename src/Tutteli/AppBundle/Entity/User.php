@@ -277,6 +277,6 @@ class User implements UserInterface, \Serializable {
      */
     public function getDataKey()
     {
-        return $this->dataKey;
+        return stream_get_contents($this->dataKey);
     }
 }
