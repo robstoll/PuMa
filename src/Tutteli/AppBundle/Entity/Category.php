@@ -9,6 +9,7 @@
 namespace Tutteli\AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="category")
@@ -24,7 +25,7 @@ class Category
     private $id;
     
     /**
-     * @ORM\Column(type="string", length=30, unique=true)
+     * @ORM\Column(type="binary", unique=true)
      */
     private $name;
     

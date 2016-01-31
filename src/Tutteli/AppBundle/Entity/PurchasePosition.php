@@ -24,13 +24,13 @@ class PurchasePosition {
     private $id;
     
     /**
-     * @ORM\Column(type="string", length=200)
+     * @ORM\Column(type="blob")
      * @Assert\Regex(pattern="#^[0-9]+(.[0-9]+)?(\s*(\+|-|\*)\s*[0-9]+(.[0-9]+)?)*$#", message="purchase.expr")
      */
     private $expression;
     
     /**
-     * @ORM\Column(type="decimal", scale=2)
+     * @ORM\Column(type="binary")
      */
     private $price;
     
@@ -41,7 +41,7 @@ class PurchasePosition {
     private $category;
     
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="blob")
      */
     private $notice;
     

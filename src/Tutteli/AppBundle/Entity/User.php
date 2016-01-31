@@ -53,6 +53,11 @@ class User implements UserInterface, \Serializable {
     private $role;
     
     /**
+     * @ORM\Column(type="binary")
+     */
+    private $dataKey;
+    
+    /**
      * @ORM\Column(type="datetime")
      */
     private $updatedAt;
@@ -248,5 +253,30 @@ class User implements UserInterface, \Serializable {
     public function getUpdatedBy()
     {
         return $this->updatedBy;
+    }
+
+
+    /**
+     * Set dataKey
+     *
+     * @param binary $dataKey
+     *
+     * @return User
+     */
+    public function setDataKey($dataKey)
+    {
+        $this->dataKey = $dataKey;
+
+        return $this;
+    }
+
+    /**
+     * Get dataKey
+     *
+     * @return binary
+     */
+    public function getDataKey()
+    {
+        return $this->dataKey;
     }
 }
