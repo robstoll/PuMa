@@ -30,20 +30,20 @@ services:
             
     app.exception_listener:
         class: Tutteli\AppBundle\Listener\ExceptionListener
-        arguments: [@security.token_storage]
+        arguments: ["@security.token_storage"]
         tags:
             - { name: kernel.event_listener, event: kernel.exception, priority: 50  }
             
     db.listeners.lastUpdated:
         class: Tutteli\AppBundle\Listener\DbLastUpdateListener
-        arguments: [@security.token_storage]
+        arguments: ["@security.token_storage"]
         tags:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: preUpdate }
 
     db.listeners.crypto:
         class: Tutteli\AppBundle\Listener\DbCryptoListener
-        arguments: [@session]
+        arguments: ["@session"]
         tags: 
           - { name: doctrine.event_listener, event: prePersist }
           - { name: doctrine.event_listener, event: preUpdate }    
