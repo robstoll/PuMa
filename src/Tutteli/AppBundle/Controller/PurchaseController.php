@@ -13,11 +13,58 @@ use Tutteli\AppBundle\Entity\Purchase;
 use Tutteli\AppBundle\Entity\PurchasePosition;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class PurchaseController extends ATplController {
     
     protected function getCsrfTokenDomain() {
         return 'purchase';
+    }
+    
+    public function monthAction() {
+        return new RedirectResponse($this->container->get('router')->generate(
+                'purchases_monthAndYear', 
+                ['month' => date('m'), 'year' => date('Y')],
+                UrlGeneratorInterface::ABSOLUTE_URL));
+    }
+    
+    public function monthTplAction(Request $request) {
+        //only get the template
+        return $this->monthAndYearAction($request, null, null, '.tpl');
+    }
+    
+    public function monthAndYearAction(Request $request, $month, $year, $ending) {
+        $viewPath = '@TutteliAppBundle/Resources/views/Purchase/month.html.twig';
+        list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
+        if (!$response) {
+            $purchases = null;
+            if ($ending != '.tpl') {
+                $purchases = $this->getPurchasesForMonthOfYear($month, $year);
+            }
+            $response = $this->render($viewPath, array (
+                    'notXhr' => $ending == '',
+                    'error' => null,
+                    'purchases' => $purchases
+            ));
+        
+            if ($ending == '.tpl') {
+                $response->setETag($etag);
+            }
+        }
+        return $response;
+    }
+    
+    private function getPurchasesForMonthOfYear($month, $year){
+        $repository = $this->getPurchaseRepository();
+        return $repository->getPurchasesForMonthOfYear($month, $year);
+    }
+    
+    /**
+     * @return \Tutteli\AppBundle\Entity\PurchaseRepository
+     */
+    private function getPurchaseRepository() {
+        return $this->getDoctrine()->getRepository('TutteliAppBundle:Purchase');
     }
     
     public function newAction(Request $request, $ending) {
