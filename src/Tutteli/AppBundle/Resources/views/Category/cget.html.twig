@@ -67,6 +67,7 @@
         	{% include 'TutteliAppBundle:tpl:updateBlock.html.twig' with {'controllerName': 'categoriesCtrl'} only  %}
         </div>
         <div id="categories_load">{{ 'categories.loading'|trans }}</div>
+        <div class="hidden" id="categories_nothingFound">{{ 'categories.noCategories'|trans }}</div>
         <footer class="footer">
 			<a href="{{ path('new_category') }}" ui-sref="new_category" class="btn-default btn"><i class="glyphicon glyphicon-plus"></i> {{ 'categories.add'|trans }}</a>
         </footer> 

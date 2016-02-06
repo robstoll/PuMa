@@ -72,10 +72,11 @@
             <input type="hidden" ng-model="usersCtrl.usersInit" value="{{ json }}"/>
             <!-- pre-work-exclude-end -->
         {% endif %}
+        <div id="users_load">{{ 'users.loading'|trans }}</div>
+        <div class="hidden" id="users_nothingFound">{{ 'users.noUsers'|trans }}</div>
         <div class="notice beforeFooter">
         	{% include 'TutteliAppBundle:tpl:updateBlock.html.twig' with {'controllerName': 'usersCtrl'} only  %}
        	</div>
-        <div id="users_load">{{ 'users.loading'|trans }}</div>
         <footer class="footer">
 			<a href="{{ path('new_user') }}" ui-sref="new_user" class="btn-default btn"><i class="glyphicon glyphicon-plus"></i> {{ 'users.add'|trans }}</a>
         </footer> 

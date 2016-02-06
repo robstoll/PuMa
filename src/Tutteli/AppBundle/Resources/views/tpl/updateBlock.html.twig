@@ -3,7 +3,7 @@
  * For the full copyright and license information, please have a look at LICENSE in the
  * root folder or visit https://github.com/robstoll/purchase
  #}
-<div id="updateBlock" ng-class="{hidden: !{{ controllerName }}.updatedAt}">
+<div id="updateBlock" ng-class="{show: {{ controllerName }}.updatedAt}">
 	<input type="hidden" id="{{ controllerName }}_updatedAt" ng-model="{{ controllerName }}.updatedAt" />
 	{{ 'general.updatedAt'|trans }} <span id="updatedAt" ng-bind="{{ controllerName }}.updatedAt"></span>
 	<input type="hidden" id="{{ controllerName }}_updatedBy" ng-model="{{ controllerName }}.updatedBy" />

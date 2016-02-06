@@ -62,8 +62,14 @@ function InitHelper(PreWork) {
         }
         
         var load = document.getElementById(name + '_load');
-        if (load && data[name] != null && data[name].length > 0) {
+        if (load) {
             load.style.display = 'none';
+        }
+        if(data[name] == null || data[name].length == 0) {
+            var nothingFound = document.getElementById(name+'_nothingFound');
+            if (nothingFound) {
+                nothingFound.style.display = 'none';
+            }
         }
     };
     
