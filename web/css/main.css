@@ -127,6 +127,10 @@ body {
 	font-size: 0.9em;
 }
 
+#updateBlock {
+	display:none;
+}
+
 @media (max-width: 768px) {
 	.footer {
 	  position: fixed;
