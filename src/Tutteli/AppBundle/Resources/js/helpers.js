@@ -51,23 +51,31 @@ function InitHelper(PreWork) {
     var self = this;
     
     this.initTableData = function(name, controller, data) {
-        controller[name] = data;
+        controller[name] = data[name];
+        if (data.updatedAt) {
+            controller.updatedAt = data.updatedAt;
+            controller.updatedBy = data.updatedBy;
+        }
         var rows = document.getElementById(name + '_rows');
         if (rows) {
             rows.className = '';
         }
         
         var load = document.getElementById(name + '_load');
-        if (load) {
+        if (load && data[name] != null && data[name].length > 0) {
             load.style.display = 'none';
         }
     };
     
     this.initTable = function(name, controller, loadFunc) {
+        self.initTableBasedOnPreWork(name + '.tpl', name, controller, loadFunc);
+    };
+    
+    this.initTableBasedOnPreWork = function(tplName, name, controller, loadFunc) {
         var initName = name + 'Init';
         var nameUpper = name.substr(0, 1).toUpperCase() + name.substr(1);
         
-        PreWork.merge(name + '.tpl', controller, name + 'Ctrl');
+        PreWork.merge(tplName, controller, name + 'Ctrl');
         if (controller[initName] !== undefined) {
             self.initTableData(name, controller, JSON.parse(controller[initName]));
         } else {

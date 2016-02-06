@@ -62,7 +62,7 @@
         				<td><a href="{{ path('edit_user', {'userId': user.id}) }}"><i class="glyphicon glyphicon-pencil"></i></a></td>
         			</tr>
         		{% endfor %}
-        		{% set json = '[' ~ json ~ ']' %}
+        		{% set json = '{"users":[' ~ json ~ ']}' %}
         		</tbody>
         		<!-- pre-work-exclude-end -->
         	{% endif %}

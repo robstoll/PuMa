@@ -18,21 +18,19 @@ angular.module('tutteli.purchase.category', [
     .constant('tutteli.purchase.NewCategoryController.alertId', 'tutteli-ctrls-NewCategoryController')
     .constant('tutteli.purchase.EditCategoryController.alertId', 'tutteli-ctrls-EditCategoryController');
 
-CategoriesController.$inject = ['tutteli.PreWork', 'tutteli.purchase.CategoryService', 'tutteli.helpers.InitHelper'];
-function CategoriesController(PreWork, CategoryService, InitHelper) {
+CategoriesController.$inject = ['tutteli.purchase.CategoryService', 'tutteli.helpers.InitHelper'];
+function CategoriesController(CategoryService, InitHelper) {
     var self = this;
     
     this.categories = null;
     
     this.initCategories = function(data) {
-        InitHelper.initTableData('categories', self, data.categories);
-        self.updatedAt = data.updatedAt;
-        self.updatedBy = data.updatedBy;
+        InitHelper.initTableData('categories', self, data);
     };
     
     // ----------------
     
-    InitHelper.initTable('categories', this, function(){
+    InitHelper.initTable('categories', this, function() {
        CategoryService.getCategories().then(self.initCategories);
     });
 }

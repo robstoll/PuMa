@@ -53,7 +53,7 @@
         				<td><a href="{{ path('edit_category', {'categoryId': category.id}) }}"><i class="glyphicon glyphicon-pencil"></i></a></td>
         			</tr>
         		{% endfor %}
-        		{% set json = '[' ~ json ~ ']' %}
+        		{% set json = '{"categories":[' ~ json ~ ']}' %}
         		</tbody>
         		<!-- pre-work-exclude-end -->
         	{% endif %}
@@ -65,7 +65,7 @@
         {% endif %}
         <div class="notice beforeFooter">
         	{% include 'TutteliAppBundle:tpl:updateBlock.html.twig' with {'controllerName': 'categoriesCtrl'} only  %}
-       	</div>
+        </div>
         <div id="categories_load">{{ 'categories.loading'|trans }}</div>
         <footer class="footer">
 			<a href="{{ path('new_category') }}" ui-sref="new_category" class="btn-default btn"><i class="glyphicon glyphicon-plus"></i> {{ 'categories.add'|trans }}</a>

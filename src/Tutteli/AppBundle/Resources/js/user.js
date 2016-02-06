@@ -29,9 +29,7 @@ function UsersController(PreWork, UserService, InitHelper) {
     this.users = null;
     
     this.initUsers = function(data) {
-        InitHelper.initTableData('users', self, data.users);
-        self.updatedAt = data.updatedAt;
-        self.updatedBy = data.updatedBy;
+        InitHelper.initTableData('users', self, data);
     };
     
     // ----------------
