@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="purchase")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Tutteli\AppBundle\Entity\PurchaseRepository")
  */
 class Purchase 
 {
