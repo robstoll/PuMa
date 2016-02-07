@@ -24,11 +24,32 @@ logout:
 
 home:
     path:   /
-    defaults: 
-      _controller: FrameworkBundle:Redirect:redirect
-      route:  new_purchase
+    defaults: { _controller: "FrameworkBundle:Redirect:redirect", route: "new_purchase"}
     methods: [GET]
 
+purchases:
+    path:   /purchases/
+    defaults: { _controller: "FrameworkBundle:Redirect:redirect", route: "purchases_month"}
+    methods: [GET]
+
+purchases_month:
+    path:   /purchases/month
+    defaults: { _controller: "TutteliAppBundle:Purchase:month"}
+    methods: [GET]
+
+purchases_monthTpl:
+    path:   /purchases/month.tpl
+    defaults: { _controller: "TutteliAppBundle:Purchase:monthTpl"}
+
+purchases_monthAndYear_json:
+    path:   /purchases/month-{month}-{year}.json
+    defaults: { _controller: "TutteliAppBundle:Purchase:monthAndYearJson" }
+    methods: [GET]
+
+purchases_monthAndYear:
+    path:   /purchases/month-{month}-{year}{ending}
+    defaults: { _controller: "TutteliAppBundle:Purchase:monthAndYear", ending: ""}
+    methods: [GET]
 
 new_purchase:
     path:   /purchases/new{ending}

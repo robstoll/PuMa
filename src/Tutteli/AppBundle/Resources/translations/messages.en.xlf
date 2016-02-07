@@ -82,7 +82,18 @@
                 <source>nav.changePassword</source>
                 <target>Change Password</target>
             </trans-unit>
-            
+             <trans-unit id="123">
+                <source>nav.views</source>
+                <target>Views</target>
+            </trans-unit>
+            <trans-unit id="124">
+                <source>nav.views.new_purchase</source>
+                <target>Add Purchase</target>
+            </trans-unit>
+            <trans-unit id="125">
+                <source>nav.views.purchases_month</source>
+                <target>Overview per Month</target>
+            </trans-unit>
             
             <trans-unit id="200">
                 <source>purchase.price</source>
@@ -119,7 +130,13 @@
             <trans-unit id="208">
                 <source>purchase.total</source>
                 <target>Total of the purchase</target>
-            </trans-unit>
+            </trans-unit>           
+            
+            <trans-unit id="220">
+                <source>purchases.loading</source>
+                <target>Loading purchases...</target>
+            </trans-unit>       
+            
             
             <trans-unit id="300">
                 <source>users.username</source>
@@ -206,10 +223,27 @@
                 <source>categories.add</source>
                 <target>Add category</target>
             </trans-unit>
-            <trans-unit id="405">
+             <trans-unit id="405">
                 <source>categories.noCategories</source>
                 <target>There are not any categories defined yet.</target>
             </trans-unit>
+            
+            <trans-unit id="500">
+                <source>month.purchaseDate</source>
+                <target>Purchase Date</target>
+            </trans-unit>
+            <trans-unit id="501">
+                <source>month.user</source>
+                <target>User</target>
+            </trans-unit>
+            <trans-unit id="502">
+                <source>month.total</source>
+                <target>Expenses</target>
+            </trans-unit>
+            <trans-unit id="503">
+                <source>month.noPurchases</source>
+                <target>No purchases found for the selected month and year.</target>
+            </trans-unit>     
         </body>
     </file>
 </xliff>

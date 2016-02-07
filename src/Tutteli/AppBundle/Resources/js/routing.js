@@ -6,6 +6,17 @@
 (function(){
 'use strict';
 
+function getCurrentMonth() {
+    var month = new Date().getMonth() + 1;
+    if (month <= 9) {
+        month = '0' + month;
+    }
+    return month;
+}
+
+function getCurrentYear() {
+    return new Date().getFullYear();
+}
 
 angular.module('tutteli.purchase.routing', [
     'ui.router', 
@@ -33,13 +44,30 @@ angular.module('tutteli.purchase.routing', [
         controller: 'tutteli.LogoutController'
     })
     
+    .state('purchases', {
+        url: '/purchases',
+        redirectTo: 'purchases_month',
+    })
+    .state('purchases_month', {
+        url: '/purchases/month',
+        redirectTo: 'purchases_monthAndYear',
+        redirectParams: {month: getCurrentMonth(), year: getCurrentYear()}            
+    })
+    .state('purchases_monthAndYear', {
+        url: '/purchases/month-:month-:year',
+        controller: 'tutteli.purchase.PurchaseMonthController',
+        controllerAs: 'purchasesCtrl',
+        templateUrl: 'purchases/month.tpl',
+        data: {
+            authRoles: [USER_ROLES.authenticated]
+        }
+    })
     .state('new_purchase', {
         url: '/purchases/new',
         controller: 'tutteli.purchase.PurchaseController',
         controllerAs: 'purchaseCtrl',
         templateUrl: 'purchases/new.tpl',
         data: {
-            //user needs to be logged in
             authRoles: [USER_ROLES.authenticated]
         }
     })
@@ -111,11 +139,18 @@ angular.module('tutteli.purchase.routing', [
     $rootScope.$on('$stateChangeStart', function(evt, toState, params) {
       if (toState.redirectTo) {
         evt.preventDefault();
-        $state.go(toState.redirectTo, params);
+        var newParams = params;
+        if (toState.redirectParams) {
+            for(var prop in toState.redirectParams) {
+                newParams[prop] = toState.redirectParams[prop];
+            }
+        }
+        $state.go(toState.redirectTo, newParams);
       }
     });
 }]).constant('tutteli.purchase.ROUTES', {
     get_login_csrf: 'login/token',
+    get_purchases_monthAndYear_json: 'purchases/month-:month-:year.json',
     post_purchase : 'purchases',
     get_purchase_csrf: 'purchases/new/token',    
     get_categories_json: 'categories.json',

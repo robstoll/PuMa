@@ -45,6 +45,13 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse{% if app.user == null or not is_granted('IS_AUTHENTICATED_REMEMBERED') %} hidden{% endif %}" ng-class="naviCtrl.isAuthenticated() ? 'showBlock' : 'hidden'" >
                 <ul class="nav navbar-nav">
+                 	<li class="dropdown">
+                        <a  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ 'nav.views'|trans }} <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a ui-sref="new_purchase" href="{{ path('new_purchase') }}" >{{ 'nav.views.new_purchase'|trans }}</a></li>
+                            <li><a ui-sref="purchases_month" href="{{ path('purchases_month') }}" >{{ 'nav.views.purchases_month'|trans }}</a></li>
+                        </ul>
+                    </li>
                     <li class="dropdown{% if app.user == null or not is_granted('ROLE_ADMIN') %} hidden {% endif %}" ng-class="naviCtrl.isAdmin() ? 'showList' : 'hidden'">
                         <a  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ 'nav.settings'|trans }} <span class="caret"></span></a>
                         <ul class="dropdown-menu">

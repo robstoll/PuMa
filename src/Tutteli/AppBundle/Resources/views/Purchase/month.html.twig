@@ -1,0 +1,111 @@
+{#
+ * This file is part of the project tutteli/purchase published under the Apache License 2.0
+ * For the full copyright and license information, please have a look at LICENSE in the
+ * root folder or visit https://github.com/robstoll/purchase
+ #}
+ {% extends notXhr ? 'TutteliAppBundle::layout.html.twig' : 'xhr.twig' %}
+
+{% block title %} {{ 'nav.views.purchases_month'|trans }} | {{ parent() }}{% endblock %}
+
+
+{% block content %}
+    {% if notXhr %}
+    <div ui-view></div>
+    	<div pre-work="purchases/month.tpl">
+    {%  endif %}
+    
+    	<table class="table table-striped">
+    		<thead>
+    			<tr>
+    				<th>#</th>
+    				<th>{{ 'month.purchaseDate'|trans }}</th>
+    				<th>{{ 'month.user'|trans }}</th>
+    				<th>{{ 'month.total'|trans }}</th>
+    				<th>{{ 'general.edit'|trans }}</th>
+				</tr>
+    		</thead>
+    		<tbody id="purchases_rows" class="hidden">
+            	<tr ng-repeat="purchase in purchasesCtrl.purchases">
+            		<td ng-bind="purchase.id"></td>
+            		<td ng-bind="purchase.purchaseDate"></td>
+            		<td ng-bind="purchase.user"></td>
+            		<td ng-bind="purchase.total"></td>
+            		<td><a href="#" ui-sref="edit_purchase({purchaseId: purchase.id})"><i class="glyphicon glyphicon-pencil"></i></a></td>
+        		</tr>
+            </tbody> 
+            {% if notXhr %}
+                {% set json = '' %}
+            {% endif %}
+            {% if purchases %}
+            	<!-- pre-work-exclude-start -->
+            	<tbody id="purchases_rows_preload">
+            	{% set updatedAt = date('0000-00-00') %}
+            	{% set updatedBy = {username:''} %}
+                {% for purchase in purchases %}
+                	{% if (updatedAt < purchase.updatedAt) %}
+                		{% set updatedAt = purchase.updatedAt %}
+                		{% set updatedBy = purchase.updatedBy %}
+                	{% endif %}
+                    {%  if not json == '' %}
+                		{% set json = json ~ ',' %}
+                	{%  endif %}
+                	{% set total = 0 %}
+            	    {% for position in purchase.positions %}
+            	    	{% set total = total + position.price %}
+            	    {% endfor %}
+            	    {%  set purchaseDate = purchase.purchaseDate|date('general.dateFormat.php'|trans) %}
+                	{% set json = json ~ '{' 
+                	    ~ '"id":"' ~ purchase.id ~ '",' 
+                	    ~ '"user":"' ~ purchase.user.username ~ '",'
+                	    ~ '"purchaseDate":"' ~ purchaseDate ~ '",'
+                	    ~ '"total":"' ~ total ~ '"' 
+                	    ~ '}' 
+            	    %}
+        			<tr>
+        				<td>{{ purchase.id }} </td>
+        				<td>{{ purchase.user.username }}
+        				<td>{{ purchaseDate }}</td>
+        				<td>{{ total }}</td>
+        				<td>TODO</td>
+{#         				<td><a href="{{ path('edit_purchase', {'purchaseId': purchase.id}) }}"><i class="glyphicon glyphicon-pencil"></i></a></td>#}
+        			</tr>
+        		{% endfor %}	
+        		</tbody>
+        		<!-- pre-work-exclude-end -->
+        	{% endif %}
+        </table>
+        {% if notXhr %}
+            {% set json = '{"purchases":[' ~ json ~ ']}' %}
+            <!-- pre-work-exclude-start -->
+        	<input type="hidden" ng-model="purchasesCtrl.purchasesInit" value="{{ json }}"/>
+            <!-- pre-work-exclude-end -->
+        {% endif %}
+        <div id="purchases_load">{{ 'purchases.loading'|trans }}</div>
+        <div style="display:none" id="purchases_nothingFound">{{ 'month.noPurchases'|trans }}</div>
+        <div class="notice beforeFooter">
+        	{% include 'TutteliAppBundle:tpl:updateBlock.html.twig' with {'controllerName': 'purchasesCtrl'} only  %}
+       	</div>
+        <footer class="footer">
+			{# TODO choose month #}
+        </footer> 
+        
+    {% if notXhr %}
+        </div>
+        
+        {% if purchases %}
+            {%  include 'TutteliAppBundle:tpl:updateBlock.js.twig' 
+                with {
+                	'controllerName': 'purchasesCtrl',
+                    'updatedAt': updatedAt, 
+                    'updatedBy': updatedBy
+                } only %} 
+        {% endif %}
+        
+        <script type="text/javascript">
+        	document.getElementById('purchases_load').style.display = 'none';
+            {% if not purchases %}
+            	document.getElementById('purchases_nothingFound').style.display = 'block';	
+			{% endif %}
+		</script>
+    {%  endif %}
+{% endblock %}
