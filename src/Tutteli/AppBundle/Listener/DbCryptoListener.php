@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Tutteli\AppBundle\Handler\AuthSuccessHandler;
 use Tutteli\AppBundle\Entity\Category;
 use Tutteli\AppBundle\Entity\PurchasePosition;
+use Defuse\Crypto\Exception\InvalidCiphertextException;
 
 class DbCryptoListener
 {
@@ -60,11 +61,17 @@ class DbCryptoListener
     }
     
     private function encrypt($msg) {
-        return Crypto::encrypt($msg, $this->key, true);
+        if ($msg !== null && $msg != "") {
+            return Crypto::encrypt($msg, $this->key, true);
+        }
+        return null;
     }
     
     private function decrypt($resource) {
-        $msg = stream_get_contents($resource);
-        return Crypto::decrypt($msg, $this->key, true);
+        if ($resource !== null) {
+            $msg = stream_get_contents($resource);
+            return Crypto::decrypt($msg, $this->key, true);
+        }
+        return null;
     }
 }

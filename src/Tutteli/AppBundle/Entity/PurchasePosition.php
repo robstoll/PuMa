@@ -41,13 +41,13 @@ class PurchasePosition {
     private $category;
     
     /**
-     * @ORM\Column(type="blob")
+     * @ORM\Column(type="blob", nullable=true)
      */
     private $notice;
     
     /**
      * @ORM\ManyToOne(targetEntity="Purchase", inversedBy="positions")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $purchase;
     

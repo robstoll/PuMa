@@ -12,7 +12,7 @@ use Defuse\Crypto\Key;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20160131171332 extends AbstractMigration implements ContainerAwareInterface
+class Version20160207162600 extends AbstractMigration implements ContainerAwareInterface
 {
     private $container;
     
@@ -46,13 +46,13 @@ class Version20160131171332 extends AbstractMigration implements ContainerAwareI
         
         $this->addSql('CREATE TABLE category (id INT AUTO_INCREMENT NOT NULL, name VARBINARY(255) NOT NULL, updated_by_user INT NOT NULL, updated_at DATETIME NOT NULL, UNIQUE INDEX UNIQ_64C19C15E237E06 (name), INDEX IDX_64C19C1A7F6CB27 (updated_by_user), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB');
         $this->addSql('CREATE TABLE purchase (id INT AUTO_INCREMENT NOT NULL, user_id INT NOT NULL, purchase_date DATE NOT NULL, updated_by_user INT NOT NULL, updated_at DATETIME NOT NULL, INDEX IDX_6117D13BA76ED395 (user_id), INDEX IDX_6117D13BA7F6CB27 (updated_by_user), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE purchase_position (id INT AUTO_INCREMENT NOT NULL, purchase_id INT NOT NULL, category_id INT NOT NULL, expression LONGBLOB NOT NULL, price VARBINARY(255) NOT NULL, notice LONGBLOB NOT NULL, updated_by_user INT NOT NULL, updated_at DATETIME NOT NULL, INDEX IDX_6FEEF7A712469DE2 (category_id), INDEX IDX_6FEEF7A7558FBEB9 (purchase_id), INDEX IDX_6FEEF7A7A7F6CB27 (updated_by_user), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE purchase_position (id INT AUTO_INCREMENT NOT NULL, purchase_id INT NOT NULL, category_id INT NOT NULL, expression LONGBLOB NOT NULL, price VARBINARY(255) NOT NULL, notice LONGBLOB NULL, updated_by_user INT NOT NULL, updated_at DATETIME NOT NULL, INDEX IDX_6FEEF7A712469DE2 (category_id), INDEX IDX_6FEEF7A7558FBEB9 (purchase_id), INDEX IDX_6FEEF7A7A7F6CB27 (updated_by_user), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB');
         $this->addSql('CREATE TABLE app_users (id INT AUTO_INCREMENT NOT NULL, username VARCHAR(25) NOT NULL, password VARCHAR(64) NOT NULL, email VARCHAR(60) NOT NULL, role VARCHAR(20) DEFAULT NULL, data_key VARBINARY(255) NOT NULL, updated_by_user INT NOT NULL, updated_at DATETIME NOT NULL, UNIQUE INDEX UNIQ_C2502824F85E0677 (username), UNIQUE INDEX UNIQ_C2502824E7927C74 (email), INDEX IDX_C2502824A7F6CB27 (updated_by_user), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB');
         $this->addSql('ALTER TABLE category ADD CONSTRAINT FK_64C19C1A7F6CB27 FOREIGN KEY (updated_by_user) REFERENCES app_users (id)');
         $this->addSql('ALTER TABLE purchase ADD CONSTRAINT FK_6117D13BA76ED395 FOREIGN KEY (user_id) REFERENCES app_users (id)');
         $this->addSql('ALTER TABLE purchase ADD CONSTRAINT FK_6117D13BA7F6CB27 FOREIGN KEY (updated_by_user) REFERENCES app_users (id)');
         $this->addSql('ALTER TABLE purchase_position ADD CONSTRAINT FK_6FEEF7A712469DE2 FOREIGN KEY (category_id) REFERENCES category (id)');
-        $this->addSql('ALTER TABLE purchase_position ADD CONSTRAINT FK_6FEEF7A7558FBEB9 FOREIGN KEY (purchase_id) REFERENCES purchase (id)');
+        $this->addSql('ALTER TABLE purchase_position ADD CONSTRAINT FK_6FEEF7A7558FBEB9 FOREIGN KEY (purchase_id) REFERENCES purchase (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE purchase_position ADD CONSTRAINT FK_6FEEF7A7A7F6CB27 FOREIGN KEY (updated_by_user) REFERENCES app_users (id)');
         $this->addSql('ALTER TABLE app_users ADD CONSTRAINT FK_C2502824A7F6CB27 FOREIGN KEY (updated_by_user) REFERENCES app_users (id)');
         
