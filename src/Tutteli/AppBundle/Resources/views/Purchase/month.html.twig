@@ -49,23 +49,19 @@
                     {%  if not json == '' %}
                 		{% set json = json ~ ',' %}
                 	{%  endif %}
-                	{% set total = 0 %}
-            	    {% for position in purchase.positions %}
-            	    	{% set total = total + position.price %}
-            	    {% endfor %}
             	    {%  set purchaseDate = purchase.purchaseDate|date('general.dateFormat.php'|trans) %}
                 	{% set json = json ~ '{' 
                 	    ~ '"id":"' ~ purchase.id ~ '",' 
                 	    ~ '"user":"' ~ purchase.user.username ~ '",'
                 	    ~ '"purchaseDate":"' ~ purchaseDate ~ '",'
-                	    ~ '"total":"' ~ total ~ '"' 
+                	    ~ '"total":"' ~ purchase.total ~ '"' 
                 	    ~ '}' 
             	    %}
         			<tr>
         				<td>{{ purchase.id }} </td>
         				<td>{{ purchase.user.username }}
         				<td>{{ purchaseDate }}</td>
-        				<td>{{ total }}</td>
+        				<td>{{ purchase.total }}</td>
         				<td>TODO</td>
 {#         				<td><a href="{{ path('edit_purchase', {'purchaseId': purchase.id}) }}"><i class="glyphicon glyphicon-pencil"></i></a></td>#}
         			</tr>

@@ -9,6 +9,7 @@
 namespace Tutteli\AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="purchase")
@@ -31,6 +32,7 @@ class Purchase
     
     /**
      * @ORM\Column(type="date")
+     * @Assert\NotNull()
      */
     private $purchaseDate;
     
@@ -38,6 +40,13 @@ class Purchase
      * @ORM\OneToMany(targetEntity="PurchasePosition", mappedBy="purchase")
      */
     private $positions;
+    
+    /**
+     * @ORM\Column(type="binary")
+     * @Assert\GreaterThan(value=0, message="purchase.total")
+     * @Assert\NotNull(message="purchase.total")
+     */
+    private $total;
         
     /**
      * @ORM\Column(type="datetime")
@@ -196,5 +205,29 @@ class Purchase
     public function getUpdatedBy()
     {
         return $this->updatedBy;
+    }
+
+    /**
+     * Set total
+     *
+     * @param binary $total
+     *
+     * @return Purchase
+     */
+    public function setTotal($total)
+    {
+        $this->total = $total;
+
+        return $this;
+    }
+
+    /**
+     * Get total
+     *
+     * @return binary
+     */
+    public function getTotal()
+    {
+        return $this->total;
     }
 }

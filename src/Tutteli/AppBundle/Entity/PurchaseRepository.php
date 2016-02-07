@@ -16,18 +16,12 @@ namespace Tutteli\AppBundle\Entity;
 class PurchaseRepository extends \Doctrine\ORM\EntityRepository
 {
     public function getPurchasesForMonthOfYear($month, $year) {
-        $result = $this->getPurchasePositionsForMonthOfYear($month, $year);
-        return $this->mapToPurchases($result);
-    }
-    
-    private function getPurchasePositionsForMonthOfYear($month, $year) {
         $from = new \DateTime($year.'-'.$month.'-01T00:00:00');
         $to = new \DateTime($year.'-'.$month.'-01T00:00:00');
         $to->add(new \DateInterval('P1M'));
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
-        return $queryBuilder->select('p', 'pp')
-            ->from('TutteliAppBundle:PurchasePosition', 'pp')
-            ->innerJoin('pp.purchase', 'p')
+        return $queryBuilder->select('p')
+            ->from('TutteliAppBundle:Purchase', 'p')
             ->where($queryBuilder->expr()->andX(
                 $queryBuilder->expr()->gte('p.purchaseDate', ':from'),
                 $queryBuilder->expr()->lt('p.purchaseDate', ':to')
@@ -36,20 +30,5 @@ class PurchaseRepository extends \Doctrine\ORM\EntityRepository
             ->setParameter('to', $to)
             ->getQuery()
             ->getResult();
-    }
-    
-    public function mapToPurchases(array $result) {
-        $purchases = [];
-        /* @var $purchasePosition \Tutteli\AppBundle\Entity\PurchasePosition */
-        foreach ($result as $purchasePosition) {
-            $purchase = $purchasePosition->getPurchase();
-            if (array_key_exists($purchase->getId(), $purchases)){
-                $purchase = $purchases[$purchase->getId()];
-            } else {
-                $purchases[$purchase->getId()] = $purchase;
-            }
-            $purchase->addPosition($purchasePosition);
-        }
-        return $purchases;
     }
 }

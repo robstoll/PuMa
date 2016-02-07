@@ -24,6 +24,10 @@
                 <source>purchase.positions</source>
                 <target>No positions provided for the given purchase.</target>
             </trans-unit>
+            <trans-unit id="13">
+                <source>purchase.total</source>
+                <target>Total was not calculated for the purchase.</target>
+            </trans-unit>
             
             <trans-unit id="20">
                 <source>password.notCurrent</source>

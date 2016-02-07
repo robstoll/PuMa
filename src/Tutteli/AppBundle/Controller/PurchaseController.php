@@ -124,6 +124,7 @@ class PurchaseController extends ATplController {
         $validator = $this->get('validator');
         $errors = new ConstraintViolationList();
         $numPos = count($data['positions']);
+        $total = 0;
         for ($i = 0; $i < $numPos; ++$i) {
             $dataPos = $data['positions'][$i];
             $position = $this->createPosition($dataPos);
@@ -136,6 +137,7 @@ class PurchaseController extends ATplController {
                     $newErrors->add(new ConstraintViolation(
                         'purchase.price', 'purchase.price', [], $position, 'price', $price));      
                 }
+                $total += $price;
             }
             if(count($newErrors) > 0) {
                 $newErrors = $this->translateErrors($newErrors, $i + 1);
@@ -144,7 +146,8 @@ class PurchaseController extends ATplController {
             $position->setPurchase($purchase);
             $purchase->addPosition($position);
         }
-
+        $purchase->setTotal($total);
+        
         if ($numPos == 0) {
             $translator = $this->get('translator');
             $message = $translator->trans('purchase.positions', [], 'validators');

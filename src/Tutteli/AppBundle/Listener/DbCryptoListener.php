@@ -12,8 +12,8 @@ use Defuse\Crypto\Crypto;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Tutteli\AppBundle\Handler\AuthSuccessHandler;
 use Tutteli\AppBundle\Entity\Category;
+use Tutteli\AppBundle\Entity\Purchase;
 use Tutteli\AppBundle\Entity\PurchasePosition;
-use Defuse\Crypto\Exception\InvalidCiphertextException;
 
 class DbCryptoListener
 {
@@ -38,6 +38,9 @@ class DbCryptoListener
             /* @var $entity \Tutteli\AppBundle\Entity\Category */ 
             $entity->setName($this->encrypt($entity->getName()));
             return;
+        } else if($entity instanceof Purchase) {
+            /* @var $entity \Tutteli\AppBundle\Entity\Purchase */
+            $entity->setTotal($this->encrypt($entity->getTotal()));
         } else if($entity instanceof PurchasePosition) {
             /* @var $entity \Tutteli\AppBundle\Entity\PurchasePosition */
             $entity->setExpression($this->encrypt($entity->getExpression()));
@@ -52,6 +55,9 @@ class DbCryptoListener
         if ($entity instanceof Category) {
             /* @var $entity \Tutteli\AppBundle\Entity\Category */
             $entity->setName($this->decrypt($entity->getName()));
+        } else if($entity instanceof Purchase) {
+            /* @var $entity \Tutteli\AppBundle\Entity\Purchase */
+            $entity->setTotal($this->decrypt($entity->getTotal()));
         } else if($entity instanceof PurchasePosition) {
             /* @var $entity \Tutteli\AppBundle\Entity\PurchasePosition */
             $entity->setExpression($this->decrypt($entity->getExpression()));
