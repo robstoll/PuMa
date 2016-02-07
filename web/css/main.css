@@ -131,6 +131,10 @@ body {
 	display:none;
 }
 
+#updateBlock.showBlock {
+    display: block;
+}
+
 @media (max-width: 768px) {
 	.footer {
 	  position: fixed;

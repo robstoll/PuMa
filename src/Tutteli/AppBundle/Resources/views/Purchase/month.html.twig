@@ -14,6 +14,7 @@
     	<div pre-work="purchases/month.tpl">
     {%  endif %}
     
+        {% set json = '' %}
     	<table class="table table-striped">
     		<thead>
     			<tr>
@@ -33,9 +34,7 @@
             		<td><a href="#" ui-sref="edit_purchase({purchaseId: purchase.id})"><i class="glyphicon glyphicon-pencil"></i></a></td>
         		</tr>
             </tbody> 
-            {% if notXhr %}
-                {% set json = '' %}
-            {% endif %}
+            
             {% if purchases %}
             	<!-- pre-work-exclude-start -->
             	<tbody id="purchases_rows_preload">
@@ -70,17 +69,14 @@
         		<!-- pre-work-exclude-end -->
         	{% endif %}
         </table>
-        {% if notXhr %}
-            {% set json = '{"purchases":[' ~ json ~ ']}' %}
-            <!-- pre-work-exclude-start -->
-        	<input type="hidden" ng-model="purchasesCtrl.purchasesInit" value="{{ json }}"/>
-            <!-- pre-work-exclude-end -->
-        {% endif %}
-        <div id="purchases_load">{{ 'purchases.loading'|trans }}</div>
-        <div style="display:none" id="purchases_nothingFound">{{ 'month.noPurchases'|trans }}</div>
-        <div class="notice beforeFooter">
-        	{% include 'TutteliAppBundle:tpl:updateBlock.html.twig' with {'controllerName': 'purchasesCtrl'} only  %}
-       	</div>
+         {% include 'TutteliAppBundle:tpl:tableBottom.html.twig' 
+            with {
+            	'notXhr': notXhr, 
+            	'name': 'purchases', 
+            	'nothingFound': 'month.noPurchases',
+            	'json': json
+            } only %}
+        
         <footer class="footer">
 			{# TODO choose month #}
         </footer> 
@@ -88,13 +84,13 @@
     {% if notXhr %}
         </div>
         
-        {% if purchases %}
+         {% if purchases %}
             {%  include 'TutteliAppBundle:tpl:updateBlock.js.twig' 
                 with {
                 	'controllerName': 'purchasesCtrl',
                     'updatedAt': updatedAt, 
                     'updatedBy': updatedBy
-                } only %} 
+                } only %}             	
         {% endif %}
         
         <script type="text/javascript">

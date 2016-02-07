@@ -14,6 +14,7 @@
     	<div pre-work="categories.tpl">
     {%  endif %}
     
+        {% set json = '' %}
     	<table class="table table-striped">
     		<thead>
     			<tr>
@@ -31,8 +32,7 @@
             </tbody> 
             {% if categories %}
             	<!-- pre-work-exclude-start -->
-            	<tbody id="categories_rows_preload">
-            	{% set json = '' %} 
+            	<tbody id="categories_rows_preload"> 
             	{% set updatedAt = date('0000-00-00') %}
             	{% set updatedBy = {username:''} %}
                 {% for category in categories %}
@@ -53,21 +53,18 @@
         				<td><a href="{{ path('edit_category', {'categoryId': category.id}) }}"><i class="glyphicon glyphicon-pencil"></i></a></td>
         			</tr>
         		{% endfor %}
-        		{% set json = '{"categories":[' ~ json ~ ']}' %}
         		</tbody>
         		<!-- pre-work-exclude-end -->
         	{% endif %}
         </table>
-        {% if categories %}
-            <!-- pre-work-exclude-start -->
-        	<input type="hidden" ng-model="categoriesCtrl.categoriesInit" value="{{ json }}"/>
-            <!-- pre-work-exclude-end -->
-        {% endif %}
-        <div class="notice beforeFooter">
-        	{% include 'TutteliAppBundle:tpl:updateBlock.html.twig' with {'controllerName': 'categoriesCtrl'} only  %}
-        </div>
-        <div id="categories_load">{{ 'categories.loading'|trans }}</div>
-        <div class="hidden" id="categories_nothingFound">{{ 'categories.noCategories'|trans }}</div>
+        {% include 'TutteliAppBundle:tpl:tableBottom.html.twig' 
+            with {
+            	'notXhr': notXhr, 
+            	'name': 'categories', 
+            	'nothingFound': 'categories.noCategories',
+            	'json': json
+            } only %}
+            
         <footer class="footer">
 			<a href="{{ path('new_category') }}" ui-sref="new_category" class="btn-default btn"><i class="glyphicon glyphicon-plus"></i> {{ 'categories.add'|trans }}</a>
         </footer> 

@@ -1,0 +1,16 @@
+{#
+ * This file is part of the project tutteli/purchase published under the Apache License 2.0
+ * For the full copyright and license information, please have a look at LICENSE in the
+ * root folder or visit https://github.com/robstoll/purchase
+ #}
+{% if notXhr %}
+    {% set json = '{"' ~ name ~ '":[' ~ json ~ ']}' %}
+    <!-- pre-work-exclude-start -->
+	<input type="hidden" ng-model="{{ name }}Ctrl.{{ name }}Init" value="{{ json }}"/>
+    <!-- pre-work-exclude-end -->
+{% endif %}
+<div class="notice beforeFooter">
+	{% include 'TutteliAppBundle:tpl:updateBlock.html.twig' with {'controllerName': name ~ 'Ctrl'} only  %}
+</div>
+<div id="{{ name }}_load">{{ (name ~'.loading')|trans }}</div>
+<div style="display:none" id="{{ name }}_nothingFound">{{ nothingFound|trans }}</div>

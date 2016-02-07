@@ -14,6 +14,7 @@
     	<div pre-work="users.tpl">
     {%  endif %}
     
+        {% set json = '' %}
     	<table class="table table-striped">
     		<thead>
     			<tr>
@@ -36,7 +37,6 @@
             {% if users %}
             	<!-- pre-work-exclude-start -->
             	<tbody id="users_rows_preload"> 
-            	{% set json = '' %}
             	{% set updatedAt = date('0000-00-00') %}
             	{% set updatedBy = {username:''} %}
                 {% for user in users %}
@@ -67,16 +67,14 @@
         		<!-- pre-work-exclude-end -->
         	{% endif %}
         </table>
-        {% if users %}
-            <!-- pre-work-exclude-start -->
-            <input type="hidden" ng-model="usersCtrl.usersInit" value="{{ json }}"/>
-            <!-- pre-work-exclude-end -->
-        {% endif %}
-        <div id="users_load">{{ 'users.loading'|trans }}</div>
-        <div class="hidden" id="users_nothingFound">{{ 'users.noUsers'|trans }}</div>
-        <div class="notice beforeFooter">
-        	{% include 'TutteliAppBundle:tpl:updateBlock.html.twig' with {'controllerName': 'usersCtrl'} only  %}
-       	</div>
+        {% include 'TutteliAppBundle:tpl:tableBottom.html.twig' 
+            with {
+            	'notXhr': notXhr, 
+            	'name': 'users', 
+            	'nothingFound': 'users.noUsers',
+            	'json': json
+            } only %}
+        
         <footer class="footer">
 			<a href="{{ path('new_user') }}" ui-sref="new_user" class="btn-default btn"><i class="glyphicon glyphicon-plus"></i> {{ 'users.add'|trans }}</a>
         </footer> 
