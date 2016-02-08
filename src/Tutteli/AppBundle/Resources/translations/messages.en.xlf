@@ -124,10 +124,6 @@
                 <target>Add position</target>
             </trans-unit>
             <trans-unit id="207">
-                <source>purchase.submit</source>
-                <target>End purchase</target>
-            </trans-unit>
-            <trans-unit id="208">
                 <source>purchase.total</source>
                 <target>Total of the purchase</target>
             </trans-unit>           
@@ -135,7 +131,11 @@
             <trans-unit id="220">
                 <source>purchases.loading</source>
                 <target>Loading purchases...</target>
-            </trans-unit>       
+            </trans-unit>
+            <trans-unit id="221">
+                <source>purchases.create</source>
+                <target>Save purchase</target>
+            </trans-unit>
             
             
             <trans-unit id="300">

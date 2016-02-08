@@ -4,100 +4,30 @@
  * root folder or visit https://github.com/robstoll/purchase
  #}
 
-{% extends notXhr ? 'TutteliAppBundle::layout.html.twig' : 'xhr.twig' %}
+{% set entity = null %} 
+{% set name = 'purchase' %}
+{% set preWork = 'purchases/new.tpl' %}
+{% set formAction = path('post_purchase') %}
+{% set formSubmit = 'purchaseCtrl.createPurchase($event)' %}
+{% set btnText = 'purchases.create'|trans %}
+{% extends 'TutteliAppBundle::form.layout.html.twig' %}
 
 {% block title %} Add Purchase | {{ parent() }}{% endblock %}
 
+{% block form_content %}
+    {%  include 'TutteliAppBundle:Purchase:form.incl.twig' %}
+{% endblock %}
 
-{% block content %}
-    {% if notXhr %}
-    	<div ui-view></div>
-    	<div pre-work="purchases/new.tpl">
-    {%  endif %}
-        <form name="form" method="post" action="{{ path('post_purchase') }}" id="purchase_form" ng-submit="purchaseCtrl.createPurchase($event)">
-            {% if error %}
-            	<div id="purchase_error" class="alert alert-danger alert-dismissible" role="alert">
-                	<button type="button" class="close" onclick="this.parentNode.parentNode.removeChild(this.parentNode)">
-                    	<span aria-hidden="true">&times;</span>
-                    	<span class="sr-only">Close</span>
-                	</button>
-            	    {{ error.messageKey|trans(error.messageData) }}
-        		</div>
-            {% endif %}
-            <div ng-repeat="position in purchaseCtrl.positions">
-                <div class="form-group">
-                	<div>
-                		<div class="closePosition"  ng-class="{show: $index>0}" ng-click="purchaseCtrl.removePosition($index);"><i class="glyphicon glyphicon-trash"></i></div>
-                		<label class="control-label" for="purchase_expression{{ '{{$index}}' }}">{{ 'purchase.price'|trans }}</label>
-                		<div style="float:clear"></div>
-                	</div>
-                	<div class="input-group">
-                	 	<input type="text" id="purchase_expression{{ '{{$index}}' }}" name="expression" required="required" ng-model="position.expression" ng-disabled="purchaseCtrl.disabled" class="form-control" autocomplete="off"/>
-                	 	<span class="input-group-addon"><span ng-bind="position.calc()">CHF 0.00</span></span>
-                     </div>
-               	</div>
-               	<div class="form-group calc">
-               		<calculator field="position.expression" btn-class="'btn btn-default'" disabled="purchaseCtrl.disabled"></calculator>
-               	</div>
-               	
-                <div class="form-group">
-                	<label class="control-label" for="purchase_category{{ '{{$index}}' }}">{{ 'purchase.category'|trans }}</label>
-                	<select id="purchase_category" name="category" required="required" ng-model="position.category" ng-disabled="purchaseCtrl.disabled" ng-options="obj.id as obj.name for obj in purchaseCtrl.getCategories()" class="form-control">
-                		<option>{{ 'purchase.loadingCategories'|trans }}</option>
-                	</select>
-                </div>
-                <div class="form-group">
-                	<label class="control-label" for="purchase_notice">{{ 'purchase.notice'|trans }}</label>
-                	<input type="text" id="purchase_notice" name="notice" ng-model="position.notice" ng-disabled="purchaseCtrl.disabled" class="form-control">
-               	</div>
-               	<hr/>
-           	</div>
-            <div class="form-group">
-            	<label class="control.label" for="purchase_date">{{ 'purchase.date'|trans }}</label>
-            	<div>
-                    <div class="input-group">
-                      <input type="text" class="form-control" name="date" uib-datepicker-popup="{{ 'general.dateFormat.angularjs'|trans }}" ng-model="purchaseCtrl.dt" ng-disabled="purchaseCtrl.disabled" is-open="purchaseCtrl.opened" min-date="purchaseCtrl.minDate" max-date="purchaseCtrl.maxDate" datepicker-options="purchaseCtrl.dateOptions" ng-required="true" close-text="{{'general.close'|trans}}" value="{{ "now"|date('general.dateFormat.php'|trans) }}" />
-                      <span class="input-group-btn">
-                        <button type="button" class="btn btn-default" ng-disabled="purchaseCtrl.disabled" ng-click="purchaseCtrl.open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-                      </span>
-                    </div>
-                </div>
-            </div>
-           	<div class="form-group last extraMargin">
-            	<label class="control-label" for="purchase_user">{{ 'purchase.user'|trans }}</label>
-            	<select id="purchase_category" name="user" required="required" ng-model="purchaseCtrl.user" ng-disabled="purchaseCtrl.disabled" ng-options="obj.id as obj.username for obj in purchaseCtrl.getUsers()" class="form-control" ng-init="purchaseCtrl.selectUser('{{ app.user.id }}', '{{  app.user.username }}')">
-            		<option value="{{ app.user.id }}">{{ app.user.username }}</option>
-            	</select>
-           	</div>
-           	<input type="hidden" id="csrf_token" ng-model="purchaseCtrl.csrf_token" name="csrf_token" value="{{ csrf_token('purchase') }}">
-           	<div class="totalContainer hidden" ng-class="{showBlock: purchaseCtrl.positions.length > 1}">
-           		<hr/>
-           		<label>{{ 'purchase.total'|trans }}</label>
-           		<span class="total pull-right" ng-bind="purchaseCtrl.getTotal()"></span>
-           		<div class="clear"></div>
-           	</div>
-           	<footer class="footer">
-                <div class="form-group">
-                	<button style="display:none" type="button" id="purchase_add" class="btn-default btn" ng-disabled="purchaseCtrl.disabled" ng-click="purchaseCtrl.addPosition()"><i class="glyphicon glyphicon-plus"></i> {{ 'purchase.add'|trans }}</button>
-                	<span class="pull-right"><button type="submit" id="purchase_form_submit" ng-disabled="purchaseCtrl.disabled" class="btn-default btn"><i class="glyphicon glyphicon-floppy-disk"></i> {{ 'purchase.submit'|trans }}</button></span>
-            	</div>
-            </footer>    
-        </form>
-        {% if error %}
-        <script type="text/javascript">
-        	(function(){
-        		var oneTimeRemove = function(){
-              		this.removeChild(document.getElementById('purchase_error'));
-              		this.removeEventListener('submit', oneTimeRemove);
-        		};
-              	document.getElementById('purchase_form').addEventListener('submit', oneTimeRemove);
-        	})();
-        </script>
-        {% endif %}          	
-    {% if notXhr %}
-    	</div>
-    {%  endif %}
-    
-{% endblock %} 
+{% block before_footer %}
+	<div class="totalContainer hidden" ng-class="{showBlock: purchaseCtrl.positions.length > 1}">
+   		<hr/>
+   		<label>{{ 'purchase.total'|trans }}</label>
+   		<span class="total pull-right" ng-bind="purchaseCtrl.getTotal()"></span>
+   		<div class="clear"></div>
+   	</div>
+{% endblock %}   	
 
+{% block footer_left_button %}
+	<button style="display:none" type="button" id="purchase_add" class="btn-default btn" ng-disabled="purchaseCtrl.disabled" ng-click="purchaseCtrl.addPosition()"><i class="glyphicon glyphicon-plus"></i> {{ 'purchase.add'|trans }}</button>
+{% endblock %}
  

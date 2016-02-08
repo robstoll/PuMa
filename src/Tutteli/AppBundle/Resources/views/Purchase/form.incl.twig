@@ -1,0 +1,53 @@
+{#
+ * This file is part of the project tutteli/purchase published under the Apache License 2.0
+ * For the full copyright and license information, please have a look at LICENSE in the
+ * root folder or visit https://github.com/robstoll/purchase
+ #}
+
+
+<div class="position" ng-repeat="position in purchaseCtrl.positions">
+    <div class="form-group">
+    	<div>
+    		<div class="closePosition"  ng-class="{show: $index>0}" ng-click="purchaseCtrl.removePosition($index);"><i class="glyphicon glyphicon-trash"></i></div>
+    		<label class="control-label" for="purchase_expression{{ '{{$index}}' }}">{{ 'purchase.price'|trans }}</label>
+    		<div style="float:clear"></div>
+    	</div>
+    	<div class="input-group">
+    	 	<input type="text" id="purchase_expression{{ '{{$index}}' }}" name="expression" required="required" ng-model="position.expression" ng-disabled="purchaseCtrl.disabled" class="form-control" autocomplete="off"/>
+    	 	<span class="input-group-addon"><span ng-bind="position.calc()">CHF 0.00</span></span>
+         </div>
+   	</div>
+   	<div class="form-group calc">
+   		<calculator field="position.expression" btn-class="'btn btn-default'" disabled="purchaseCtrl.disabled"></calculator>
+   	</div>
+   	
+    <div class="form-group">
+    	<label class="control-label" for="purchase_category{{ '{{$index}}' }}">{{ 'purchase.category'|trans }}</label>
+    	<select id="purchase_category" name="category" required="required" ng-model="position.category" ng-disabled="purchaseCtrl.disabled" ng-options="obj.id as obj.name for obj in purchaseCtrl.getCategories()" class="form-control">
+    		<option>{{ 'purchase.loadingCategories'|trans }}</option>
+    	</select>
+    </div>
+    <div class="form-group">
+    	<label class="control-label" for="purchase_notice">{{ 'purchase.notice'|trans }}</label>
+    	<input type="text" id="purchase_notice" name="notice" ng-model="position.notice" ng-disabled="purchaseCtrl.disabled" class="form-control">
+   	</div>
+   	<hr/>
+</div>
+<div class="form-group">
+	<label class="control.label" for="purchase_date">{{ 'purchase.date'|trans }}</label>
+	<div>
+        <div class="input-group">
+          <input type="text" class="form-control" name="date" uib-datepicker-popup="{{ 'general.dateFormat.angularjs'|trans }}" ng-model="purchaseCtrl.dt" ng-disabled="purchaseCtrl.disabled" is-open="purchaseCtrl.opened" min-date="purchaseCtrl.minDate" max-date="purchaseCtrl.maxDate" datepicker-options="purchaseCtrl.dateOptions" ng-required="true" close-text="{{'general.close'|trans}}" value="{{ "now"|date('general.dateFormat.php'|trans) }}" />
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-disabled="purchaseCtrl.disabled" ng-click="purchaseCtrl.open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+        </div>
+    </div>
+</div>
+<div class="form-group last extraMargin">
+	<label class="control-label" for="purchase_user">{{ 'purchase.user'|trans }}</label>
+	<select id="purchase_category" name="user" required="required" ng-model="purchaseCtrl.user" ng-disabled="purchaseCtrl.disabled" ng-options="obj.id as obj.username for obj in purchaseCtrl.getUsers()" class="form-control" ng-init="purchaseCtrl.selectUser('{{ app.user.id }}', '{{  app.user.username }}')">
+		<option value="{{ app.user.id }}">{{ app.user.username }}</option>
+	</select>
+</div>
+
