@@ -3,28 +3,18 @@
  * For the full copyright and license information, please have a look at LICENSE in the
  * root folder or visit https://github.com/robstoll/purchase
  #}
- {% extends notXhr ? 'TutteliAppBundle::layout.html.twig' : 'xhr.twig' %}
+
+{% set entity = null %} 
+{% set name = 'category' %}
+{% set preWork = 'categories/new.tpl' %}
+{% set formAction = path('post_category') %}
+{% set formSubmit = 'categoryCtrl.createCategory($event)' %}
+{% set btnText = 'categories.create'|trans %}
+{% extends 'TutteliAppBundle::form.layout.html.twig' %}
 
 {% block title %} Add Category | {{ parent() }}{% endblock %}
 
-
-{% block content %}
-    {% if notXhr %}
-    <div ui-view></div>
-    	<div pre-work="categories/new.tpl">
-    {%  endif %}
-    	
-    	{%  set btnText = 'categories.create'|trans %}
-        {%  set formAction = path('post_category') %}
-        {%  set formSubmit = 'categoryCtrl.createCategory($event)' %}
-    	{%  include 'TutteliAppBundle:Category:form.incl.twig' %}
-    	
-    {% if notXhr %}
-    	</div>
-    	
-    	<script type="text/javascript">
-    		document.getElementById('updateBlock').className = 'hidden';
-    	</script>
-    	
-    {%  endif %}
+{% block form_content %}
+    {%  include 'TutteliAppBundle:Category:form.incl.twig' %}
 {% endblock %}
+ 

@@ -4,42 +4,7 @@
  * root folder or visit https://github.com/robstoll/purchase
  #}
  
- <form name="form" method="post" action="{{ formAction }}" id="category_form" ng-submit="{{ formSubmit }}">
-	<input type="hidden" id="category_id" name="id" ng-model="categoryCtrl.id"/>
-    {% if error %}
-    	<div id="category_error" class="alert alert-danger alert-dismissible" role="alert">
-        	<button type="button" class="close" onclick="this.parentNode.parentNode.removeChild(this.parentNode)">
-            	<span aria-hidden="true">&times;</span>
-            	<span class="sr-only">Close</span>
-        	</button>
-    	    {{ error.messageKey|trans(error.messageData) }}
-		</div>
-    {% endif %}
-	<div class="form-group">
-    	<label class="control-label" for="category_name">{{ 'categories.name'|trans }}</label>
-    	<input type="text" id="category_name" name="username" required="required" ng-model="categoryCtrl.name" ng-disabled="categoryCtrl.isDisabled()" class="form-control" />
-	</div>                    
-	
-   	<input type="hidden" id="csrf_token" ng-model="categoryCtrl.csrf_token" name="csrf_token" value="{{ csrf_token('category') }}" />
-   	<div class="notice beforeFooter">
-   	    {% include 'TutteliAppBundle:tpl:updateBlock.html.twig' with {'controllerName': 'categoryCtrl'} only  %}
-   	</div>
-    <footer class="footer">
-        <div class="form-group">
-        	<span class="pull-right"><button type="submit" id="category_form_submit" class="btn-default btn" ng-disabled="categoryCtrl.isDisabled()"><i class="glyphicon glyphicon-floppy-disk"></i> {{ btnText }}</button></span>
-        	<div class="clear"></div>
-    	</div>
-    </footer> 
-</form>
-{% if error %}
-    <script type="text/javascript">
-    	(function(){
-    		var oneTimeRemove = null;
-    		oneTimeRemove = function() {
-          		this.removeChild(document.getElementById('category_error'));
-          		this.removeEventListener('submit', oneTimeRemove);
-    		};
-          	document.getElementById('category_form').addEventListener('submit', oneTimeRemove);
-    	})();
-    </script>
-{% endif %}
+<div class="form-group">
+	<label class="control-label" for="category_name">{{ 'categories.name'|trans }}</label>
+	<input type="text" id="category_name" name="username" required="required" ng-model="categoryCtrl.name" ng-disabled="categoryCtrl.isDisabled()" class="form-control" />
+</div>                    	

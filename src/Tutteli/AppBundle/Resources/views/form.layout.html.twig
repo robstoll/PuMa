@@ -1,0 +1,66 @@
+{#
+ * This file is part of the project tutteli/purchase published under the Apache License 2.0
+ * For the full copyright and license information, please have a look at LICENSE in the
+ * root folder or visit https://github.com/robstoll/purchase
+ #}
+ 
+{% extends notXhr ? 'TutteliAppBundle::layout.html.twig' : 'xhr.twig' %}
+ 
+{% block content %} 
+    {% if notXhr %}
+		<div ui-view></div>
+		<div pre-work="{{ preWork }}">
+    {%  endif %}
+        <form name="form" method="post" action="{{ formAction }}" id="{{ name }}_form" ng-submit="{{ formSubmit }}">
+            <input type="hidden" id="{{ name }}_id" name="id" ng-model="{{ name }}Ctrl.id"/>
+            {% if error %}
+                <div id="{{ name }}_error" class="alert alert-danger alert-dismissible" role="alert">
+                    <button type="button" class="close" onclick="this.parentNode.parentNode.removeChild(this.parentNode)">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    {{ error.messageKey|trans(error.messageData) }}
+                </div>
+            {% endif %}
+            
+            {% block form_content %}{% endblock %}
+            
+            <input type="hidden" id="csrf_token" ng-model="{{ name }}Ctrl.csrf_token" name="csrf_token" value="{{ csrf_token(name) }}">
+            <div class="notice beforeFooter">
+                {% include 'TutteliAppBundle:tpl:updateBlock.html.twig' with {'controllerName': name ~ 'Ctrl'} only  %}
+            </div>
+            <footer class="footer">
+                <div class="form-group">
+                	<span class="pull-right"><button type="submit" id="{{ name }}_form_submit" class="btn-default btn" ng-disabled="{{ name }}Ctrl.isDisabled()"><i class="glyphicon glyphicon-floppy-disk"></i> {{ btnText }}</button></span>
+                	<div class="clear"></div>
+            	</div>
+            </footer> 
+        </form>
+        
+        {% if error %}
+            <script type="text/javascript">
+            	(function(){
+            		var oneTimeRemove = null;
+            		oneTimeRemove = function() {
+                  		this.removeChild(document.getElementById('{{ name }}_error'));
+                  		this.removeEventListener('submit', oneTimeRemove);
+            		};
+                  	document.getElementById('{{ name }}_form').addEventListener('submit', oneTimeRemove);
+            	})();
+            </script>
+        {% endif %}
+    {% if notXhr %}
+    	</div>
+    	
+    	{% block form_notXhr %}{% endblock %}
+    	
+    	{% if entity %}
+            {%  include 'TutteliAppBundle:tpl:updateBlock.js.twig' 
+                with {
+                	'controllerName': name ~ 'Ctrl',
+                    'updatedAt': entity.updatedAt, 
+                    'updatedBy': entity.updatedBy
+                } only %}
+        {%  endif %}        
+    {%  endif %}
+{% endblock %}    

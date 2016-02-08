@@ -3,23 +3,17 @@
  * For the full copyright and license information, please have a look at LICENSE in the
  * root folder or visit https://github.com/robstoll/purchase
  #}
- {% extends notXhr ? 'TutteliAppBundle::layout.html.twig' : 'xhr.twig' %}
+
+{% set entity = null %}
+{% set name = 'user' %}
+{% set preWork = 'users/new.tpl' %}
+{%  set formAction = path('post_user') %}
+{%  set formSubmit = 'userCtrl.createUser($event)' %}
+{% set btnText = 'users.create'|trans %}
+{% extends 'TutteliAppBundle::form.layout.html.twig' %}
 
 {% block title %} Add User | {{ parent() }}{% endblock %}
 
-
-{% block content %}
-    {% if notXhr %}
-    <div ui-view></div>
-    	<div pre-work="users/new.tpl">
-    {%  endif %}
-    	
-    	{%  set btnText = 'users.create'|trans %}
-        {%  set formAction = path('post_user') %}
-        {%  set formSubmit = 'userCtrl.createUser($event)' %}
-    	{%  include 'TutteliAppBundle:User:form.incl.twig' %}
-    	
-    {% if notXhr %}
-    	</div>
-    {%  endif %}
+{% block form_content %}
+    {%  include 'TutteliAppBundle:User:form.incl.twig' %}
 {% endblock %}
