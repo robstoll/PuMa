@@ -4,15 +4,15 @@
  * root folder or visit https://github.com/robstoll/purchase
  #}
 
-{% set entity = null %} 
+{% set entity = purchase %}
 {% set name = 'purchase' %}
-{% set preWork = 'purchases/new.tpl' %}
-{% set formAction = path('post_purchase') %}
-{% set formSubmit = 'purchaseCtrl.createPurchase($event)' %}
-{% set btnText = 'purchases.create'|trans %}
+{% set preWork = 'purchases/edit.tpl' %}
+{% set formAction = notXhr ? path('put_purchase', {'purchaseId': purchase.id}) : '' %}
+{% set formSubmit = 'purchaseCtrl.updatePurchase($event)' %}
+{% set btnText = 'purchases.update'|trans %}
 {% extends 'TutteliAppBundle::form.layout.html.twig' %}
 
-{% block title %} Add Purchase | {{ parent() }}{% endblock %}
+{% block title %} Edit Purchase | {{ parent() }}{% endblock %}
 
 {% block form_content %}
     {%  include 'TutteliAppBundle:Purchase:form.incl.twig' %}
@@ -25,9 +25,26 @@
    		<span class="total pull-right" ng-bind="purchaseCtrl.positionManager.getTotal()"></span>
    		<div class="clear"></div>
    	</div>
+   	<!-- pre-work-exclude-start -->
+   	<div class="totalContainer">
+   		<hr/>
+   		<label>{{ 'purchase.total'|trans }}</label>
+   		<span class="total pull-right">CHF {{ purchase.total|number_format(2, '.') }}</span>
+   		<div class="clear"></div>
+   	</div>
+   	<!-- pre-work-exclude-end -->
 {% endblock %}   	
 
 {% block footer_left_button %}
 	<button style="display:none" type="button" id="purchase_add" class="btn-default btn" ng-disabled="purchaseCtrl.disabled" ng-click="purchaseCtrl.positionManager.addPosition()"><i class="glyphicon glyphicon-plus"></i> {{ 'purchase.add'|trans }}</button>
 {% endblock %}
- 
+
+{%  block form_notXhr %}
+	
+    <script type="text/javascript">
+    	document.getElementById('purchase_id').value = '{{ purchase.id }}';
+    	document.getElementById('purchase_purchaseDate').value = '{{ purchase.purchaseDate|date('general.dateFormat.php'|trans) }}';
+    	document.getElementById('purchase_user').value = '{{ purchase.user.id }}';
+    </script>
+{% endblock %}
+

@@ -24,12 +24,12 @@
             {% endif %}
             
             {% block form_content %}{% endblock %}
+            {% block before_footer %}{% endblock %}
             
             <input type="hidden" id="csrf_token" ng-model="{{ name }}Ctrl.csrf_token" name="csrf_token" value="{{ csrf_token(name) }}">
             <div class="notice beforeFooter">
                 {% include 'TutteliAppBundle:tpl:updateBlock.html.twig' with {'controllerName': name ~ 'Ctrl'} only  %}
             </div>
-            {% block before_footer %}{% endblock %}
             
             <footer class="footer">
                 <div class="form-group">

@@ -16,6 +16,7 @@ angular.module('tutteli.purchase.core', [
     'tutteli.helpers',
 ])
     .controller('tutteli.purchase.PurchaseController', PurchaseController)
+    .controller('tutteli.purchase.EditPurchaseController', EditPurchaseController)
     .controller('tutteli.purchase.PurchaseMonthController', PurchaseMonthController)
     .service('tutteli.purchase.PurchaseService', PurchaseService)
     .constant('tutteli.purchase.PurchaseService.alertId', 'tutteli-ctrls-Purchase');
@@ -45,31 +46,18 @@ function PurchaseController(
 
     var self = this;
     var formHelper = FormHelperFactory.build(self, ROUTES.get_purchase_csrf);
+
     var categories = [{id: 0, name: 'Loading categories...'}];
     var users = null;
     var usersLoaded = false;
     var categoriesLoaded = false;
 
+    this.datePicker = new DatePicker();
+    this.positionManager = new PositionManager($parse, $filter);
+    this.clearForm = self.positionManager.clearForm;
+    
     this.disabled = false;
-    this.positions = [];
-    this.dt = new Date();
-    this.opened = false;
-    this.maxDate = new Date();
-    this.minDate = new Date();
-    this.minDate.setFullYear(this.minDate.getFullYear() - 1);
-    this.dateOptions = {
-        formatYear: 'yy',
-        startingDay: 1
-    };
-
-    this.today = function() {
-        self.dt = new Date();
-    };
-
-    this.open = function($event) {
-        self.opened = true;
-    };
-
+ 
     this.getCategories = function() {
         return categories;
     };
@@ -171,23 +159,66 @@ function PurchaseController(
         });
     };
 
-    this.addPosition = addPosition;
-    function addPosition() {
-        self.positions.push(new Position($parse, $filter));
-    }
-
-    this.removePosition = function(index) {
-        self.positions.splice(index, 1);
-    };
-
     this.createPurchase = function($event) {
         var purchase = {
             userId : self.user,
-            dt : self.dt,
-            positions : self.positions,
+            dt : self.datePicker.dt,
+            positions :  self.positionManager.positions,
             csrf_token : self.csrf_token
         };
         formHelper.create($event, alertId, purchase, 'Purchase', null, PurchaseService);
+    };
+    
+
+    // -------------------
+
+    self.positionManager.addPosition();
+    var position = {};
+    if (PreWork.merge('purchases/new.tpl', position, 'position')) {
+        self.positionManager.positions[0].expression = position.expression;
+        self.positionManager.positions[0].notice = position.notice;
+    }
+    PreWork.merge('purchases/new.tpl', this, 'purchaseCtrl');
+
+    formHelper.reloadCsrfIfNecessary();
+
+    self.loadCategories();
+    self.loadUsers();
+    document.getElementById('purchase_add').style.display = 'inline';
+}
+
+function DatePicker() {
+    var self = this;
+    this.dt = new Date();
+    this.opened = false;
+    this.maxDate = new Date();
+    this.minDate = new Date();
+    this.minDate.setFullYear(this.minDate.getFullYear() - 1);
+    this.dateOptions = {
+        formatYear: 'yy',
+        startingDay: 1
+    };
+
+    this.today = function() {
+        self.dt = new Date();
+    };
+
+    this.open = function($event) {
+        self.opened = true;
+    };
+
+}
+
+function PositionManager ($parse, $filter) {
+    var self = this;
+    this.positions = [];
+    
+    this.addPosition = function() {
+        self.positions.push(new Position($parse, $filter));
+    };
+
+    this.removePosition = function(index) {
+        self.positions.splice(index, 1);
     };
     
     this.clearForm = function() {
@@ -213,22 +244,6 @@ function PurchaseController(
         }
         return $filter('currency')(total, 'CHF ');
     };
-
-    // -------------------
-
-    self.addPosition();
-    var position = {};
-    if (PreWork.merge('purchase.tpl', position, 'position')) {
-        self.positions[0].expression = position.expression;
-        self.positions[0].notice = position.notice;
-    }
-    PreWork.merge('purchase.tpl', this, 'purchaseCtrl');
-
-    formHelper.reloadCsrfIfNecessary();
-
-    self.loadCategories();
-    self.loadUsers();
-    document.getElementById('purchase_add').style.display = 'inline';
 }
 
 function Position($parse, $filter) {
@@ -253,6 +268,63 @@ function Position($parse, $filter) {
         return $filter('currency')(val, 'CHF ');
     };
 }
+
+EditPurchaseController.$inject = [
+  '$stateParams',
+  '$parse',
+  '$filter',
+  'tutteli.purchase.ROUTES',
+  'tutteli.PreWork',
+  'tutteli.purchase.PurchaseService',
+  'tutteli.purchase.EditCategoryController.alertId',
+  'tutteli.helpers.FormHelperFactory'];
+function EditPurchaseController(
+        $stateParams, 
+        $parse,
+        $filter,
+        ROUTES, 
+        PreWork,  
+        PurchaseService,  
+        alertId, 
+    FormHelperFactory) {
+    var self = this;
+    var formHelper = FormHelperFactory.build(self, ROUTES.get_purchase_csrf);
+    
+    var categories = [{id: 0, name: 'Loading categories...'}];
+    var users = null;
+    var usersLoaded = false;
+    var categoriesLoaded = false;
+    var isNotLoaded = true;
+    
+    this.datePicker = new DatePicker();
+    this.positionManager = new PositionManager($parse, $filter);
+    this.clearForm = self.positionManager.clearForm;
+    
+    // -------------------
+    
+    var positions = {};
+    if (PreWork.merge('purchases/edit.tpl', positions, 'positions')) {
+        //positions is actually an object with field names as index
+        for(var i in positions) {
+            self.positionManager.addPosition();
+            self.positionManager.positions[i].expression = positions[i].expression;
+            self.positionManager.positions[i].notice = positions[i].notice;
+        }
+    }
+    PreWork.merge('purchases/edit.tpl', this, 'purchaseCtrl');
+
+    isNotLoaded = self.positionManager.positions.length == 0;
+    if (isNotLoaded) {
+        self.loadPurchase($stateParams.purchaseId);
+    }
+    
+    formHelper.reloadCsrfIfNecessary();
+
+//    self.loadCategories();
+//    self.loadUsers();
+    document.getElementById('purchase_add').style.display = 'inline';
+}
+
 
 PurchaseMonthController.$inject = [
     '$stateParams',

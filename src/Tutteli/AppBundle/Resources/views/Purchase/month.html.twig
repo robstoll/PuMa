@@ -61,8 +61,7 @@
         				<td>{{ purchase.user.username }}
         				<td>{{ purchaseDate }}</td>
         				<td>{{ purchase.total }}</td>
-        				<td>TODO</td>
-{#         				<td><a href="{{ path('edit_purchase', {'purchaseId': purchase.id}) }}"><i class="glyphicon glyphicon-pencil"></i></a></td>#}
+        				<td><a href="{{ path('edit_purchase', {'purchaseId': purchase.id}) }}"><i class="glyphicon glyphicon-pencil"></i></a></td>
         			</tr>
         		{% endfor %}	
         		</tbody>

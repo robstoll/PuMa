@@ -66,6 +66,21 @@ post_purchase:
     defaults: { _controller: "TutteliAppBundle:Purchase:post", ending: ""}
     methods: [POST]
     
+edit_purchase:
+    path: /purchases/{purchaseId}/edit{ending}
+    defaults: { _controller: "TutteliAppBundle:Purchase:edit", ending: ""}
+    methods: [GET]    
+    
+edit_purchase_tpl:
+    path: /purchases/edit.tpl
+    defaults: { _controller: "TutteliAppBundle:Purchase:editTpl" }
+    methods: [GET]
+        
+put_purchase:
+    path: /purchases/{purchaseId}
+    defaults: { _controller: "TutteliAppBundle:Purchase:put" }
+    methods: [PUT]    
+    
     
 get_categories_json:
     path:   /categories.json

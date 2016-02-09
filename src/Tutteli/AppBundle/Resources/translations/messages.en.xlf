@@ -136,6 +136,10 @@
                 <source>purchases.create</source>
                 <target>Save purchase</target>
             </trans-unit>
+            <trans-unit id="222">
+                <source>purchases.update</source>
+                <target>Update purchase</target>
+            </trans-unit>       
             
             
             <trans-unit id="300">

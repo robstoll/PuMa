@@ -71,6 +71,15 @@ angular.module('tutteli.purchase.routing', [
             authRoles: [USER_ROLES.authenticated]
         }
     })
+    .state('edit_purchase', {
+        url: '/purchases/:purchaseId/edit',
+        controller: 'tutteli.purchase.EditPurchaseController',
+        controllerAs: 'purchaseCtrl',
+        templateUrl: 'purchases/edit.tpl',
+        data: {
+            authRoles: [USER_ROLES.authenticated]
+        }
+    })
     
     .state('users', {
         url: '/users',

@@ -67,6 +67,11 @@ class PurchaseController extends ATplController {
         return $this->getDoctrine()->getRepository('TutteliAppBundle:Purchase');
     }
     
+    private function loadPurchase($purchaseId) {
+        $repository = $this->getPurchaseRepository();
+        return $repository->find($purchaseId);
+    }
+    
     public function newAction(Request $request, $ending) {
         $viewPath = '@TutteliAppBundle/Resources/views/Purchase/new.html.twig';
         list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
@@ -180,6 +185,39 @@ class PurchaseController extends ATplController {
                     $constraint->getInvalidValue()));
         }
         return $list;
+    }
+    
+    public function editAction(Request $request, $purchaseId, $ending) {
+        return $this->edit($request, $ending, function() use ($purchaseId) {
+            $category = $this->loadPurchase($purchaseId);
+            if ($category == null) {
+                throw $this->createNotFoundException('Purchase with id '.$purchaseId. ' not found.');
+            }
+            return $category;
+        });
+    }
+    
+    public function editTplAction(Request $request) {
+        return $this->edit($request, '.tpl', function(){ return null; });
+    }
+    
+    private function edit(Request $request, $ending, callable $getPurchase) {
+        $viewPath = '@TutteliAppBundle/Resources/views/Purchase/edit.html.twig';
+        list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
+    
+        if (!$response) {
+            $purchase = $getPurchase();
+            $response = $this->render($viewPath, array (
+                    'notXhr' => $ending == '',
+                    'error' => null,
+                    'purchase' => $purchase,
+            ));
+    
+            if ($ending == '.tpl') {
+                $response->setETag($etag);
+            }
+        }
+        return $response;
     }
     
 }
