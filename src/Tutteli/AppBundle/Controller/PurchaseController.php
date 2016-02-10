@@ -22,6 +22,22 @@ class PurchaseController extends AEntityController {
         return 'purchase';
     }
     
+    protected function getSingularEntityName() {
+        return 'purchase';
+    }
+    
+    protected function getPluralEntityName() {
+        return 'purchases';
+    }
+    
+    protected function getRepository() {
+        return $this->getDoctrine()->getRepository('TutteliAppBundle:Purchase');
+    }
+    
+    protected function getJson($purchase) {
+        return "{}";
+    }
+    
     public function monthAction() {
         return new RedirectResponse($this->container->get('router')->generate(
                 'purchases_monthAndYear', 
@@ -56,22 +72,10 @@ class PurchaseController extends AEntityController {
     }
     
     private function getPurchasesForMonthOfYear($month, $year){
-        $repository = $this->getPurchaseRepository();
+        $repository = $this->getRepository();
         return $repository->getPurchasesForMonthOfYear($month, $year);
     }
-    
-    /**
-     * @return \Tutteli\AppBundle\Entity\PurchaseRepository
-     */
-    private function getPurchaseRepository() {
-        return $this->getDoctrine()->getRepository('TutteliAppBundle:Purchase');
-    }
-    
-    private function loadPurchase($purchaseId) {
-        $repository = $this->getPurchaseRepository();
-        return $repository->find($purchaseId);
-    }
-    
+  
     public function newAction(Request $request, $ending) {
         $viewPath = '@TutteliAppBundle/Resources/views/Purchase/new.html.twig';
         list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
@@ -189,7 +193,7 @@ class PurchaseController extends AEntityController {
     
     public function editAction(Request $request, $purchaseId, $ending) {
         return $this->edit($request, $ending, function() use ($purchaseId) {
-            $category = $this->loadPurchase($purchaseId);
+            $category = $this->loadEntity($purchaseId);
             if ($category == null) {
                 throw $this->createNotFoundException('Purchase with id '.$purchaseId. ' not found.');
             }

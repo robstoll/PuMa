@@ -18,6 +18,35 @@ class UserController extends AEntityController {
     protected function getCsrfTokenDomain() {
         return 'user';
     }
+
+    protected function getSingularEntityName() {
+        return 'user';
+    }
+    
+    protected function getPluralEntityName() {
+        return 'users';
+    }
+    
+    protected function getRepository() {
+        return $this->getDoctrine()->getRepository('TutteliAppBundle:User');
+    }
+
+    protected function getJson($user) {
+        /* @var $user \Tutteli\AppBundle\Entity\User */
+        $translator = $this->get('translator');
+        return '{'
+                .'"id":"'.$user->getId().'"'
+                .',"username":"'.$user->getUsername().'"'
+                .',"email":"'.$user->getEmail().'"'
+                .',"roleId":"'.$user->getRole().'"'
+                .',"role":"'.$translator->trans('users.roles.'.$user->getRole()).'"'
+                .$this->getMetaJsonRows($user)
+                .'}';
+    }
+    
+    public function getJsonAction($userId) {
+        return $this->getJsonForEntityAction($userId);
+    }
     
     public function cgetAction(Request $request, $ending) {
         $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
@@ -28,7 +57,7 @@ class UserController extends AEntityController {
         if (!$response) {
             $users = null;
             if ($ending != '.tpl') {
-                $users = $this->loadUsers();
+                $users = $this->loadEntities();
             }
             $response = $this->render($viewPath, array (
                     'notXhr' => $ending == '',
@@ -40,73 +69,7 @@ class UserController extends AEntityController {
             }
         }
         return $response;
-    }
-    
-    public function cgetJsonAction(Request $request) {
-        $repository = $this->getDoctrine()->getRepository('TutteliAppBundle:User');
-        $lastUpdatedUser = $repository->getLastUpdated();
-        $updatedAt = $lastUpdatedUser->getUpdatedAt();
-        $response = $this->checkUpdatedAt($request, $updatedAt);
-        if ($response === null) {
-            $data = $repository->findAll();
-            $jsonArray = $this->getJsonArray($data);
-            $response = new Response(
-                    '{'
-                    .'"users":'.$jsonArray.','
-                    .'"updatedAt":"'.$this->getFormattedDateTime($updatedAt).'",'
-                    .'"updatedBy":"'.$lastUpdatedUser->getUpdatedBy()->getUsername().'"'
-                    .'}');
-            $response->setLastModified($updatedAt);
-        }
-        return $response;
-    }
-        
-    private function loadUsers() {
-        $repository = $this->getDoctrine()->getRepository('TutteliAppBundle:User');
-        return $repository->findAll();
-    }
-    
-    private function getUserRepository() {
-        return $this->getDoctrine()->getRepository('TutteliAppBundle:User');
-    }
-
-    private function loadUser($userId) {
-        $repository = $this->getUserRepository();
-        return $repository->find($userId);
-    }
-
-    private function getJsonArray(array $data) {
-        $list = '';
-        $count = count($data);
-        if ($count > 0) {
-            for ($i = 0; $i < $count; ++$i) {
-                if ($i != 0) {
-                    $list .= ',';
-                }
-                /* @var $user \Tutteli\AppBundle\Entity\User */
-                $user = $data[$i];
-                $list .= $this->getJson($user);
-            }
-        }
-        return '['.$list.']';
-    }
-    
-    private function getJson(User $user) {
-         $translator = $this->get('translator');
-        return '{'
-                .'"id":"'.$user->getId().'"'
-                .',"username":"'.$user->getUsername().'"'
-                .',"email":"'.$user->getEmail().'"'
-                .',"roleId":"'.$user->getRole().'"'
-                .',"role":"'.$translator->trans('users.roles.'.$user->getRole()).'"'
-                .$this->getMetaJsonRows($user) 
-                .'}';
-    }
-    
-    public function getJsonAction($userId) {        
-        $user = $this->loadUser($userId);
-        return new Response('{"user":'.$this->getJson($user).'}');
-    }
+    }  
     
     public function newAction(Request $request, $ending) {
         $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
@@ -237,7 +200,7 @@ class UserController extends AEntityController {
         $this->denyAccessUnlessAdminOrCurrentUser($userId);
         
         return $this->edit($request, $ending, function() use ($userId) {
-            $user = $this->loadUser($userId);
+            $user = $this->loadEntity($userId);
             if ($user == null) {
                 throw $this->createNotFoundException('User with id '.$userId. ' not found.');
             }
@@ -283,7 +246,7 @@ class UserController extends AEntityController {
         $this->denyAccessUnlessAdminOrCurrentUser($userId);
         
         if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
-            $user = $this->loadUser($userId);
+            $user = $this->loadEntity($userId);
             if ($user != null) {
                 return $this->updateUser($request, $user);
             } else{
@@ -352,7 +315,7 @@ class UserController extends AEntityController {
         }
         
         if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
-            $user = $this->loadUser($userId);
+            $user = $this->loadEntity($userId);
             return $this->changePassword($request, $user);        
         }
         return new Response('{"msg": "Wrong Content-Type"}', Response::HTTP_BAD_REQUEST);

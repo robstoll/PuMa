@@ -15,6 +15,31 @@ class CategoryController extends AEntityController {
         return 'category';
     }
     
+    protected function getSingularEntityName() {
+        return 'category';
+    }
+    
+    protected function getPluralEntityName() {
+        return 'categories';
+    }
+    
+    protected function getRepository() {
+        return $this->getDoctrine()->getRepository('TutteliAppBundle:Category');
+    }
+    
+    protected function getJson($category) {
+        return  '{'
+                .'"id": "'.$category->getId().'"'
+                .',"name": "'.$category->getName().'"'
+                .$this->getMetaJsonRows($category)
+                .'}';
+    }
+    
+    public function getJsonAction($categoryId) {
+        return $this->getJsonForEntityAction($categoryId);
+    }
+    
+    
     public function cgetAction(Request $request, $ending) {
         $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
     
@@ -24,7 +49,7 @@ class CategoryController extends AEntityController {
         if (!$response) {
             $categories = null;
             if ($ending != '.tpl') {
-                $categories = $this->loadCategories();
+                $categories = $this->loadEntities();
             }
             $response = $this->render($viewPath, array (
                     'notXhr' => $ending == '',
@@ -37,69 +62,7 @@ class CategoryController extends AEntityController {
         }
         return $response;
     }
-    
-    private function loadCategories() {
-        $repository = $this->getCategoryRepository();
-        return $repository->findAll();
-    }
-    /**
-     * @return \Tutteli\AppBundle\Entity\CategoryRepository
-     */
-    private function getCategoryRepository() {
-        return $this->getDoctrine()->getRepository('TutteliAppBundle:Category');
-    }
-    
-    private function loadCategory($categoryId) {
-        $repository = $this->getCategoryRepository();
-        return $repository->find($categoryId);
-    }
-    
-    public function cgetJsonAction(Request $request) {
-        $repository = $this->getCategoryRepository();
-        $lastUpdatedCategory = $repository->getLastUpdated();
-        $updatedAt = $lastUpdatedCategory->getUpdatedAt();
-        $response = $this->checkUpdatedAt($request, $updatedAt);
-        if ($response === null) {
-            $data = $repository->findAll();
-            $jsonArray = $this->getJsonArray($data);
-            $response = new Response(
-                    '{'
-                    .'"categories":'.$jsonArray
-                    .'"updatedAt":"'.$this->getFormattedDateTime($updatedAt).'",'
-                     .'"updatedBy":"'.$lastUpdatedCategory->getUpdatedBy()->getUsername().'"'
-                    .'}');
-            $response->setLastModified($updatedAt);
-        }
-        return $response;
-    }
-    
-    private function getJsonArray(array $data) {
-        $list = '';
-        $count = count($data);
-        for ($i = 0; $i < $count; ++$i) {
-            if ($i != 0) {
-                $list .= ',';
-            }
-            /* @var $category \Tutteli\AppBundle\Entity\Category */
-            $category = $data[$i]; 
-            $list .= $this->getJson($category);
-        }
-        return '['.$list.']';
-    }
-    
-    private function getJson(Category $category) {
-        return  '{'
-                .'"id": "'.$category->getId().'"'
-                .',"name": "'.$category->getName().'"'
-                .$this->getMetaJsonRows($category)
-                .'}'; 
-    }
-    
-    public function getJsonAction($categoryId) {
-        $category = $this->loadCategory($categoryId);
-        return new Response('{"category":'.$this->getJson($category).'}');
-    }
- 
+
     public function newAction(Request $request, $ending) {
         $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
     
@@ -157,7 +120,7 @@ class CategoryController extends AEntityController {
         $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
     
         return $this->edit($request, $ending, function() use ($categoryId) {
-            $category = $this->loadCategory($categoryId);
+            $category = $this->loadEntity($categoryId);
             if ($category == null) {
                 throw $this->createNotFoundException('Category with id '.$categoryId. ' not found.');
             }
@@ -192,7 +155,7 @@ class CategoryController extends AEntityController {
         $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
     
         if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
-            $category = $this->loadCategory($categoryId);
+            $category = $this->loadEntity($categoryId);
             if ($category != null) {
                 return $this->updateCategory($request, $category);
             } else {

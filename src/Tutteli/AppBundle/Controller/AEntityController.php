@@ -15,6 +15,65 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 abstract class AEntityController extends Controller {
     
     protected abstract function getCsrfTokenDomain();
+    protected abstract function getSingularEntityName();
+    protected abstract function getPluralEntityName();
+    /**
+     * @return \Tutteli\AppBundle\Entity\ARepository
+     */
+    protected abstract function getRepository();
+    protected abstract function getJson($entity);
+    
+    
+    public function cgetJsonAction(Request $request) {
+        $repository = $this->getRepository();
+        $lastUpdatedEntity = $repository->getLastUpdated();
+        $updatedAt = $lastUpdatedEntity->getUpdatedAt();
+        $response = $this->checkUpdatedAt($request, $updatedAt);
+        if ($response === null) {
+            $data = $repository->findAll();
+            $jsonArray = $this->getJsonArray($data);
+            $response = new Response(
+                    '{'
+                    .'"'.$this->getPluralEntityName().'":'.$jsonArray.','
+                    .'"updatedAt":"'.$this->getFormattedDateTime($updatedAt).'",'
+                    .'"updatedBy":"'.$lastUpdatedEntity->getUpdatedBy()->getUsername().'"'
+                    .'}');
+            $response->setLastModified($updatedAt);
+        }
+        return $response;
+    }
+    
+    private function getJsonArray(array $data) {
+        $list = '';
+        $count = count($data);
+        if ($count > 0) {
+            for ($i = 0; $i < $count; ++$i) {
+                if ($i != 0) {
+                    $list .= ',';
+                }
+                /* @var $user \Tutteli\AppBundle\Entity\User */
+                $user = $data[$i];
+                $list .= $this->getJson($user);
+            }
+        }
+        return '['.$list.']';
+    }
+    
+
+    protected function getJsonForEntityAction($entityId) {
+        $entity = $this->loadEntity($entityId);
+        return new Response('{"'.$this->getSingularEntityName().'":'.$this->getJson($entity).'}');
+    }
+    
+    protected function loadEntity($id) {
+        $repository = $this->getRepository();
+        return $repository->find($id);
+    }
+    
+    protected function loadEntities() {
+        $repository = $this->getRepository();
+        return $repository->findAll();
+    }
     
     public function csrfTokenAction() {
         $csrf = $this->get('security.csrf.token_manager');
