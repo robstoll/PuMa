@@ -53,7 +53,7 @@ class UserController extends ATplController {
             $response = new Response(
                     '{'
                     .'"users":'.$jsonArray.','
-                    .'"updatedAt":"'.$this->getFormattedDate($updatedAt).'",'
+                    .'"updatedAt":"'.$this->getFormattedDateTime($updatedAt).'",'
                     .'"updatedBy":"'.$lastUpdatedUser->getUpdatedBy()->getUsername().'"'
                     .'}');
             $response->setLastModified($updatedAt);

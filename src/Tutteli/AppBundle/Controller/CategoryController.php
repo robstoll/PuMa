@@ -64,8 +64,8 @@ class CategoryController extends ATplController {
             $jsonArray = $this->getJsonArray($data);
             $response = new Response(
                     '{'
-                    .'"categories":'.$jsonArray.','
-                    .'"updatedAt":"'.$this->getFormattedDate($updatedAt).'",'
+                    .'"categories":'.$jsonArray
+                    .'"updatedAt":"'.$this->getFormattedDateTime($updatedAt).'",'
                      .'"updatedBy":"'.$lastUpdatedCategory->getUpdatedBy()->getUsername().'"'
                     .'}');
             $response->setLastModified($updatedAt);

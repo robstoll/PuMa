@@ -97,13 +97,13 @@ abstract class ATplController extends Controller {
         return new Response('{"id": "'.$id.'"}', Response::HTTP_CREATED);
     }
     
-    protected function getFormattedDate($date) {
+    protected function getFormattedDateTime($date) {
         $format = $this->get('translator')->trans('general.dateTimeFormat.php');
         return $date->format($format);
     }
     
     protected function getMetaJsonRows($entity) {
-        return ',"updatedAt":"'.$this->getFormattedDate($entity->getUpdatedAt()).'"'
+        return ',"updatedAt":"'.$this->getFormattedDateTime($entity->getUpdatedAt()).'"'
               .',"updatedBy": "'.$entity->getUpdatedBy()->getUsername().'"';
     }
     
