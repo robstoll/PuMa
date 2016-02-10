@@ -34,12 +34,12 @@
             		<td><a href="#" ui-sref="edit_user({userId: user.id})"><i class="glyphicon glyphicon-pencil"></i></a></td>
         		</tr>
             </tbody> 
-            {% if users %}
+            {% if entities %}
             	<!-- pre-work-exclude-start -->
-            	<tbody id="users_rows_preload"> 
+            	<tbody id="entities_rows_preload"> 
             	{% set updatedAt = date('0000-00-00') %}
             	{% set updatedBy = {username:''} %}
-                {% for user in users %}
+                {% for user in entities %}
                     {% if (updatedAt < user.updatedAt) %}
                 		{% set updatedAt = user.updatedAt %}
                 		{% set updatedBy = user.updatedBy %}
@@ -82,7 +82,7 @@
     {% if notXhr %}
         </div>
         
-         {% if users %}
+         {% if entities %}
             {%  include 'TutteliAppBundle:tpl:updateBlock.js.twig' 
                 with {
                 	'controllerName': 'usersCtrl',

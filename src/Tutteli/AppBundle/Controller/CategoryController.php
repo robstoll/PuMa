@@ -34,35 +34,16 @@ class CategoryController extends AEntityController {
                 .$this->getMetaJsonRows($category)
                 .'}';
     }
+
+    public function cgetAction(Request $request, $ending) {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
+        return parent::cgetAction($request, $ending);
+    }
     
     public function getJsonAction($categoryId) {
         return $this->getJsonForEntityAction($categoryId);
     }
     
-    
-    public function cgetAction(Request $request, $ending) {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
-    
-        $viewPath = '@TutteliAppBundle/Resources/views/Category/cget.html.twig';
-        list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
-    
-        if (!$response) {
-            $categories = null;
-            if ($ending != '.tpl') {
-                $categories = $this->loadEntities();
-            }
-            $response = $this->render($viewPath, array (
-                    'notXhr' => $ending == '',
-                    'categories' => $categories
-            ));
-    
-            if ($ending == '.tpl') {
-                $response->setETag($etag);
-            }
-        }
-        return $response;
-    }
-
     public function newAction(Request $request, $ending) {
         $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
     

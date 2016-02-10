@@ -12,9 +12,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-abstract class AEntityController extends Controller {
+abstract class AEntityController extends ATplController {
     
-    protected abstract function getCsrfTokenDomain();
+    
     protected abstract function getSingularEntityName();
     protected abstract function getPluralEntityName();
     /**
@@ -23,6 +23,32 @@ abstract class AEntityController extends Controller {
     protected abstract function getRepository();
     protected abstract function getJson($entity);
     
+
+    public function cgetAction(Request $request, $ending) {
+        return $this->getHtmlForEntities($request, $ending, 'cget', [$this, 'loadEntities']);
+    }
+    
+    protected function getHtmlForEntities(Request $request, $ending, $templateName, callable $getEntities=null) {
+        $entityNameFirstUpper = \ucfirst($this->getSingularEntityName());
+        $viewPath = '@TutteliAppBundle/Resources/views/'.$entityNameFirstUpper.'/'.$templateName.'.html.twig';
+        list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
+        
+        if (!$response) {
+            $entities = null;
+            if ($ending != '.tpl') {
+                $entities = $getEntities();
+            }
+            $response = $this->render($viewPath, array (
+                    'notXhr' => $ending == '',
+                    'entities' => $entities
+            ));
+        
+            if ($ending == '.tpl') {
+                $response->setETag($etag);
+            }
+        }
+        return $response;
+    }
     
     public function cgetJsonAction(Request $request) {
         $repository = $this->getRepository();
@@ -81,42 +107,6 @@ abstract class AEntityController extends Controller {
         return $repository->findAll();
     }
     
-    public function csrfTokenAction() {
-        $csrf = $this->get('security.csrf.token_manager');
-        return new Response('{"csrf_token": "'.$csrf->getToken($this->getCsrfTokenDomain()).'"}');
-    }
-    
-    protected function checkEndingAndEtagForView(Request $request, $ending, $viewPath) {
-        return $this->checkEndingAndEtag($request, $ending, function() use ($viewPath){
-            $path = $this->get('kernel')->locateResource($viewPath);
-            $etag = hash_file('md5', $path);
-            return $etag;
-        });
-    }
-    
-    protected function checkEndingAndEtag(Request $request, $ending, callable $callable) {
-        if ($ending != '' && $ending != '.tpl') {
-            throw $this->createNotFoundException('File Not Found');
-        }
-
-        $etag = '';
-        $response = null;
-        if ($ending == '.tpl') {
-            if ($request->isXmlHttpRequest() || $this->container->get('kernel')->getEnvironment() == 'dev') {
-                $response = new Response();
-                $etag = $callable();
-                $response->setETag($etag);
-                if (!$response->isNotModified($request)) {
-                    //is newer, need to generate a new response and cannot use the old one
-                    $response = null;
-                }
-            } else {
-                $response = new Response('partials are only available per xmlHttpRequest', Response::HTTP_BAD_REQUEST);
-            }
-        }
-        return [$etag, $response];
-    }
-    
     protected function checkUpdatedAt(Request $request, \DateTime $updatedAt){
         $response = new Response();
         $response->setLastModified($updatedAt);
@@ -125,21 +115,7 @@ abstract class AEntityController extends Controller {
             $response = null;
         }
         return $response;
-    }
-    
-    protected function decodeDataAndVerifyCsrf(Request $request) {
-        $response = null;
-        $data = json_decode($request->getContent(), true);
-        if ($data != null) {
-            if (!array_key_exists('csrf_token', $data) 
-                    || !$this->isCsrfTokenValid($this->getCsrfTokenDomain(), $data['csrf_token'])) {
-                $response = new JsonResponse('Invalid CSRF token.', Response::HTTP_UNAUTHORIZED);
-            }
-        } else {
-            $response = new JsonResponse('No data provided.', Response::HTTP_BAD_REQUEST);
-        }
-        return [$data, $response];
-    }
+    }  
     
     protected function getTranslatedValidationResponse(ConstraintViolationList $errorList) {
         $translator = $this->get('translator');

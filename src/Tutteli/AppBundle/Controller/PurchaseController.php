@@ -65,8 +65,7 @@ class PurchaseController extends AEntityController {
     }
     
     public function monthTplAction(Request $request) {
-        //only get the template
-        return $this->monthAndYearAction($request, null, null, '.tpl');
+        return $this->getHtmlForEntities($request, '.tpl', 'month', null);
     }
     
     public function monthAndYearJsonAction(Request $request, $month, $year) {
@@ -82,29 +81,10 @@ class PurchaseController extends AEntityController {
     }
     
     public function monthAndYearAction(Request $request, $month, $year, $ending) {
-        $viewPath = '@TutteliAppBundle/Resources/views/Purchase/month.html.twig';
-        list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
-        if (!$response) {
-            $purchases = null;
-            if ($ending != '.tpl') {
-                $purchases = $this->getForMonthOfYear($month, $year);
-            }
-            $response = $this->render($viewPath, array (
-                    'notXhr' => $ending == '',
-                    'error' => null,
-                    'purchases' => $purchases
-            ));
-        
-            if ($ending == '.tpl') {
-                $response->setETag($etag);
-            }
-        }
-        return $response;
-    }
-    
-    private function getPurchasesForMonthOfYear($month, $year){
-        $repository = $this->getRepository();
-        return $repository->getPurchasesForMonthOfYear($month, $year);
+        return $this->getHtmlForEntities($request, $ending, 'month', function() use($month, $year) {
+            $repository = $this->getRepository();
+            return $repository->getForMonthOfYear($month, $year);
+        });
     }
   
     public function newAction(Request $request, $ending) {

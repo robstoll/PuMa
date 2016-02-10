@@ -30,12 +30,12 @@
             		<td><a href="#" ui-sref="edit_category({categoryId: category.id})"><i class="glyphicon glyphicon-pencil"></i></a></td>
         		</tr>
             </tbody> 
-            {% if categories %}
+            {% if entities %}
             	<!-- pre-work-exclude-start -->
             	<tbody id="categories_rows_preload"> 
             	{% set updatedAt = date('0000-00-00') %}
             	{% set updatedBy = {username:''} %}
-                {% for category in categories %}
+                {% for category in entities %}
                 	{% if (updatedAt < category.updatedAt) %}
                 		{% set updatedAt = category.updatedAt %}
                 		{% set updatedBy = category.updatedBy %}
@@ -72,7 +72,7 @@
     {% if notXhr %}
         </div>
         
-        {% if categories %}
+        {% if entities %}
             {%  include 'TutteliAppBundle:tpl:updateBlock.js.twig' 
                 with {
                 	'controllerName': 'categoriesCtrl',

@@ -8,7 +8,7 @@ namespace Tutteli\AppBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 
-class SecurityController extends AEntityController {
+class SecurityController extends ATplController {
     
     protected function getCsrfTokenDomain() {
         return 'authenticate';
@@ -32,4 +32,5 @@ class SecurityController extends AEntityController {
         }
         return $response;
     }
+  
 }

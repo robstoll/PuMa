@@ -50,25 +50,7 @@ class UserController extends AEntityController {
     
     public function cgetAction(Request $request, $ending) {
         $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
-        
-        $viewPath = '@TutteliAppBundle/Resources/views/User/cget.html.twig';
-        list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
-    
-        if (!$response) {
-            $users = null;
-            if ($ending != '.tpl') {
-                $users = $this->loadEntities();
-            }
-            $response = $this->render($viewPath, array (
-                    'notXhr' => $ending == '',
-                    'users' => $users
-            ));
-    
-            if ($ending == '.tpl') {
-                $response->setETag($etag);
-            }
-        }
-        return $response;
+        return parent::cgetAction($request, $ending);
     }  
     
     public function newAction(Request $request, $ending) {

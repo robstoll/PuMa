@@ -35,12 +35,12 @@
         		</tr>
             </tbody> 
             
-            {% if purchases %}
+            {% if entities %}
             	<!-- pre-work-exclude-start -->
             	<tbody id="purchases_rows_preload">
             	{% set updatedAt = date('0000-00-00') %}
             	{% set updatedBy = {username:''} %}
-                {% for purchase in purchases %}
+                {% for purchase in entities %}
                 	{% if (updatedAt < purchase.updatedAt) %}
                 		{% set updatedAt = purchase.updatedAt %}
                 		{% set updatedBy = purchase.updatedBy %}
@@ -83,7 +83,7 @@
     {% if notXhr %}
         </div>
         
-         {% if purchases %}
+         {% if entities %}
             {%  include 'TutteliAppBundle:tpl:updateBlock.js.twig' 
                 with {
                 	'controllerName': 'purchasesCtrl',
@@ -94,7 +94,7 @@
         
         <script type="text/javascript">
         	document.getElementById('purchases_load').style.display = 'none';
-            {% if not purchases %}
+            {% if not entities %}
             	document.getElementById('purchases_nothingFound').style.display = 'block';	
 			{% endif %}
 		</script>
