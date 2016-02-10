@@ -35,7 +35,26 @@ class PurchaseController extends AEntityController {
     }
     
     protected function getJson($purchase) {
-        return "{}";
+        /*@var $purchase \Tutteli\AppBundle\Entity\Purchase */
+        return  '{'
+                .'"id": "'.$purchase->getId().'"'
+                .',"purchaseDate": "'.$this->getFormattedDate($purchase->getPurchaseDate()).'"'
+                .',"total": "'.$purchase->getTotal().'"'
+                .',"user": "'.$purchase->getUser()->getUsername().'"'
+                .',"positions":'.$this->getJsonArray($purchase->getPositions(), [$this, 'getJsonForPosition'])
+                .$this->getMetaJsonRows($purchase)
+                .'}';
+    }
+    
+    protected function getJsonForPosition(PurchasePosition $position) {
+        return '{'
+                .'"id":"'.$position->getId().'"'
+                .',"expression":"'.$position->getExpression().'"'
+                .',"price":"'.$position->getPrice().'"'
+                .',"category":"'.$position->getCategory()->getName().'"'
+                .',"notice":"'.$position->getNotice().'"'
+                .$this->getMetaJsonRows($position)
+                .'}';
     }
     
     public function monthAction() {
@@ -50,13 +69,25 @@ class PurchaseController extends AEntityController {
         return $this->monthAndYearAction($request, null, null, '.tpl');
     }
     
+    public function monthAndYearJsonAction(Request $request, $month, $year) {
+        /*@var $repository \Tutteli\AppBundle\Entity\PurchaseRepository */
+        $repository = $this->getRepository();
+        return $this->getJsonForEntities($request, 
+                function() use($repository, $month, $year) {
+                    return $repository->getLastUpdatedForMonthOfYear($month, $year);
+                }, 
+                function() use($repository, $month, $year) {
+                    return $repository->getForMonthOfYear($month, $year);
+                });
+    }
+    
     public function monthAndYearAction(Request $request, $month, $year, $ending) {
         $viewPath = '@TutteliAppBundle/Resources/views/Purchase/month.html.twig';
         list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
         if (!$response) {
             $purchases = null;
             if ($ending != '.tpl') {
-                $purchases = $this->getPurchasesForMonthOfYear($month, $year);
+                $purchases = $this->getForMonthOfYear($month, $year);
             }
             $response = $this->render($viewPath, array (
                     'notXhr' => $ending == '',

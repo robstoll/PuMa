@@ -19,20 +19,39 @@ class PurchaseRepository extends ARepository
         return 'TutteliAppBundle:Purchase';
     }
     
-    public function getPurchasesForMonthOfYear($month, $year) {
+    public function getLastUpdatedForMonthOfYear($month, $year) {
+        $result = $this->createQueryBuilderPurchasesForMonthOfYear($month, $year)
+            ->orderBy('p.updatedAt', 'DESC')
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getResult();
+        if (count($result) > 0) {
+            return $result[0];
+        }
+        return null;
+    }
+    
+    /**
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    private function createQueryBuilderPurchasesForMonthOfYear($month, $year) {
         $from = new \DateTime($year.'-'.$month.'-01T00:00:00');
         $to = new \DateTime($year.'-'.$month.'-01T00:00:00');
         $to->add(new \DateInterval('P1M'));
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
         return $queryBuilder->select('p')
-            ->from($this->getEntityIdentifier(), 'p')
-            ->where($queryBuilder->expr()->andX(
-                $queryBuilder->expr()->gte('p.purchaseDate', ':from'),
-                $queryBuilder->expr()->lt('p.purchaseDate', ':to')
-                ))
+                ->from($this->getEntityIdentifier(), 'p')
+                ->where($queryBuilder->expr()->andX(
+                        $queryBuilder->expr()->gte('p.purchaseDate', ':from'),
+                        $queryBuilder->expr()->lt('p.purchaseDate', ':to')
+                ))          
+                ->setParameter('from', $from)
+                ->setParameter('to', $to);
+    }
+    
+    public function getForMonthOfYear($month, $year) {
+        return $this->createQueryBuilderPurchasesForMonthOfYear($month, $year)
             ->orderBy('p.purchaseDate', 'ASC')
-            ->setParameter('from', $from)
-            ->setParameter('to', $to)
             ->getQuery()
             ->getResult();
     }

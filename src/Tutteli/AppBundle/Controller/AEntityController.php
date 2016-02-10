@@ -26,12 +26,20 @@ abstract class AEntityController extends Controller {
     
     public function cgetJsonAction(Request $request) {
         $repository = $this->getRepository();
-        $lastUpdatedEntity = $repository->getLastUpdated();
+        return $this->getJsonForEntities($request, [$repository, 'getLastUpdated'], [$repository, 'findAll']);
+    }
+    
+    protected function getJsonForEntities(Request $request, callable $getLastUpdated, callable $getEntities) {
+        $lastUpdatedEntity = $getLastUpdated();
+        if ($lastUpdatedEntity == null) {
+            return new Response('{"'.$this->getPluralEntityName().'":[]}');
+        }
+        
         $updatedAt = $lastUpdatedEntity->getUpdatedAt();
         $response = $this->checkUpdatedAt($request, $updatedAt);
         if ($response === null) {
-            $data = $repository->findAll();
-            $jsonArray = $this->getJsonArray($data);
+            $data = $getEntities();
+            $jsonArray = $this->getJsonArray($data, [$this, 'getJson']);
             $response = new Response(
                     '{'
                     .'"'.$this->getPluralEntityName().'":'.$jsonArray.','
@@ -43,7 +51,7 @@ abstract class AEntityController extends Controller {
         return $response;
     }
     
-    private function getJsonArray(array $data) {
+    protected function getJsonArray($data, callable $getJsonForEntry) {
         $list = '';
         $count = count($data);
         if ($count > 0) {
@@ -51,9 +59,7 @@ abstract class AEntityController extends Controller {
                 if ($i != 0) {
                     $list .= ',';
                 }
-                /* @var $user \Tutteli\AppBundle\Entity\User */
-                $user = $data[$i];
-                $list .= $this->getJson($user);
+                $list .= $getJsonForEntry($data[$i]);
             }
         }
         return '['.$list.']';
@@ -158,6 +164,11 @@ abstract class AEntityController extends Controller {
     
     protected function getFormattedDateTime($date) {
         $format = $this->get('translator')->trans('general.dateTimeFormat.php');
+        return $date->format($format);
+    }
+    
+    protected function getFormattedDate($date) {
+        $format = $this->get('translator')->trans('general.dateFormat.php');
         return $date->format($format);
     }
     
