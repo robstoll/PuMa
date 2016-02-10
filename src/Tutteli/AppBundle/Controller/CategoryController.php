@@ -9,7 +9,7 @@ namespace Tutteli\AppBundle\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Tutteli\AppBundle\Entity\Category;
-class CategoryController extends ATplController {
+class CategoryController extends AEntityController {
     
     protected function getCsrfTokenDomain() {
         return 'category';

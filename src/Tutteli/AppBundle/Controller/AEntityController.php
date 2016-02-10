@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-abstract class ATplController extends Controller {
+abstract class AEntityController extends Controller {
     
     protected abstract function getCsrfTokenDomain();
     

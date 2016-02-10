@@ -13,7 +13,7 @@ use Symfony\Component\Validator\ConstraintViolation;
 use Tutteli\AppBundle\Entity\ChangePasswordDto;
 use Tutteli\AppBundle\Entity\User;
 
-class UserController extends ATplController {
+class UserController extends AEntityController {
 
     protected function getCsrfTokenDomain() {
         return 'user';

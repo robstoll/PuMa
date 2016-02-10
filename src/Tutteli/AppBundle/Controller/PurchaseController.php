@@ -16,7 +16,7 @@ use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class PurchaseController extends ATplController {
+class PurchaseController extends AEntityController {
     
     protected function getCsrfTokenDomain() {
         return 'purchase';
