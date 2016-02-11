@@ -36,7 +36,7 @@
             </tbody> 
             {% if entities %}
             	<!-- pre-work-exclude-start -->
-            	<tbody id="entities_rows_preload"> 
+            	<tbody id="users_rows_preload"> 
             	{% set updatedAt = date('0000-00-00') %}
             	{% set updatedBy = {username:''} %}
                 {% for user in entities %}
@@ -62,7 +62,6 @@
         				<td><a href="{{ path('edit_user', {'userId': user.id}) }}"><i class="glyphicon glyphicon-pencil"></i></a></td>
         			</tr>
         		{% endfor %}
-        		{% set json = '{"users":[' ~ json ~ ']}' %}
         		</tbody>
         		<!-- pre-work-exclude-end -->
         	{% endif %}

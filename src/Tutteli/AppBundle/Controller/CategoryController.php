@@ -46,21 +46,12 @@ class CategoryController extends AEntityController {
     
     public function newAction(Request $request, $ending) {
         $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
+        return parent::newAction($request, $ending);
+    }
     
-        $viewPath = '@TutteliAppBundle/Resources/views/Category/new.html.twig';
-        list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
-    
-        if (!$response) {
-            $response = $this->render($viewPath, array (
-                    'notXhr' => $ending == '',
-                    'error' => null,
-            ));
-    
-            if ($ending == '.tpl') {
-                $response->setETag($etag);
-            }
-        }
-        return $response;
+    public function editAction(Request $request, $categoryId, $ending) {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
+        return $this->editEntityAction($request, $categoryId, $ending);
     }
     
     public function postAction(Request $request) {
@@ -97,40 +88,7 @@ class CategoryController extends AEntityController {
         }
     }
     
-    public function editAction(Request $request, $categoryId, $ending) {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
     
-        return $this->edit($request, $ending, function() use ($categoryId) {
-            $category = $this->loadEntity($categoryId);
-            if ($category == null) {
-                throw $this->createNotFoundException('Category with id '.$categoryId. ' not found.');
-            }
-            return $category;
-        });
-    }
-    
-    public function editTplAction(Request $request) {
-        return $this->edit($request, '.tpl', function(){return null;});
-    }
-    
-    private function edit(Request $request, $ending, callable $getCategory) {
-        $viewPath = '@TutteliAppBundle/Resources/views/Category/edit.html.twig';
-        list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
-    
-        if (!$response) {
-            $category = $getCategory();
-            $response = $this->render($viewPath, array (
-                    'notXhr' => $ending == '',
-                    'error' => null,
-                    'category' => $category,
-            ));
-    
-            if ($ending == '.tpl') {
-                $response->setETag($etag);
-            }
-        }
-        return $response;
-    }
     
     public function putAction(Request $request, $categoryId) {
         $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');

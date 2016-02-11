@@ -55,21 +55,22 @@ class UserController extends AEntityController {
     
     public function newAction(Request $request, $ending) {
         $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
-        
-        $viewPath = '@TutteliAppBundle/Resources/views/User/new.html.twig';
-        list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
+         return parent::newAction($request, $ending);
+    }
     
-        if (!$response) {
-            $response = $this->render($viewPath, array (
-                    'notXhr' => $ending == '',
-                    'error' => null,
-            ));
+    public function editAction(Request $request, $userId, $ending) {
+        $this->denyAccessUnlessAdminOrCurrentUser($userId);
+        return $this->editEntityAction($request, $userId, $ending);
+    }
     
-            if ($ending == '.tpl') {
-                $response->setETag($etag);
-            }
+    private function denyAccessUnlessAdminOrCurrentUser($userId) {
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN') && !$this->isCurrentUser($userId)) {
+            throw $this->createAccessDeniedException('Unable to access this page!');
         }
-        return $response;
+    }
+    
+    private function isCurrentUser($userId) {
+        return $this->get('security.token_storage')->getToken()->getUser()->getId() == $userId;
     }
     
     public function postAction(Request $request) {
@@ -177,52 +178,6 @@ class UserController extends AEntityController {
             $user->setRole($data['roleId']);
         }
     }
-    
-    public function editAction(Request $request, $userId, $ending) {
-        $this->denyAccessUnlessAdminOrCurrentUser($userId);
-        
-        return $this->edit($request, $ending, function() use ($userId) {
-            $user = $this->loadEntity($userId);
-            if ($user == null) {
-                throw $this->createNotFoundException('User with id '.$userId. ' not found.');
-            }
-            return $user;
-        });
-    }
-    
-    private function denyAccessUnlessAdminOrCurrentUser($userId) {
-        if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN') && !$this->isCurrentUser($userId)) {
-            throw $this->createAccessDeniedException('Unable to access this page!');
-        }
-    }
-    
-    private function isCurrentUser($userId) {
-        return $this->get('security.token_storage')->getToken()->getUser()->getId() == $userId;
-    }
-    
-    public function editTplAction(Request $request) {
-        return $this->edit($request, '.tpl', function(){return null;});
-    }
-    
-    private function edit(Request $request, $ending, callable $getUser) {
-        $viewPath = '@TutteliAppBundle/Resources/views/User/edit.html.twig';
-        list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
-        
-        if (!$response) {
-            $user = $getUser();
-            $response = $this->render($viewPath, array (
-                    'notXhr' => $ending == '',
-                    'error' => null,
-                    'user' => $user,
-            ));
-        
-            if ($ending == '.tpl') {
-                $response->setETag($etag);
-            }
-        }
-        return $response;
-    }
-
     
     public function putAction(Request $request, $userId) {
         $this->denyAccessUnlessAdminOrCurrentUser($userId);

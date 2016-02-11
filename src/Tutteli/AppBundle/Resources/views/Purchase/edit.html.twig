@@ -4,7 +4,7 @@
  * root folder or visit https://github.com/robstoll/purchase
  #}
 
-{% set entity = purchase %}
+{% set purchase = entity %}
 {% set name = 'purchase' %}
 {% set preWork = 'purchases/edit.tpl' %}
 {% set formAction = notXhr ? path('put_purchase', {'purchaseId': purchase.id}) : '' %}

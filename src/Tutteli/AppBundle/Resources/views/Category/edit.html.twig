@@ -4,7 +4,7 @@
  * root folder or visit https://github.com/robstoll/purchase
  #}
 
-{% set entity = category %}
+{% set category = entity %}
 {% set name = 'category' %}
 {% set preWork = 'categories/edit.tpl' %}
 {% set formAction = notXhr ? path('put_category', {'categoryId': category.id}) : '' %}

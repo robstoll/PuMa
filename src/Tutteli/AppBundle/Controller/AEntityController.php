@@ -23,24 +23,54 @@ abstract class AEntityController extends ATplController {
     protected abstract function getRepository();
     protected abstract function getJson($entity);
     
+    protected function getEntitynameFirstUpper() {
+        return \ucfirst($this->getSingularEntityName());
+    }
 
     public function cgetAction(Request $request, $ending) {
         return $this->getHtmlForEntities($request, $ending, 'cget', [$this, 'loadEntities']);
     }
     
     protected function getHtmlForEntities(Request $request, $ending, $templateName, callable $getEntities=null) {
-        $entityNameFirstUpper = \ucfirst($this->getSingularEntityName());
+        return $this->getHtmlForThing('entities', $request, $ending, $templateName, $getEntities);
+    }
+    
+    protected function getHtmlForEntity(Request $request, $ending, $templateName, callable $getEntity=null) {
+        return $this->getHtmlForThing('entity', $request, $ending, $templateName, $getEntity);
+    }
+    
+    public function newAction(Request $request, $ending) {
+        return $this->getHtmlForEntity($request, $ending, 'new', function(){ return null; });
+    }
+    
+    public function editEntityAction(Request $request, $entityId, $ending) {
+        return $this->getHtmlForEntity($request, $ending, 'edit', function() use ($entityId) {
+            $entity = $this->loadEntity($entityId);
+            if ($entity == null) {
+                throw $this->createNotFoundException($this->getEntitynameFirstUpper().' with id '.$entityId. ' not found.');
+            }
+            return $entity;
+        });
+    }
+    
+    public function editTplAction(Request $request) {
+        return $this->getHtmlForEntity($request, '.tpl', 'edit', function(){ return null; });
+    }
+    
+    private function getHtmlForThing($thingName, Request $request, $ending, $templateName, callable $getThing=null) {
+        $entityNameFirstUpper = $this->getEntityNameFirstUpper();
         $viewPath = '@TutteliAppBundle/Resources/views/'.$entityNameFirstUpper.'/'.$templateName.'.html.twig';
         list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
         
         if (!$response) {
-            $entities = null;
+            $thing = null;
             if ($ending != '.tpl') {
-                $entities = $getEntities();
+                $thing = $getThing();
             }
             $response = $this->render($viewPath, array (
                     'notXhr' => $ending == '',
-                    'entities' => $entities
+                    'error' => null,
+                    $thingName => $thing
             ));
         
             if ($ending == '.tpl') {

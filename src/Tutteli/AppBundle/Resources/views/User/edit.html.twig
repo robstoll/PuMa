@@ -4,7 +4,7 @@
  * root folder or visit https://github.com/robstoll/purchase
  #}
 
-{% set entity = user %}
+{% set user = entity %}
 {% set name = 'user' %}
 {% set preWork = 'users/edit.tpl' %}
 {%  set formAction = notXhr ? path('put_user', {'userId': user.id}) : '' %}

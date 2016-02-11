@@ -88,20 +88,7 @@ class PurchaseController extends AEntityController {
     }
   
     public function newAction(Request $request, $ending) {
-        $viewPath = '@TutteliAppBundle/Resources/views/Purchase/new.html.twig';
-        list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
-          
-        if (!$response) {
-            $response = $this->render($viewPath, array (
-                    'notXhr' => $ending == '',
-                    'error' => null 
-            ));
-            
-            if ($ending == '.tpl') {
-                $response->setETag($etag);
-            }
-        }
-        return $response;
+        return parent::newAction($request, $ending);
     }
     
     public function postAction(Request $request) {
