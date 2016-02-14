@@ -34,7 +34,7 @@
 		"ircmaxell/password-compat" : "^1.0",
 		"friendsofsymfony/rest-bundle" : "^1.7",
 		"jms/serializer-bundle" : "^1.1.0",
-		"defuse/php-encryption": "2.0.x-dev"
+		"defuse/php-encryption" : "2.0.x-dev"
 	},
 	"require-dev" : {
 		"sensio/generator-bundle" : "~2.3"
