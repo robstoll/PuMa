@@ -8,12 +8,13 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Doctrine\DBAL\Migrations\AbortMigrationException;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 class Version20160207162600 extends AbstractMigration implements ContainerAwareInterface
 {
+    /**
+     * @var \Symfony\Component\DependencyInjection\ContainerInterface
+     */
     private $container;
     
     public function setContainer(ContainerInterface $container = null)
@@ -31,16 +32,27 @@ class Version20160207162600 extends AbstractMigration implements ContainerAwareI
         
         $password = 'tutteli-purchase';
         $hash = password_hash($password, PASSWORD_BCRYPT);
-        $paramSalt = $this->container->getParameter('salt_key');
-        if ($paramSalt == null || \strlen($paramSalt) < Key::MIN_SAFE_KEY_BYTE_SIZE) {
-            throw new AbortMigrationException('You need to define an own salt_key in your parameters.yml file which is at least '.Key::MIN_SAFE_KEY_BYTE_SIZE.' characters long.');
+        
+        $salt = base64_decode($this->container->getParameter('salt_key'));
+        if (\strlen($salt) < Key::MIN_SAFE_KEY_BYTE_SIZE) {
+            $suggestedSalt = base64_encode(openssl_random_pseudo_bytes(Key::MIN_SAFE_KEY_BYTE_SIZE * 2));
+            throw new AbortMigrationException('You need to define an own salt_key in your parameters.yml file which is at least '.Key::MIN_SAFE_KEY_BYTE_SIZE.' characters long.'."\n"
+                    .'Following a randomly created key:'."\n"
+                    .'salt_key: '.$suggestedSalt);
         }
-        $salt = base64_decode($paramSalt);
-        $asciiDataKey = $this->container->getParameter('data_key_delete_after_migration');
-        if ($asciiDataKey == null || \strlen($asciiDataKey) < Key::MIN_SAFE_KEY_BYTE_SIZE) {
-            throw new AbortMigrationException('You need to define an own data_key_delete_after_migration in your parameters.yml file which is at least '.Key::MIN_SAFE_KEY_BYTE_SIZE.' characters long. Delete this entry after a successful migration.');
+        
+        $dataKey = null;
+        if ($this->container->hasParameter('data_key_delete_after_migration')) {
+            $asciiDataKey = $this->container->getParameter('data_key_delete_after_migration');
+            $dataKey = Key::LoadFromAsciiSafeString($asciiDataKey);
         }
-        $dataKey = Key::LoadFromAsciiSafeString($asciiDataKey);
+        if ($dataKey == null) {
+            throw new AbortMigrationException('You need to define an own data_key_delete_after_migration in your parameters.yml which is a key generated with \Defuse\Crypto\Key::CreateNewRandomKey()->saveToAsciiSafeString()'."\n"
+                    .'Following a randomly created key:'."\n"
+                    .'data_key_delete_after_migration: '.Key::CreateNewRandomKey()->saveToAsciiSafeString()."\n"
+                    .'YOU MUST delete this entry in your parameters.yml afterwards (you can make a copy on a save device).');
+        }
+        
         $key = Key::CreateKeyBasedOnPassword($password, $salt);
         $encryptedDataKey = Crypto::encrypt($asciiDataKey, $key, true);
         
