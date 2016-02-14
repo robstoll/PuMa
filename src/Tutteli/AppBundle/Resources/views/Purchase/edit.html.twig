@@ -25,14 +25,16 @@
    		<span class="total pull-right" ng-bind="purchaseCtrl.positionManager.getTotal()"></span>
    		<div class="clear"></div>
    	</div>
-   	<!-- pre-work-exclude-start -->
-   	<div class="totalContainer">
-   		<hr/>
-   		<label>{{ 'purchase.total'|trans }}</label>
-   		<span class="total pull-right">CHF {{ purchase.total|number_format(2, '.') }}</span>
-   		<div class="clear"></div>
-   	</div>
-   	<!-- pre-work-exclude-end -->
+   	{% if purchase %}
+       	<!-- pre-work-exclude-start -->
+       	<div class="totalContainer">
+       		<hr/>
+       		<label>{{ 'purchase.total'|trans }}</label>
+       		<span class="total pull-right">CHF {{ purchase.total|number_format(2, '.') }}</span>
+       		<div class="clear"></div>
+       	</div>
+       	<!-- pre-work-exclude-end -->
+   	{% endif %}
 {% endblock %}   	
 
 {% block footer_left_button %}
