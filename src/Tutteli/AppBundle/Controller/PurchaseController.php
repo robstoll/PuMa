@@ -8,7 +8,6 @@ namespace Tutteli\AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Tutteli\AppBundle\Entity\Purchase;
 use Tutteli\AppBundle\Entity\PurchasePosition;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -86,19 +85,16 @@ class PurchaseController extends AEntityController {
             return $repository->getForMonthOfYear($month, $year);
         });
     }
-  
-    public function newAction(Request $request, $ending) {
-        return parent::newAction($request, $ending);
+    
+    public function editAction(Request $request, $purchaseId, $ending) {
+        return $this->editEntityAction($request, $purchaseId, $ending);
     }
     
     public function postAction(Request $request) {
-        if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
-            return $this->savePurchase($request);
-        }
-        return new Response('{"msg": "Wrong Content-Type"}', Response::HTTP_BAD_REQUEST);
+        return $this->postEntity($request);
     }
     
-    private function savePurchase(Request $request) {
+    protected function createPurchase(Request $request) {
         list($data, $response) = $this->decodeDataAndVerifyCsrf($request);
         if (!$response) {
             $purchase = new Purchase();
@@ -188,38 +184,5 @@ class PurchaseController extends AEntityController {
         }
         return $list;
     }
-    
-    public function editAction(Request $request, $purchaseId, $ending) {
-        return $this->edit($request, $ending, function() use ($purchaseId) {
-            $category = $this->loadEntity($purchaseId);
-            if ($category == null) {
-                throw $this->createNotFoundException('Purchase with id '.$purchaseId. ' not found.');
-            }
-            return $category;
-        });
-    }
-    
-    public function editTplAction(Request $request) {
-        return $this->edit($request, '.tpl', function(){ return null; });
-    }
-    
-    private function edit(Request $request, $ending, callable $getPurchase) {
-        $viewPath = '@TutteliAppBundle/Resources/views/Purchase/edit.html.twig';
-        list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
-    
-        if (!$response) {
-            $purchase = $getPurchase();
-            $response = $this->render($viewPath, array (
-                    'notXhr' => $ending == '',
-                    'error' => null,
-                    'purchase' => $purchase,
-            ));
-    
-            if ($ending == '.tpl') {
-                $response->setETag($etag);
-            }
-        }
-        return $response;
-    }
-    
+ 
 }

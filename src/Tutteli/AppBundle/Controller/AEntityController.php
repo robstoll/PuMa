@@ -43,7 +43,7 @@ abstract class AEntityController extends ATplController {
         return $this->getHtmlForEntity($request, $ending, 'new', function(){ return null; });
     }
     
-    public function editEntityAction(Request $request, $entityId, $ending) {
+    protected function editEntityAction(Request $request, $entityId, $ending) {
         return $this->getHtmlForEntity($request, $ending, 'edit', function() use ($entityId) {
             $entity = $this->loadEntity($entityId);
             if ($entity == null) {
@@ -78,6 +78,25 @@ abstract class AEntityController extends ATplController {
             }
         }
         return $response;
+    }
+    
+    protected function postEntity(Request $request) {
+        if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+            return $this->{'create'.$this->getEntitynameFirstUpper()}($request);
+        }
+        return new Response('{"msg": "Wrong Content-Type"}', Response::HTTP_BAD_REQUEST);
+    }
+    
+    protected function putEntity(Request $request, $entityId) {
+        if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+            $entity = $this->loadEntity($entityId);
+            if ($entity != null) {
+                return $this->{'update'.$this->getEntitynameFirstUpper()}($request, $entity);
+            } else {
+                return $this->createNotFoundException($this->getEntitynameFirstUpper().' Not Found');
+            }
+        }
+        return new Response('{"msg": "Wrong Content-Type"}', Response::HTTP_BAD_REQUEST);
     }
     
     public function cgetJsonAction(Request $request) {

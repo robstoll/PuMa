@@ -56,14 +56,10 @@ class CategoryController extends AEntityController {
     
     public function postAction(Request $request) {
         $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
-    
-        if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
-            return $this->createCategory($request);
-        }
-        return new Response('{"msg": "Wrong Content-Type"}', Response::HTTP_BAD_REQUEST);
+        return $this->postEntity($request);
     }
     
-    private function createCategory(Request $request) {
+    protected function createCategory(Request $request) {
         list($data, $response) = $this->decodeDataAndVerifyCsrf($request);
         if (!$response) {
             $category = new Category();
@@ -88,23 +84,12 @@ class CategoryController extends AEntityController {
         }
     }
     
-    
-    
     public function putAction(Request $request, $categoryId) {
         $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
-    
-        if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
-            $category = $this->loadEntity($categoryId);
-            if ($category != null) {
-                return $this->updateCategory($request, $category);
-            } else {
-                return $this->createNotFoundException('Category Not Found');
-            }
-        }
-        return new Response('{"msg": "Wrong Content-Type"}', Response::HTTP_BAD_REQUEST);
+        return $this->putEntity($request, $categoryId);
     }
     
-    private function updateCategory(Request $request, Category $category) {
+    protected function updateCategory(Request $request, Category $category) {
         list($data, $response) = $this->decodeDataAndVerifyCsrf($request);
         if (!$response) {
             $this->mapCategory($category, $data);

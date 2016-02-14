@@ -75,14 +75,10 @@ class UserController extends AEntityController {
     
     public function postAction(Request $request) {
         $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
-        
-        if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
-            return $this->createUser($request);
-        }
-        return new Response('{"msg": "Wrong Content-Type"}', Response::HTTP_BAD_REQUEST);
+        return $this->postEntity($request);
     }
     
-    private function createUser(Request $request) {
+    protected function createUser(Request $request) {
         list($data, $response) = $this->decodeDataAndVerifyCsrf($request);
         if (!$response) {
             $user = new User();
@@ -181,19 +177,10 @@ class UserController extends AEntityController {
     
     public function putAction(Request $request, $userId) {
         $this->denyAccessUnlessAdminOrCurrentUser($userId);
-        
-        if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
-            $user = $this->loadEntity($userId);
-            if ($user != null) {
-                return $this->updateUser($request, $user);
-            } else{
-                return $this->createNotFoundException('User Not Found');
-            }
-        }
-        return new Response('{"msg": "Wrong Content-Type"}', Response::HTTP_BAD_REQUEST);
+        return $this->putEntity($request, $userId);
     }
     
-    private function updateUser(Request $request, User $user) {
+    protected function updateUser(Request $request, User $user) {
         list($data, $response) = $this->decodeDataAndVerifyCsrf($request);
         if (!$response) {    
             $oldRole = $user->getRole();
