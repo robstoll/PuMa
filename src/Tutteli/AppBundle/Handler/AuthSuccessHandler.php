@@ -19,6 +19,7 @@ class AuthSuccessHandler extends DefaultAuthenticationSuccessHandler {
     const PAGE_BEFORE_LOGIN = '_security.secured_area.target_path';
     const SESSION_KEY_DATA_KEY = '_tutteli.purchase.dataKey';
     private $saltKey;
+    
     public function __construct($saltKey, HttpUtils $httpUtils, array $options) {
         parent::__construct($httpUtils, $options);
         $this->saltKey = base64_decode($saltKey);

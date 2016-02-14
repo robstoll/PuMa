@@ -12,6 +12,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\ConstraintViolation;
 use Tutteli\AppBundle\Entity\ChangePasswordDto;
 use Tutteli\AppBundle\Entity\User;
+use Tutteli\AppBundle\Handler\AuthSuccessHandler;
+use Defuse\Crypto\Key;
+use Defuse\Crypto\Crypto;
 
 class UserController extends AEntityController {
 
@@ -83,7 +86,7 @@ class UserController extends AEntityController {
         if (!$response) {
             $user = new User();
             $user->setPlainPassword($this->generatePassword());
-            $this->encodePassword($user);
+            $this->encodePasswordAndChangeDataKey($user);
             $this->mapUser($user, $data);
             $validator = $this->get('validator');
             $errors = $validator->validate($user);
@@ -110,9 +113,18 @@ class UserController extends AEntityController {
         return $response;
     }
     
-    private function encodePassword(User $user){
-        $password =  $this->get('security.password_encoder')->encodePassword($user, $user->getPlainPassword());
+    private function encodePasswordAndChangeDataKey(User $user){
+        $plainPassword = $user->getPlainPassword();
+        $password =  $this->get('security.password_encoder')->encodePassword($user, $plainPassword);
         $user->setPassword($password);
+        
+        $saltKey = base64_decode($this->getParameter('salt_key'));
+        $key = Key::CreateKeyBasedOnPassword($plainPassword, $saltKey);
+        /*@var $cryptoKey \Defuse\Crypto\Key */
+        $cryptoKey = $this->get('session')->get(AuthSuccessHandler::SESSION_KEY_DATA_KEY);
+        $asciiDataKey = $cryptoKey->saveToAsciiSafeString();
+        $encryptedDataKey = Crypto::encrypt($asciiDataKey, $key, true);
+        $user->setDataKey($encryptedDataKey);
     }
     
     private function generatePassword() {
@@ -256,7 +268,7 @@ class UserController extends AEntityController {
                 $response = $this->getTranslatedValidationResponse($errors);
             } else {
                 $user->setPlainPassword($data['newPw']);
-                $this->encodePassword($user);
+                $this->encodePasswordAndChangeDataKey($user);
                 $em = $this->getDoctrine()->getManager();
                 $em->merge($user);
                 $em->flush();
