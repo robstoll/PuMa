@@ -53,7 +53,7 @@
                 	    ~ '"id":"' ~ purchase.id ~ '",' 
                 	    ~ '"user":"' ~ purchase.user.username ~ '",'
                 	    ~ '"purchaseDate":"' ~ purchaseDate ~ '",'
-                	    ~ '"total":"' ~ purchase.total ~ '"' 
+                	    ~ '"total":"' ~ purchase.total|number_format(2, '.') ~ '"' 
                 	    ~ '}' 
             	    %}
         			<tr>
