@@ -162,8 +162,10 @@ class UserController extends AEntityController {
     private function sendPassword(User $user) {
         $lang = $this->get('translator')->getLocale();
         $html = $this->renderView(
-            '@TutteliAppBundle/Resources/views/User/email.'.$lang.'.html.twig',
-            array('user' => $user)
+            '@TutteliAppBundle/Resources/views/User/email.'.$lang.'.html.twig', array(
+                'user' => $user,
+                'homeUrl' => $this->generateUrl('home', [], true)
+            )
         );
         $message = \Swift_Message::newInstance()
             ->setSubject('New User Account')
