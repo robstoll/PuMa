@@ -3,7 +3,14 @@
 use Symfony\Component\ClassLoader\ApcClassLoader;
 use Symfony\Component\HttpFoundation\Request;
 
-$loader = require_once __DIR__.'/../app/bootstrap.php.cache';
+if ($_SERVER['HTTP_HOST'] != 'localhost') {
+    $appDir = __DIR__.'/../../private/purchase/app/';
+} else {
+    $appDir = __DIR__.'/../app/';
+}
+    
+
+$loader = require_once $appDir.'bootstrap.php.cache';
 
 // Enable APC for autoloading to improve performance.
 // You should change the ApcClassLoader first argument to a unique prefix
@@ -15,10 +22,14 @@ $loader->unregister();
 $apcLoader->register(true);
 */
 
-require_once __DIR__.'/../app/AppKernel.php';
-//require_once __DIR__.'/../app/AppCache.php';
+require_once $appDir.'AppKernel.php';
+//require_once  $appDir.'AppCache.php';
+if ($_SERVER['HTTP_HOST'] != 'localhost') {
+    $kernel = new AppKernel('prod', false);
+} else {
+    $kernel = new AppKernel('pre_prod', false);
+}
 
-$kernel = new AppKernel('prod', false);
 $kernel->loadClassCache();
 //$kernel = new AppCache($kernel);
 
