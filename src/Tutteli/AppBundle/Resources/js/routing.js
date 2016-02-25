@@ -55,7 +55,7 @@ angular.module('tutteli.purchase.routing', [
     })
     .state('purchases_monthAndYear', {
         url: '/purchases/month-:month-:year',
-        controller: 'tutteli.purchase.PurchaseMonthController',
+        controller: 'tutteli.purchase.PurchasesMonthController',
         controllerAs: 'purchasesCtrl',
         templateUrl: 'purchases/month.tpl',
         data: {
@@ -64,7 +64,7 @@ angular.module('tutteli.purchase.routing', [
     })
     .state('new_purchase', {
         url: '/purchases/new',
-        controller: 'tutteli.purchase.PurchaseController',
+        controller: 'tutteli.purchase.NewPurchaseController',
         controllerAs: 'purchaseCtrl',
         templateUrl: 'purchases/new.tpl',
         data: {

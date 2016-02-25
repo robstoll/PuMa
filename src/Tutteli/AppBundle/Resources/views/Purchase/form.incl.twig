@@ -32,16 +32,16 @@
 	<label class="control.label" for="purchase_date">{{ 'purchase.date'|trans }}</label>
 	<div>
         <div class="input-group">
-          <input id="purchase_purchaseDate" type="text" class="form-control" name="date" uib-datepicker-popup="{{ 'general.dateFormat.angularjs'|trans }}" ng-model="purchaseCtrl.datePicker.dt" ng-disabled="purchaseCtrl.disabled" is-open="purchaseCtrl.datePicker.opened" min-date="purchaseCtrl.datePicker.minDate" max-date="purchaseCtrl.datePicker.maxDate" datepicker-options="purchaseCtrl.datePicker.dateOptions" ng-required="true" close-text="{{'general.close'|trans}}" value="{{ "now"|date('general.dateFormat.php'|trans) }}" />
+          <input id="purchase_purchaseDate" type="text" class="form-control" name="date" uib-datepicker-popup="{{ 'general.dateFormat.angularjs'|trans }}" ng-model="purchaseCtrl.datePicker.dt" ng-disabled="purchaseCtrl.isDisabled()" is-open="purchaseCtrl.datePicker.opened" min-date="purchaseCtrl.datePicker.minDate" max-date="purchaseCtrl.datePicker.maxDate" datepicker-options="purchaseCtrl.datePicker.dateOptions" ng-required="true" close-text="{{'general.close'|trans}}" value="{{ "now"|date('general.dateFormat.php'|trans) }}" />
           <span class="input-group-btn">
-            <button type="button" class="btn btn-default" ng-disabled="purchaseCtrl.disabled" ng-click="purchaseCtrl.open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+            <button type="button" class="btn btn-default" ng-disabled="purchaseCtrl.isDisabled()" ng-click="purchaseCtrl.open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>
         </div>
     </div>
 </div>
 <div class="form-group last extraMargin">
 	<label class="control-label" for="purchase_user">{{ 'purchase.user'|trans }}</label>
-	<select id="purchase_user" name="user" required="required" ng-model="purchaseCtrl.user" ng-disabled="purchaseCtrl.disabled" ng-options="obj.id as obj.username for obj in purchaseCtrl.getUsers()" class="form-control" ng-init="purchaseCtrl.selectUser('{{ app.user.id }}', '{{  app.user.username }}')">
+	<select id="purchase_user" name="user" required="required" ng-model="purchaseCtrl.user" ng-disabled="purchaseCtrl.isDisabled()" ng-options="obj.id as obj.username for obj in purchaseCtrl.getUsers()" class="form-control" ng-init="purchaseCtrl.selectUser('{{ app.user.id }}', '{{  app.user.username }}')">
 		<option value="{{ app.user.id }}">{{ app.user.username }}</option>
 	</select>
 </div>
