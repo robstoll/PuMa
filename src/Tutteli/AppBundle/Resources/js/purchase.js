@@ -17,36 +17,25 @@ angular.module('tutteli.purchase.core', [
 ])
     .controller('tutteli.purchase.NewPurchaseController', NewPurchaseController)
     .controller('tutteli.purchase.EditPurchaseController', EditPurchaseController)
-    .controller('tutteli.purchase.PurchaseMonthController', PurchaseMonthController)
+    .controller('tutteli.purchase.PurchasesMonthController', PurchasesMonthController)
     .service('tutteli.purchase.PurchaseService', PurchaseService)
     .service('tutteli.purchase.UsersLoaderFactory', UsersLoaderFactory)
     .service('tutteli.purchase.CategoriesLoaderFactory', CategoriesLoaderFactory)
     .constant('tutteli.purchase.PurchaseService.alertId', 'tutteli-ctrls-Purchase');
 
-NewPurchaseController.$inject = [
-    '$q',
-    '$parse',
-    '$filter',
-    'tutteli.purchase.ROUTES',
-    'tutteli.PreWork',
-    'tutteli.purchase.PurchaseService',
-    'tutteli.purchase.CategoriesLoaderFactory',
-    'tutteli.purchase.UsersLoaderFactory',
-    'tutteli.helpers.FormHelperFactory'];
-function NewPurchaseController(
+function APurchaseController(
         $q,
         $parse, 
         $filter, 
         ROUTES, 
         PreWork,
         PurchaseService,
+        alertId,
         CategoriesLoaderFactory,
         UsersLoaderFactory,
         FormHelperFactory) {
-
     var self = this;
-    var formHelper = FormHelperFactory.build(self, ROUTES.get_purchase_csrf);
-
+    
     var categories = [{id: 0, name: 'Loading categories...'}];
     var users = null;
     var usersLoaded = false;
@@ -55,6 +44,7 @@ function NewPurchaseController(
     var categoriesLoader = CategoriesLoaderFactory.build(self);
     var usersLoader = UsersLoaderFactory.build(self);
     
+    this.formHelper = FormHelperFactory.build(self, ROUTES.get_purchase_csrf);
     this.datePicker = new DatePicker();
     this.positionManager = new PositionManager($parse, $filter);
     this.clearForm = self.positionManager.clearForm;
@@ -95,7 +85,42 @@ function NewPurchaseController(
         }
         self.user = id;
     };
+    
+    // -------------------
+    
+    self.formHelper.reloadCsrfIfNecessary();
 
+    self.loadCategories();
+    self.loadUsers();
+    document.getElementById('purchase_add').style.display = 'inline';
+}
+
+NewPurchaseController.$inject = [
+    '$q',
+    '$parse',
+    '$filter',
+    'tutteli.purchase.ROUTES',
+    'tutteli.PreWork',
+    'tutteli.purchase.PurchaseService',
+    'tutteli.purchase.PurchaseService.alertId',
+    'tutteli.purchase.CategoriesLoaderFactory',
+    'tutteli.purchase.UsersLoaderFactory',
+    'tutteli.helpers.FormHelperFactory'];
+NewPurchaseController.prototype = Object.create(APurchaseController.prototype);
+function NewPurchaseController(
+        $q,
+        $parse, 
+        $filter, 
+        ROUTES, 
+        PreWork,
+        PurchaseService,
+        alertId,
+        CategoriesLoaderFactory,
+        UsersLoaderFactory,
+        FormHelperFactory) {
+    APurchaseController.apply(this, arguments);    
+    var self = this;
+   
     this.createPurchase = function($event) {
         var purchase = {
             userId : self.user,
@@ -103,9 +128,8 @@ function NewPurchaseController(
             positions :  self.positionManager.positions,
             csrf_token : self.csrf_token
         };
-        formHelper.create($event, alertId, purchase, 'Purchase', null, PurchaseService);
+        self.formHelper.create($event, alertId, purchase, 'Purchase', null, PurchaseService);
     };
-    
 
     // -------------------
 
@@ -116,12 +140,57 @@ function NewPurchaseController(
         self.positionManager.positions[0].notice = position.notice;
     }
     PreWork.merge('purchases/new.tpl', this, 'purchaseCtrl');
+}
 
-    formHelper.reloadCsrfIfNecessary();
 
-    self.loadCategories();
-    self.loadUsers();
-    document.getElementById('purchase_add').style.display = 'inline';
+EditPurchaseController.$inject = [
+  '$stateParams',
+  '$q',
+  '$parse',
+  '$filter',
+  'tutteli.purchase.ROUTES',
+  'tutteli.PreWork',
+  'tutteli.purchase.PurchaseService',
+  'tutteli.purchase.EditCategoryController.alertId',
+  'tutteli.purchase.CategoriesLoaderFactory',
+  'tutteli.purchase.UsersLoaderFactory',
+  'tutteli.helpers.FormHelperFactory'];
+EditPurchaseController.prototype = Object.create(APurchaseController.prototype);
+function EditPurchaseController(
+        $stateParams, 
+        $q,
+        $parse,
+        $filter,
+        ROUTES, 
+        PreWork,  
+        PurchaseService,  
+        alertId, 
+        CategoriesLoaderFactory,
+        UsersLoaderFactory,
+        FormHelperFactory) {
+    APurchaseController.apply(this, [].slice.call(arguments).slice(1));     
+    var self = this;
+    
+    // -------------------
+    
+    var positions = {};
+    if (PreWork.merge('purchases/edit.tpl', positions, 'positions')) {
+        //positions is actually an object with field names corresponding to an index
+        for(var i in positions) {
+            self.positionManager.addPosition();
+            var position = self.positionManager.positions[i];
+            position.expression = positions[i].expression;
+            position.notice = positions[i].notice;
+            position.category = positions[i].category;
+        }
+    }
+    PreWork.merge('purchases/edit.tpl', this, 'purchaseCtrl');
+
+    var isNotLoaded = self.positionManager.positions.length == 0;
+    if (isNotLoaded) {
+        self.loadPurchase($stateParams.purchaseId);
+    }
+    
 }
 
 function DatePicker() {
@@ -222,7 +291,6 @@ function CategoriesLoaderFactory($q, CategoryService, AlertService, alertId) {
     };
 }
 
-
 function CategoriesLoader($q, CategoryService, AlertService, alertId, controller) {
     var self = this;
     this.load = function() {
@@ -311,68 +379,13 @@ function UsersLoader($q, UserService, AlertService, alertId, controller) {
     };
 }
 
-EditPurchaseController.$inject = [
-  '$stateParams',
-  '$parse',
-  '$filter',
-  'tutteli.purchase.ROUTES',
-  'tutteli.PreWork',
-  'tutteli.purchase.PurchaseService',
-  'tutteli.purchase.EditCategoryController.alertId',
-  'tutteli.helpers.FormHelperFactory'];
-function EditPurchaseController(
-        $stateParams, 
-        $parse,
-        $filter,
-        ROUTES, 
-        PreWork,  
-        PurchaseService,  
-        alertId, 
-    FormHelperFactory) {
-    var self = this;
-    var formHelper = FormHelperFactory.build(self, ROUTES.get_purchase_csrf);
-    
-    var categories = [{id: 0, name: 'Loading categories...'}];
-    var users = null;
-    var usersLoaded = false;
-    var categoriesLoaded = false;
-    var isNotLoaded = true;
-    
-    this.datePicker = new DatePicker();
-    this.positionManager = new PositionManager($parse, $filter);
-    this.clearForm = self.positionManager.clearForm;
-    
-    // -------------------
-    
-    var positions = {};
-    if (PreWork.merge('purchases/edit.tpl', positions, 'positions')) {
-        //positions is actually an object with field names as index
-        for(var i in positions) {
-            self.positionManager.addPosition();
-            self.positionManager.positions[i].expression = positions[i].expression;
-            self.positionManager.positions[i].notice = positions[i].notice;
-        }
-    }
-    PreWork.merge('purchases/edit.tpl', this, 'purchaseCtrl');
-
-    isNotLoaded = self.positionManager.positions.length == 0;
-    if (isNotLoaded) {
-        self.loadPurchase($stateParams.purchaseId);
-    }
-    
-    formHelper.reloadCsrfIfNecessary();
-
-//    self.loadCategories();
-//    self.loadUsers();
-    document.getElementById('purchase_add').style.display = 'inline';
-}
 
 
-PurchaseMonthController.$inject = [
+PurchasesMonthController.$inject = [
     '$stateParams',
     'tutteli.purchase.PurchaseService',
     'tutteli.helpers.InitHelper'];
-function PurchaseMonthController($stateParams, PurchaseService, InitHelper) {
+function PurchasesMonthController($stateParams, PurchaseService, InitHelper) {
     var self = this;
     
     this.purchases = null;
