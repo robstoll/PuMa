@@ -9,8 +9,8 @@
 angular.module('tutteli.helpers', ['tutteli.alert', 'tutteli.preWork'])
     .service('tutteli.helpers.ErrorHandler', ErrorHandler)       
     .service('tutteli.helpers.InitHelper', InitHelper)
-    .service('tutteli.helpers.FormHelperFactory', FormHelperFactory);
-
+    .service('tutteli.helpers.FormHelperFactory', FormHelperFactory)
+    .service('tutteli.helpers.ServiceHelper', ServiceHelper);
 
 ErrorHandler.$inject = ['tutteli.alert.AlertService'];
 function ErrorHandler(AlertService) {
@@ -50,6 +50,13 @@ InitHelper.$inject = ['tutteli.PreWork'];
 function InitHelper(PreWork) {
     var self = this;
     
+    function changeDisplay(elementId, display) {
+        var element = document.getElementById(elementId);
+        if (element) {
+            element.style.display = display;
+        }
+    }
+    
     this.initTableData = function(name, controller, data) {
         controller[name] = data[name];
         if (data.updatedAt) {
@@ -61,15 +68,9 @@ function InitHelper(PreWork) {
             rows.className = '';
         }
         
-        var load = document.getElementById(name + '_load');
-        if (load) {
-            load.style.display = 'none';
-        }
+        changeDisplay(name + '_load', 'none');
         if(data[name] == null || data[name].length == 0) {
-            var nothingFound = document.getElementById(name + '_nothingFound');
-            if (nothingFound) {
-                nothingFound.style.display = 'block';
-            }
+            changeDisplay(name + '_nothingFound', 'block');
         }
     };
     
@@ -85,10 +86,8 @@ function InitHelper(PreWork) {
         if (controller[initName] !== undefined) {
             self.initTableData(name, controller, JSON.parse(controller[initName]));
         } else {
-            var load = document.getElementById(name + '_load');
-            if (load) {
-                load.style.display = 'block';
-            }
+            changeDisplay(name + '_load', 'block');
+            changeDisplay(name + '_nothingFound', 'none');            
             loadFunc();
         }
     };
@@ -147,6 +146,26 @@ function FormHelper($q, AlertService, ErrorHandler, CsrfService, controller, url
         if (controller.csrf_token === undefined || controller.csrf_token === '') {
             self.reloadCsrfToken();
         }
+    };
+}
+
+ServiceHelper.$inject = ['$http','$q'];
+function ServiceHelper($http, $q) {
+    this.get = function (url, propertyName) {
+        return $http.get(url).then(function(response) {
+            if (response.data[propertyName] === undefined) {
+                return $q.reject({msg:'The property "'+propertyName+'" was not defined in the returned data.', data: response.data});
+            }
+            if(response.data[propertyName].length > 0) {
+                if (response.data.updatedAt === undefined) {
+                    return $q.reject({msg:'The property "updatedAt" was not defined in the returned data.', data: response.data});
+                }
+                if (response.data.updatedBy === undefined) {
+                    return $q.reject({msg:'The property "updatedBy" was not defined in the returned data.', data: response.data});
+                }
+            }
+            return $q.resolve(response.data);
+        });
     };
 }
 

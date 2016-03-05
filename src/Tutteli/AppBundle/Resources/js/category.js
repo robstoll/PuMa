@@ -117,31 +117,15 @@ function EditCategoryController(
     formHelper.reloadCsrfIfNecessary();
 }
 
-CategoryService.$inject = ['$http', '$q', 'tutteli.purchase.ROUTES'];
-function CategoryService($http, $q, ROUTES) {
+CategoryService.$inject = ['$http', '$q', 'tutteli.purchase.ROUTES', 'tutteli.helpers.ServiceHelper'];
+function CategoryService($http, $q, ROUTES, ServiceHelper) {
     
     this.getCategories = function() {
-        return $http.get(ROUTES.get_categories_json).then(function(response) {
-            if (response.data.categories === undefined) {
-                return $q.reject({msg:'The property "categories" was not defined in the returned data.', data: response.data});
-            }
-            if (response.data.updatedAt === undefined) {
-                return $q.reject({msg:'The property "updatedAt" was not defined in the returned data.', data: response.data});
-            }
-            if (response.data.updatedBy === undefined) {
-                return $q.reject({msg:'The property "updatedBy" was not defined in the returned data.', data: response.data});
-            }
-            return $q.resolve(response.data);
-        });
+        return ServiceHelper.get(ROUTES.get_categories_json, 'categories');
     };
     
     this.getCategory = function(categoryId) {
-        return $http.get(ROUTES.get_category_json.replace(':categoryId', categoryId)).then(function(response) {
-            if (response.data.category === undefined) {
-                return $q.reject({msg:'The property "category was not defined in the returned data.', data: response.data});
-            }
-            return $q.resolve(response.data.category);
-        });
+        return ServiceHelper.get(ROUTES.get_category_json.replace(':categoryId', categoryId), 'category');
     };
     
     this.createCategory = function(category) {

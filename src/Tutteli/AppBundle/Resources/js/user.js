@@ -227,31 +227,15 @@ function getError($q, $timeout, errors) {
     return delay.promise;
 }
 
-UserService.$inject = ['$http', '$q', '$timeout', 'tutteli.purchase.ROUTES'];
-function UserService($http, $q, $timeout, ROUTES) {
+UserService.$inject = ['$http', '$q', '$timeout', 'tutteli.purchase.ROUTES', 'tutteli.helpers.ServiceHelper'];
+function UserService($http, $q, $timeout, ROUTES, ServiceHelper) {
     
     this.getUsers = function() {
-        return $http.get(ROUTES.get_users_json).then(function(response) {
-            if (response.data.users === undefined) {
-                return $q.reject({msg:'The property "users" was not defined in the returned data.', data: response.data});
-            }
-            if (response.data.updatedAt === undefined) {
-                return $q.reject({msg:'The property "updatedAt" was not defined in the returned data.', data: response.data});
-            }
-            if (response.data.updatedBy === undefined) {
-                return $q.reject({msg:'The property "updatedBy" was not defined in the returned data.', data: response.data});
-            }
-            return $q.resolve(response.data);
-        });
+        return ServiceHelper.get(ROUTES.get_users_json, 'users');
     };
     
     this.getUser = function(userId) {
-        return $http.get(ROUTES.get_user_json.replace(':userId', userId)).then(function(response) {
-            if (response.data.user === undefined) {
-                return $q.reject({msg:'The property "user" was not defined in the returned data.', data: response.data});
-            }
-            return $q.resolve(response.data.user);
-        });
+        return ServiceHelper.get(ROUTES.get_user_json.replace(':userId', userId), 'user');
     };
     
     this.createUser = function(user) {
