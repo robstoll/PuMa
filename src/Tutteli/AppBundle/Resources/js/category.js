@@ -121,7 +121,7 @@ CategoryService.$inject = ['$http', '$q', 'tutteli.purchase.ROUTES', 'tutteli.he
 function CategoryService($http, $q, ROUTES, ServiceHelper) {
     
     this.getCategories = function() {
-        return ServiceHelper.get(ROUTES.get_categories_json, 'categories');
+        return ServiceHelper.cget(ROUTES.get_categories_json, 'categories');
     };
     
     this.getCategory = function(categoryId) {

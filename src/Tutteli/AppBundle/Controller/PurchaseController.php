@@ -86,6 +86,10 @@ class PurchaseController extends AEntityController {
         });
     }
     
+    public function getJsonAction($purchaseId) {
+        return $this->getJsonForEntityAction($purchaseId);
+    }
+    
     public function editAction(Request $request, $purchaseId, $ending) {
         return $this->editEntityAction($request, $purchaseId, $ending);
     }

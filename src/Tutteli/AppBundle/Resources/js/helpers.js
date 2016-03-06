@@ -151,20 +151,38 @@ function FormHelper($q, AlertService, ErrorHandler, CsrfService, controller, url
 
 ServiceHelper.$inject = ['$http','$q'];
 function ServiceHelper($http, $q) {
-    this.get = function (url, propertyName) {
+    
+    function get(url, propertyName) {
         return $http.get(url).then(function(response) {
             if (response.data[propertyName] === undefined) {
                 return $q.reject({msg:'The property "'+propertyName+'" was not defined in the returned data.', data: response.data});
             }
-            if(response.data[propertyName].length > 0) {
-                if (response.data.updatedAt === undefined) {
-                    return $q.reject({msg:'The property "updatedAt" was not defined in the returned data.', data: response.data});
-                }
-                if (response.data.updatedBy === undefined) {
-                    return $q.reject({msg:'The property "updatedBy" was not defined in the returned data.', data: response.data});
-                }
-            }
             return $q.resolve(response.data);
+        });
+    }
+    
+    function checkUpdatedAt(data) {
+        if (data.updatedAt === undefined) {
+            return $q.reject({msg:'The property "updatedAt" was not defined in the returned data.', data: data});
+        }
+        if (data.updatedBy === undefined) {
+            return $q.reject({msg:'The property "updatedBy" was not defined in the returned data.', data: data});
+        }
+        return $q.resolve(data);
+    }
+    
+    this.cget = function (url, propertyName) {
+        return get(url, propertyName).then(function(data) {
+            if(data[propertyName].length > 0) {
+                return checkUpdatedAt(data);
+            }
+            return $q.resolve(data);
+        });
+    };
+    
+    this.get = function (url, propertyName) {
+        return get(url, propertyName).then(function(data) {
+            return checkUpdatedAt(data[propertyName]);
         });
     };
 }

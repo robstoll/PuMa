@@ -160,6 +160,7 @@ angular.module('tutteli.purchase.routing', [
 }]).constant('tutteli.purchase.ROUTES', {
     get_login_csrf: 'login/token',
     get_purchases_monthAndYear_json: 'purchases/month-:month-:year.json',
+    get_purchase_json: 'purchases/:purchaseId.json',
     post_purchase : 'purchases',
     get_purchase_csrf: 'purchases/new/token',    
     get_categories_json: 'categories.json',

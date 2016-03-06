@@ -19,8 +19,7 @@ angular.module('tutteli.purchase.core', [
     .controller('tutteli.purchase.EditPurchaseController', EditPurchaseController)
     .controller('tutteli.purchase.PurchasesMonthController', PurchasesMonthController)
     .service('tutteli.purchase.PurchaseService', PurchaseService)
-    .service('tutteli.purchase.UsersLoaderFactory', UsersLoaderFactory)
-    .service('tutteli.purchase.CategoriesLoaderFactory', CategoriesLoaderFactory)
+    .service('tutteli.purchase.LoaderFactory', LoaderFactory)
     .constant('tutteli.purchase.PurchaseService.alertId', 'tutteli-ctrls-Purchase');
 
 function APurchaseController(
@@ -31,8 +30,7 @@ function APurchaseController(
         PreWork,
         PurchaseService,
         alertId,
-        CategoriesLoaderFactory,
-        UsersLoaderFactory,
+        LoaderFactory,
         FormHelperFactory) {
     var self = this;
     
@@ -41,8 +39,8 @@ function APurchaseController(
     var usersLoaded = false;
     var categoriesLoaded = false;
     var disabled = false;
-    var categoriesLoader = CategoriesLoaderFactory.build(self);
-    var usersLoader = UsersLoaderFactory.build(self);
+    var categoriesLoader = LoaderFactory.buildCategoriesLoader(self);
+    var usersLoader = LoaderFactory.buildUsersLoader(self);
     
     this.formHelper = FormHelperFactory.build(self, ROUTES.get_purchase_csrf);
     this.datePicker = new DatePicker();
@@ -103,8 +101,7 @@ NewPurchaseController.$inject = [
     'tutteli.PreWork',
     'tutteli.purchase.PurchaseService',
     'tutteli.purchase.PurchaseService.alertId',
-    'tutteli.purchase.CategoriesLoaderFactory',
-    'tutteli.purchase.UsersLoaderFactory',
+    'tutteli.purchase.LoaderFactory',
     'tutteli.helpers.FormHelperFactory'];
 NewPurchaseController.prototype = Object.create(APurchaseController.prototype);
 function NewPurchaseController(
@@ -115,8 +112,7 @@ function NewPurchaseController(
         PreWork,
         PurchaseService,
         alertId,
-        CategoriesLoaderFactory,
-        UsersLoaderFactory,
+        LoaderFactory,
         FormHelperFactory) {
     APurchaseController.apply(this, arguments);    
     var self = this;
@@ -152,8 +148,7 @@ EditPurchaseController.$inject = [
   'tutteli.PreWork',
   'tutteli.purchase.PurchaseService',
   'tutteli.purchase.EditCategoryController.alertId',
-  'tutteli.purchase.CategoriesLoaderFactory',
-  'tutteli.purchase.UsersLoaderFactory',
+  'tutteli.purchase.LoaderFactory',
   'tutteli.helpers.FormHelperFactory'];
 EditPurchaseController.prototype = Object.create(APurchaseController.prototype);
 function EditPurchaseController(
@@ -165,16 +160,32 @@ function EditPurchaseController(
         PreWork,  
         PurchaseService,  
         alertId, 
-        CategoriesLoaderFactory,
-        UsersLoaderFactory,
+        LoaderFactory,
         FormHelperFactory) {
     APurchaseController.apply(this, [].slice.call(arguments).slice(1));     
     var self = this;
+    var isNotLoaded = true;
+    
+    this.loadPurchase = function (purchaseId) {
+        PurchaseService.getPurchase(purchaseId).then(function(purchase) {
+            self.id = purchase.id;
+            self.purchaseDate = purchase.purchaseDate;
+            self.user = purchase.user;
+            self.updatedAt = purchase.updatedAt;
+            self.updatedBy = purchase.updatedBy;
+            updatePositions(purchase.positions);
+            isNotLoaded = false;
+        });
+    };
+    
+    var isDisabledParent = this.isDisabled;
+    this.isDisabled = function() {
+        return isNotLoaded || isDisabledParent();
+    };
     
     // -------------------
     
-    var positions = {};
-    if (PreWork.merge('purchases/edit.tpl', positions, 'positions')) {
+    function updatePositions(positions) {
         //positions is actually an object with field names corresponding to an index
         for(var i in positions) {
             self.positionManager.addPosition();
@@ -184,9 +195,14 @@ function EditPurchaseController(
             position.category = positions[i].category;
         }
     }
+    
+    var positions = {};
+    if (PreWork.merge('purchases/edit.tpl', positions, 'positions')) {
+        updatePositions(positions);
+    }
     PreWork.merge('purchases/edit.tpl', this, 'purchaseCtrl');
 
-    var isNotLoaded = self.positionManager.positions.length == 0;
+    isNotLoaded = self.positionManager.positions.length == 0;
     if (isNotLoaded) {
         self.loadPurchase($stateParams.purchaseId);
     }
@@ -280,14 +296,21 @@ function closeAlertAndCall(alertId, methodName) {
         + 'onclick="angular.element(document.querySelector(\'[ui-view]\')).controller().' + methodName + '(); return false;"';
 }
 
-CategoriesLoaderFactory.$inject = [
+
+LoaderFactory.$inject = [
   '$q',
   'tutteli.purchase.CategoryService',
+  'tutteli.purchase.UserService',
   'tutteli.alert.AlertService',
   'tutteli.purchase.PurchaseService.alertId'];
-function CategoriesLoaderFactory($q, CategoryService, AlertService, alertId) {
-    this.build = function (controller) {
+function LoaderFactory($q, CategoryService, UserService, AlertService, alertId) {
+    
+    this.buildCategoriesLoader = function (controller) {
         return new CategoriesLoader($q, CategoryService, AlertService, alertId, controller);
+    };
+    
+    this.buildUsersLoader = function (controller) {
+        return new UsersLoader($q, UserService, AlertService, alertId, controller);
     };
 }
 
@@ -298,7 +321,7 @@ function CategoriesLoader($q, CategoryService, AlertService, alertId, controller
             if (data.categories.length == 0) {
                 var alertIdCategories = alertId + '-categories';
                 AlertService.add(alertIdCategories,
-                        'No categories are defined yet, gathering purchases is not yet possible. '
+                        'No categories are defined yet, adding/updating purchases is not yet possible. '
                         + 'Please inform your administrator. '
                         + '<a '+ closeAlertAndCall(alertIdCategories, 'loadCategories') + '>'
                             + 'Click then here once the categories have been created'
@@ -311,7 +334,7 @@ function CategoriesLoader($q, CategoryService, AlertService, alertId, controller
             var reportId = '_purchase_categories_report';
             var report = AlertService.getHttpErrorReport(errorResponse);
             if (errorResponse.status == 404) {
-                var msg = 'Categories could not been loaded, gathering purchases is thus not possible at the moment. '
+                var msg = 'Categories could not been loaded, adding/updating purchases is thus not possible at the moment. '
                         + 'Please verify you have internet connection and '
                         + '<a ' + closeAlertAndCall(alertIdUsers, 'loadCategories') + '>'
                             + 'click here to load the categories again'
@@ -332,17 +355,6 @@ function CategoriesLoader($q, CategoryService, AlertService, alertId, controller
             }
             return $q.reject(errorResponse);
         });
-    };
-}
-
-UsersLoaderFactory.$inject = [
-  '$q',
-  'tutteli.purchase.UserService',
-  'tutteli.alert.AlertService',
-  'tutteli.purchase.PurchaseService.alertId'];
-function UsersLoaderFactory($q, UserService, AlertService, alertId) {
-    this.build = function (controller) {
-        return new UsersLoader($q, UserService, AlertService, alertId, controller);
     };
 }
 
@@ -379,8 +391,6 @@ function UsersLoader($q, UserService, AlertService, alertId, controller) {
     };
 }
 
-
-
 PurchasesMonthController.$inject = [
     '$stateParams',
     'tutteli.purchase.PurchaseService',
@@ -397,12 +407,27 @@ function PurchasesMonthController($stateParams, PurchaseService, InitHelper) {
     // ----------------
     
     InitHelper.initTableBasedOnPreWork('purchases/month.tpl', 'purchases', this, function() {
-       PurchaseService.getPurchases($stateParams.month, $stateParams.year).then(self.initPurchases);
+       PurchaseService.getPurchases($stateParams.month, $stateParams.year).then(
+           self.initPurchases, function (errorResponse) {
+               var i=0;
+           }
+       );
     });
 }
 
-PurchaseService.$inject = ['$http', '$q', '$timeout', 'tutteli.purchase.ROUTES'];
-function PurchaseService($http, $q, $timeout, ROUTES) {
+PurchaseService.$inject = ['$http', '$q', '$timeout', 'tutteli.purchase.ROUTES', 'tutteli.helpers.ServiceHelper'];
+function PurchaseService($http, $q, $timeout, ROUTES, ServiceHelper) {
+    
+    this.getPurchases = function(month, year) {
+        var url = ROUTES.get_purchases_monthAndYear_json
+            .replace(':month', month)
+            .replace(':year', year);
+        return ServiceHelper.cget(url, 'purchases');
+    };
+    
+    this.getPurchase = function(purchaseId) {
+        return ServiceHelper.get(ROUTES.get_purchase_json.replace(':purchaseId', purchaseId), 'purchase');
+    };
     
     this.createPurchase = function(purchase) {
         var errors = '';
@@ -437,25 +462,6 @@ function PurchaseService($http, $q, $timeout, ROUTES) {
             delay.reject({error: errors});
         }, 1);
         return delay.promise;
-    };
-    
-    this.getPurchases = function(month, year) {
-        var url = ROUTES.get_purchases_monthAndYear_json
-            .replace(':month', month)
-            .replace(':year', year);
-        
-        return $http.get(url).then(function(response) {
-            if (response.data.purchases === undefined) {
-                return $q.reject({msg:'The property "purchases" was not defined in the returned data.', data: response.data});
-            }
-            if (response.data.updatedAt === undefined) {
-                return $q.reject({msg:'The property "updatedAt" was not defined in the returned data.', data: response.data});
-            }
-            if (response.data.updatedBy === undefined) {
-                return $q.reject({msg:'The property "updatedBy" was not defined in the returned data.', data: response.data});
-            }
-            return $q.resolve(response.data);
-        });
     };
 }
 

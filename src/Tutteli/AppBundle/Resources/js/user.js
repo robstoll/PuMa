@@ -231,7 +231,7 @@ UserService.$inject = ['$http', '$q', '$timeout', 'tutteli.purchase.ROUTES', 'tu
 function UserService($http, $q, $timeout, ROUTES, ServiceHelper) {
     
     this.getUsers = function() {
-        return ServiceHelper.get(ROUTES.get_users_json, 'users');
+        return ServiceHelper.cget(ROUTES.get_users_json, 'users');
     };
     
     this.getUser = function(userId) {
