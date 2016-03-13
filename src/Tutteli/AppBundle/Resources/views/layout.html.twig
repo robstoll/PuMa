@@ -8,7 +8,7 @@
 {% block stylesheets %}
     {# No need to render it everytime in dev mode, it's too slow 
 	 # hence comment it only out if a lib has changed and dump the assetic again 
-	 # php app/console assetic:dump --env=prod
+	 # php app/console assetic:dump --env=pre_prod --no-debug
      #}
 	<link rel="stylesheet" href="{{ asset('css/lib.css') }}" />
 {# 	{% stylesheets output="css/lib.css" #}
@@ -86,7 +86,7 @@
 {% block javascripts %}
 	{# It's too slow to load all js files in dev mode, 
 	 # hence comment it only out if a lib has changed and dump the assetic again 
-	 # php app/console assetic:dump --env=prod
+	 # php app/console assetic:dump --env=pre_prod --no-debug
      #}
 	<script src="{{ asset('js/lib.js') }}"></script>
 {#     {% javascripts filter="?uglifyjs2" output="js/lib.js" #}

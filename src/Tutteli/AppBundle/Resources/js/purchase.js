@@ -14,6 +14,7 @@ angular.module('tutteli.purchase.core', [
     'tutteli.purchase.category',
     'tutteli.purchase.user',
     'tutteli.helpers',
+    'ui.bootstrap',
 ])
     .controller('tutteli.purchase.NewPurchaseController', NewPurchaseController)
     .controller('tutteli.purchase.EditPurchaseController', EditPurchaseController)
@@ -26,6 +27,7 @@ function APurchaseController(
         $q,
         $parse, 
         $filter, 
+        uibDateParser,
         ROUTES, 
         PreWork,
         PurchaseService,
@@ -43,9 +45,38 @@ function APurchaseController(
     var usersLoader = LoaderFactory.buildUsersLoader(self);
     
     this.formHelper = FormHelperFactory.build(self, ROUTES.get_purchase_csrf);
-    this.datePicker = new DatePicker();
+    this.dt = new Date();
+    this.datePicker = new DatePicker(this);
     this.positionManager = new PositionManager($parse, $filter);
     this.clearForm = self.positionManager.clearForm;
+    
+    this.parseDateIfNecessary = function() {
+        //necessary since ui.datePicker does not use the format specified during initialisation (month and day are switched)
+        if (!(self.dt instanceof Date)) {
+            var result = self.dt.match(/([0-3]?[1-9]).([0-3]?[1-9]).((?:[1-2][0-9])?[0-9][0-9])/);
+            if (result) {
+                result[3] = result[3].length == 2 ? '20' + result[3] : result[3];
+                self.dt = new Date(result[3], result[2] - 1, result[1]);
+            }
+        }
+    };
+    
+    this.preInitUsers = function() {
+        if (!usersLoaded && self.user) {
+            users = [{id: self.user, username: self.user_label}];
+        }
+    };
+    
+    this.preInitCategories = function(id, name) {
+        if (!categoriesLoaded) {
+            var entry = {id: id, name: name};
+            if (categories[0].id == 0) {
+                categories = [entry];
+            } else {
+                categories.push(entry);
+            }
+        }
+    }
     
     this.isDisabled = function() {
         return disabled && (!usersLoaded || !categoriesLoaded); 
@@ -53,8 +84,8 @@ function APurchaseController(
     
     this.loadCategories = function() {
         categoriesLoader.load().then(function(data) {
-            categoriesLoaded = true;
             categories = data.categories;
+            categoriesLoaded = true;
         }, function(errorResponse) {
             disabled = true;
         });
@@ -66,8 +97,8 @@ function APurchaseController(
     
     this.loadUsers = function() {
         usersLoader.load().then(function(data) {
-            usersLoaded = true;
             users = data.users;
+            usersLoaded = true;
         }, function(errorResponse) {
             disabled = true;
         });
@@ -75,13 +106,6 @@ function APurchaseController(
 
     this.getUsers = function() {
         return users;
-    };
-
-    this.selectUser = function(id, username) {
-        if (users === null) {
-            users = [{id : id, username : username}];
-        }
-        self.user = id;
     };
     
     // -------------------
@@ -94,9 +118,11 @@ function APurchaseController(
 }
 
 NewPurchaseController.$inject = [
+    'tutteli.auth.Session',
     '$q',
     '$parse',
     '$filter',
+    'uibDateParser',
     'tutteli.purchase.ROUTES',
     'tutteli.PreWork',
     'tutteli.purchase.PurchaseService',
@@ -105,22 +131,24 @@ NewPurchaseController.$inject = [
     'tutteli.helpers.FormHelperFactory'];
 NewPurchaseController.prototype = Object.create(APurchaseController.prototype);
 function NewPurchaseController(
+        Session,
         $q,
         $parse, 
         $filter, 
+        uibDateParser,
         ROUTES, 
         PreWork,
         PurchaseService,
         alertId,
         LoaderFactory,
         FormHelperFactory) {
-    APurchaseController.apply(this, arguments);    
+    APurchaseController.apply(this, [].slice.call(arguments).slice(1));
     var self = this;
    
     this.createPurchase = function($event) {
         var purchase = {
             userId : self.user,
-            dt : self.datePicker.dt,
+            dt : self.dt,
             positions :  self.positionManager.positions,
             csrf_token : self.csrf_token
         };
@@ -136,6 +164,10 @@ function NewPurchaseController(
         self.positionManager.positions[0].notice = position.notice;
     }
     PreWork.merge('purchases/new.tpl', this, 'purchaseCtrl');
+    self.parseDateIfNecessary();
+    self.user = Session.user.id;
+    self.user_label = Session.user.username;
+    self.preInitUsers();
 }
 
 
@@ -144,6 +176,7 @@ EditPurchaseController.$inject = [
   '$q',
   '$parse',
   '$filter',
+  'uibDateParser',
   'tutteli.purchase.ROUTES',
   'tutteli.PreWork',
   'tutteli.purchase.PurchaseService',
@@ -156,21 +189,25 @@ function EditPurchaseController(
         $q,
         $parse,
         $filter,
+        uibDateParser,
         ROUTES, 
         PreWork,  
         PurchaseService,  
         alertId, 
         LoaderFactory,
         FormHelperFactory) {
-    APurchaseController.apply(this, [].slice.call(arguments).slice(1));     
+    APurchaseController.apply(this, [].slice.call(arguments).slice(1));
     var self = this;
     var isNotLoaded = true;
     
     this.loadPurchase = function (purchaseId) {
         PurchaseService.getPurchase(purchaseId).then(function(purchase) {
             self.id = purchase.id;
-            self.purchaseDate = purchase.purchaseDate;
-            self.user = purchase.user;
+            self.dt = purchase.purchaseDate;
+            self.parseDateIfNecessary();
+            self.user = purchase.user.id;
+            self.user_label = purchase.user.username;
+            self.preInitUsers();
             self.updatedAt = purchase.updatedAt;
             self.updatedBy = purchase.updatedBy;
             updatePositions(purchase.positions);
@@ -183,8 +220,19 @@ function EditPurchaseController(
         return isNotLoaded || isDisabledParent();
     };
     
-    // -------------------
-    
+    this.updatePurchase = function($event) {
+        var purchase = {
+            id : self.id,
+            userId : self.user,
+            dt : self.dt,
+            positions :  self.positionManager.positions,
+            csrf_token : self.csrf_token
+        };
+        var select = document.getElementById('purchase_user');
+        var identifier = purchase.dt.toLocaleDateString('de-ch') + ' - ' + select.options[select.selectedIndex].text; 
+        self.formHelper.update($event, alertId, purchase, 'Purchase', identifier, PurchaseService);
+    };
+   
     function updatePositions(positions) {
         //positions is actually an object with field names corresponding to an index
         for(var i in positions) {
@@ -192,26 +240,35 @@ function EditPurchaseController(
             var position = self.positionManager.positions[i];
             position.expression = positions[i].expression;
             position.notice = positions[i].notice;
-            position.category = positions[i].category;
+            if (positions[i].category instanceof Object) {
+                position.category = positions[i].category.id;
+                self.preInitCategories(positions[i].category.id, positions[i].category.name);
+            } else {
+                position.category = positions[i].category;
+                self.preInitCategories(positions[i].category, positions[i].category_label);
+            }
         }
     }
     
+    // -------------------
+    
+    self.dt = "";
     var positions = {};
     if (PreWork.merge('purchases/edit.tpl', positions, 'positions')) {
         updatePositions(positions);
     }
     PreWork.merge('purchases/edit.tpl', this, 'purchaseCtrl');
-
+    self.parseDateIfNecessary();
+    self.preInitUsers();
+    
     isNotLoaded = self.positionManager.positions.length == 0;
     if (isNotLoaded) {
         self.loadPurchase($stateParams.purchaseId);
     }
-    
 }
 
-function DatePicker() {
+function DatePicker(controller) {
     var self = this;
-    this.dt = new Date();
     this.opened = false;
     this.maxDate = new Date();
     this.minDate = new Date();
@@ -222,7 +279,7 @@ function DatePicker() {
     };
 
     this.today = function() {
-        self.dt = new Date();
+        controller.dt = new Date();
     };
 
     this.open = function($event) {
@@ -429,7 +486,8 @@ function PurchaseService($http, $q, $timeout, ROUTES, ServiceHelper) {
         return ServiceHelper.get(ROUTES.get_purchase_json.replace(':purchaseId', purchaseId), 'purchase');
     };
     
-    this.createPurchase = function(purchase) {
+    function validatePurchase(purchase) {
+        purchase.dt = purchase.dt.toLocaleDateString('de-ch');
         var errors = '';
         var positionDtos = [];
         for (var i = 0; i < purchase.positions.length; ++i) {
@@ -451,10 +509,14 @@ function PurchaseService($http, $q, $timeout, ROUTES, ServiceHelper) {
                 };
             }
         }
-        
-        if (errors == '') {
-            purchase.positions = positionDtos;
-            return $http.post(ROUTES.post_purchase, purchase);
+        return {errors: errors, positions: positionDtos};
+    }
+    
+    function createOrUpdate(purchase, callback) {
+        var result = validatePurchase(purchase);
+        if (result.errors == '') {
+            purchase.positions = result.positions;
+            return callback(purchase);
         }
         // delay is necessary in order that alert is removed properly
         var delay = $q.defer();
@@ -462,7 +524,20 @@ function PurchaseService($http, $q, $timeout, ROUTES, ServiceHelper) {
             delay.reject({error: errors});
         }, 1);
         return delay.promise;
+    }
+    
+    this.createPurchase = function(purchase) {
+        return createOrUpdate(purchase, function(purchaseDto) {
+            return $http.post(ROUTES.post_purchase, purchaseDto);
+        });
     };
+    
+    this.updatePurchase = function(purchase) {
+        return createOrUpdate(purchase, function(purchaseDto) {
+           return $http.put(ROUTES.put_purchase.replace(':purchaseId', purchaseDto.id), purchaseDto);
+        });
+    };
+    
 }
 
 })();

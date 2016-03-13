@@ -14,6 +14,7 @@ use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 class PurchaseController extends AEntityController {
     
@@ -39,7 +40,11 @@ class PurchaseController extends AEntityController {
                 .'"id": "'.$purchase->getId().'"'
                 .',"purchaseDate": "'.$this->getFormattedDate($purchase->getPurchaseDate()).'"'
                 .',"total": "'.$purchase->getTotal().'"'
-                .',"user": "'.$purchase->getUser()->getUsername().'"'
+                .',"user":'
+                    .'{'
+                    .'"id":"'.$purchase->getUser()->getId().'"'
+                    .',"username": "'.$purchase->getUser()->getUsername().'"'
+                    .'}'
                 .',"positions":'.$this->getJsonArray($purchase->getPositions(), [$this, 'getJsonForPosition'])
                 .$this->getMetaJsonRows($purchase)
                 .'}';
@@ -50,7 +55,11 @@ class PurchaseController extends AEntityController {
                 .'"id":"'.$position->getId().'"'
                 .',"expression":"'.$position->getExpression().'"'
                 .',"price":"'.$position->getPrice().'"'
-                .',"category":"'.$position->getCategory()->getName().'"'
+                .',"category":'
+                    .'{'
+                    .'"id":"'.$position->getCategory()->getId().'"'
+                    .',"name":"'.$position->getCategory()->getName().'"'
+                    .'}'                                
                 .',"notice":"'.$position->getNotice().'"'
                 .$this->getMetaJsonRows($position)
                 .'}';
@@ -102,7 +111,9 @@ class PurchaseController extends AEntityController {
         list($data, $response) = $this->decodeDataAndVerifyCsrf($request);
         if (!$response) {
             $purchase = new Purchase();
-            $errors = $this->mapPurchase($purchase, $data);
+            $errors = $this->mapPurchase($purchase, $data, function() use($purchase) {
+               return $this->createPurchasePosition($purchase);
+            });
             $validator = $this->get('validator');
             $errorsPurchase = $validator->validate($purchase);
             $errorsPurchase = $this->translateErrors($errorsPurchase, null);
@@ -120,10 +131,16 @@ class PurchaseController extends AEntityController {
             }
         }
         return $response;
-        
     }
     
-    private function mapPurchase($purchase, $data) {
+    private function createPurchasePosition(Purchase $purchase){
+        $position = new PurchasePosition();
+        $position->setPurchase($purchase);
+        $purchase->addPosition($position);
+        return $position;
+    }
+    
+    private function mapPurchase($purchase, $data, callable $createOrGet) {
         $em = $this->getDoctrine()->getManager();
         $purchase->setUser($em->getReference('TutteliAppBundle:User', $data['userId']));
         $purchase->setPurchaseDate(new \DateTime($data['dt']));
@@ -133,25 +150,10 @@ class PurchaseController extends AEntityController {
         $numPos = count($data['positions']);
         $total = 0;
         for ($i = 0; $i < $numPos; ++$i) {
-            $dataPos = $data['positions'][$i];
-            $position = $this->createPosition($dataPos);
-            $newErrors = $validator->validate($position);
-            if (count($newErrors) == 0) {
-                $price = null;
-                eval('$price = '.$dataPos['expression'].';');
-                $position->setPrice($price);
-                if ($price <= 0) {
-                    $newErrors->add(new ConstraintViolation(
-                        'purchase.price', 'purchase.price', [], $position, 'price', $price));      
-                }
-                $total += $price;
-            }
-            if(count($newErrors) > 0) {
-                $newErrors = $this->translateErrors($newErrors, $i + 1);
-                $errors->addAll($newErrors);
-            }
-            $position->setPurchase($purchase);
-            $purchase->addPosition($position);
+            $position = $createOrGet($i);
+            $this->mapPurchasePosition($position, $data, $i, $validator, $errors);
+            
+            $total += $position->getPrice();
         }
         $purchase->setTotal($total);
         
@@ -160,18 +162,32 @@ class PurchaseController extends AEntityController {
             $message = $translator->trans('purchase.positions', [], 'validators');
             $errors->add(new ConstraintViolation($message, $message, [], $purchase, 'positions', null)); 
         }
-        
         return $errors;
     }
-    
-    private function createPosition(array $dataPos) {
-        $position = new PurchasePosition();
+   
+    private function mapPurchasePosition(PurchasePosition $position, array $data, $index, $validator, $errors) {
+        $dataPos = $data['positions'][$index];
         $em = $this->getDoctrine()->getManager();
         $position->setCategory($em->getReference('TutteliAppBundle:Category', $dataPos['categoryId']));
         $position->setExpression($dataPos['expression']);
         $position->setNotice($dataPos['notice']);
-        return $position;
+        $newErrors = $validator->validate($position);
+        if (count($newErrors) == 0) {
+            $price = null;
+            eval('$price = '.$dataPos['expression'].';');
+            $position->setPrice($price);
+            if ($price <= 0) {
+                $newErrors->add(new ConstraintViolation(
+                    'purchase.price', 'purchase.price', [], $position, 'price', $price));      
+            }
+        }
+        if(count($newErrors) > 0) {
+            $newErrors = $this->translateErrors($newErrors, $index + 1);
+            $errors->addAll($newErrors);
+        }
     }
+
+    
     
     private function translateErrors(ConstraintViolationList $errorList, $posNumber){
         $list = new ConstraintViolationList();
@@ -188,5 +204,50 @@ class PurchaseController extends AEntityController {
         }
         return $list;
     }
+    
+    public function putAction(Request $request, $purchaseId) {
+        return $this->putEntity($request, $purchaseId);
+    }
  
+    protected function updatePurchase(Request $request, Purchase $purchase) {
+        list($data, $response) = $this->decodeDataAndVerifyCsrf($request);
+        if (!$response) {
+            $positionIds = [];
+            $errors = $this->mapPurchase($purchase, $data, function($index) use($purchase, $data, &$positionIds) {
+                $dataPos = $data['positions'][$index];
+                if (array_key_exists('id', $dataPos)) {
+                    $positionIds[] = $dataPos['id'];
+                    return $purchase->getPositions()->get($dataPos['id']);
+                } 
+                return $this->createPurchasePosition($purchase);
+            });
+            $validator = $this->get('validator');
+            $errorsPurchase = $validator->validate($purchase);
+            $errorsPurchase = $this->translateErrors($errorsPurchase, null);
+            $errors->addAll($errorsPurchase);
+            if (count($errors) > 0) {
+                $response = $this->getValidationResponse($errors);
+            } else {
+                $this->updatePurchaseAndPositions($purchase, $positionIds);
+                $response = new Response('', Response::HTTP_NO_CONTENT);
+            }
+        }
+        return $response;
+    }
+    
+    private function updatePurchaseAndPositions(Purchase $purchase, array $positionIds) {
+        $em = $this->getDoctrine()->getManager();
+        $em->merge($purchase);
+        foreach($purchase->getPositions() as $position) {
+            $id = $position->getId();
+            if ($id === null) {
+                $em->persist($position);
+            } else if (array_key_exists($id, $positionIds)) {
+                $em->merge($position);
+            } else {
+                $em->remove($position);
+            }
+        }
+        $em->flush();
+    } 
 }

@@ -117,12 +117,12 @@ function FormHelper($q, AlertService, ErrorHandler, CsrfService, controller, url
         });
     };
     
-    this.update = function($event, alertId, obj, name, nameProp, Service) {
+    this.update = function($event, alertId, obj, propertyName, propertyIdentifier, Service) {
         $event.preventDefault();
         AlertService.close(alertId);
-        return Service['update' + name](obj).then(function() {
-            var prop = nameProp != null ? ' &quot;' + obj[nameProp] + '&quot;' : '';
-            AlertService.add(alertId, name + prop + ' successfully updated.', 'success', 3000);
+        return Service['update' + propertyName](obj).then(function() {
+            var identifier = propertyIdentifier != null ? ' &quot;' + propertyIdentifier + '&quot;' : '';
+            AlertService.add(alertId, propertyName + identifier + ' successfully updated.', 'success', 3000);
         }, function(errorResponse) {
             ErrorHandler.handle(errorResponse, alertId, self.reloadCsrfToken);
             return $q.reject(errorResponse);

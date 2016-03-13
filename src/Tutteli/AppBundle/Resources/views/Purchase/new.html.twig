@@ -24,9 +24,11 @@
    		<span class="total pull-right" ng-bind="purchaseCtrl.positionManager.getTotal()"></span>
    		<div class="clear"></div>
    	</div>
+   	 <script type="text/javascript">
+        document.getElementById('purchase_purchaseDate').value = new Date().toLocaleDateString('de-ch');
+    </script>
 {% endblock %}   	
 
 {% block footer_left_button %}
 	<button style="display:none" type="button" id="purchase_add" class="btn-default btn" ng-disabled="purchaseCtrl.isDisabled()" ng-click="purchaseCtrl.positionManager.addPosition()"><i class="glyphicon glyphicon-plus"></i> {{ 'purchase.add'|trans }}</button>
 {% endblock %}
- 

@@ -42,11 +42,9 @@
 {% endblock %}
 
 {%  block form_notXhr %}
-	
     <script type="text/javascript">
     	document.getElementById('purchase_id').value = '{{ purchase.id }}';
     	document.getElementById('purchase_purchaseDate').value = '{{ purchase.purchaseDate|date('general.dateFormat.php'|trans) }}';
-    	document.getElementById('purchase_user').value = '{{ purchase.user.id }}';
     </script>
 {% endblock %}
 

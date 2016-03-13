@@ -29,7 +29,7 @@
             	<tr ng-repeat="purchase in purchasesCtrl.purchases">
             		<td ng-bind="purchase.id"></td>
             		<td ng-bind="purchase.purchaseDate"></td>
-            		<td ng-bind="purchase.user"></td>
+            		<td ng-bind="purchase.user.username"></td>
             		<td ng-bind="purchase.total"></td>
             		<td><a href="#" ui-sref="edit_purchase({purchaseId: purchase.id})"><i class="glyphicon glyphicon-pencil"></i></a></td>
         		</tr>
@@ -51,15 +51,19 @@
             	    {%  set purchaseDate = purchase.purchaseDate|date('general.dateFormat.php'|trans) %}
                 	{% set json = json ~ '{' 
                 	    ~ '"id":"' ~ purchase.id ~ '",' 
-                	    ~ '"user":"' ~ purchase.user.username ~ '",'
+                	    ~ '"user":'
+                	        ~ '{' 
+                	        ~ '"id":"' ~ purchase.user.id ~ '",'
+                	        ~ '"username":"' ~ purchase.user.username ~ '"'
+                	        ~ '},'
                 	    ~ '"purchaseDate":"' ~ purchaseDate ~ '",'
                 	    ~ '"total":"' ~ purchase.total|number_format(2, '.') ~ '"' 
                 	    ~ '}' 
             	    %}
         			<tr>
         				<td>{{ purchase.id }} </td>
-        				<td>{{ purchase.user.username }}
         				<td>{{ purchaseDate }}</td>
+        				<td>{{ purchase.user.username }}
         				<td>{{ purchase.total }}</td>
         				<td><a href="{{ path('edit_purchase', {'purchaseId': purchase.id}) }}"><i class="glyphicon glyphicon-pencil"></i></a></td>
         			</tr>

@@ -127,7 +127,7 @@ function EditUserController(
         };
     
         $event.preventDefault();
-        formHelper.update($event, alertId, user, 'User', 'username', UserService);
+        formHelper.update($event, alertId, user, 'User', user.username, UserService);
     };
     
     this.isDisabled = function() {

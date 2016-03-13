@@ -98,7 +98,7 @@ function EditCategoryController(
     
     this.updateCategory = function($event) {
         var category = {id: self.id, name: self.name, csrf_token: self.csrf_token};
-        formHelper.update($event, alertId, category, 'Category', 'name', CategoryService);
+        formHelper.update($event, alertId, category, 'Category', category.name, CategoryService);
     };
     
     this.isDisabled = function() {

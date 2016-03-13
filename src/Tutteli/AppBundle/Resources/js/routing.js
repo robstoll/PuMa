@@ -162,6 +162,7 @@ angular.module('tutteli.purchase.routing', [
     get_purchases_monthAndYear_json: 'purchases/month-:month-:year.json',
     get_purchase_json: 'purchases/:purchaseId.json',
     post_purchase : 'purchases',
+    put_purchase : 'purchases/:purchaseId',
     get_purchase_csrf: 'purchases/new/token',    
     get_categories_json: 'categories.json',
     get_category_json: 'categories/:categoryId.json',
