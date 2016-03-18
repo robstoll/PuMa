@@ -10,6 +10,9 @@ imports:
 assetic:
     read_from: "%kernel.root_dir%/../../../httpdocs/purchase/"
 
+parameters:
+    baseUrl: '/purchase/'   
+
 #framework:
 #    validation:
 #        cache: validator.mapping.cache.apc
@@ -34,7 +37,4 @@ monolog:
             level: debug
         console:
             type:  console
-
-twig:
-  globals:
-    baseUrl:  /purchase/
+ 

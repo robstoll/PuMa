@@ -13,16 +13,19 @@ use Symfony\Component\Security\Http\HttpUtils;
 use Symfony\Component\Security\Http\Logout\DefaultLogoutSuccessHandler;
 
 class LogoutSuccessHandler extends DefaultLogoutSuccessHandler {
-    
-    public function __construct(HttpUtils $httpUtils, $targetUrl = '/') {
-        parent::__construct($httpUtils, $targetUrl);
+    private $rememberMeCookieName;
+    public function __construct(HttpUtils $httpUtils, $rememberMeCookieName) {
+        parent::__construct($httpUtils);
+        $this->rememberMeCookieName = $rememberMeCookieName;
     }
     
-    public function onLogoutSuccess(Request $request)
-    {
+    public function onLogoutSuccess(Request $request) {
         if ($request->isXmlHttpRequest()) {
-            return new Response('', Response::HTTP_NO_CONTENT);
+            $response = new Response('', Response::HTTP_NO_CONTENT);
+        } else {
+            $response = parent::onLogoutSuccess($request);
         }
-        return parent::onLogoutSuccess($request);
+        $response->headers->clearCookie($this->rememberMeCookieName);
+        return $response;
     }
 }

@@ -14,6 +14,11 @@ use Symfony\Component\Security\Http\Authentication\DefaultAuthenticationSuccessH
 use Symfony\Component\Security\Http\HttpUtils;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Tutteli\AppBundle\Entity\User;
+use Defuse\Crypto\Exception\CryptoException;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 
 class AuthSuccessHandler extends DefaultAuthenticationSuccessHandler {
     const PAGE_BEFORE_LOGIN = '_security.secured_area.target_path';
@@ -26,13 +31,15 @@ class AuthSuccessHandler extends DefaultAuthenticationSuccessHandler {
     }
     
     public function onAuthenticationSuccess(Request $request, TokenInterface $token) {
-        $password = $request->get('password');
-        $key = Key::CreateKeyBasedOnPassword($password, $this->saltKey);
-        $user = $token->getUser();
-        $encryptedKey = $user->getDataKey();
-        $asciiDataKey = Crypto::decrypt($encryptedKey, $key, true);
-        $dataKey = Key::LoadFromAsciiSafeString($asciiDataKey);
-        $request->getSession()->set(AuthSuccessHandler::SESSION_KEY_DATA_KEY, $dataKey);
+        try {
+            $password = $request->get('password');
+            $user = $token->getUser();
+            AuthSuccessHandler::encryptDataKeyAndPutIntoSession($request, $user, $password, $this->saltKey);
+        } catch(Exception $e) {
+            $request->getSession()->invalidate();
+            throw new AccessDeniedException("Unexpected exception occurred.");
+        }
+           
         if ($request->isXmlHttpRequest()) {
             $redirectUrl = $request->getSession()->get('_security.main.target_path');
             return new Response(
@@ -46,5 +53,14 @@ class AuthSuccessHandler extends DefaultAuthenticationSuccessHandler {
                     .'}');
         }
         return parent::onAuthenticationSuccess($request, $token);
+    }
+    
+    public static function encryptDataKeyAndPutIntoSession(Request $request, User $user, $password, $salt) {
+        $key = Key::CreateKeyBasedOnPassword($password, $salt);
+        $encryptedKey = $user->getDataKey();
+        $asciiDataKey = Crypto::decrypt($encryptedKey, $key, true);
+        $dataKey = Key::LoadFromAsciiSafeString($asciiDataKey);
+        $request->getSession()->set(AuthSuccessHandler::SESSION_KEY_DATA_KEY, $dataKey);
+        return $dataKey;
     }
 }

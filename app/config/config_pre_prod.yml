@@ -10,6 +10,5 @@ imports:
 assetic:
     read_from: "%kernel.root_dir%/../web/"
 
-twig:
-  globals:
-    baseUrl:  /tutteli.ch/purchase/web/
+parameters:
+    baseUrl: '/tutteli.ch/purchase/web/'       

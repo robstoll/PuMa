@@ -7,6 +7,9 @@
 imports:
     - { resource: config.yml }
 
+parameters:
+    baseUrl: '/tutteli.ch/purchase/web/app_dev.php/'       
+
 framework:
     router:
         resource: "%kernel.root_dir%/config/routing_dev.yml"
@@ -52,7 +55,3 @@ assetic:
 
 #swiftmailer:
 #    delivery_address: me@example.com
-
-twig:
-  globals:
-    baseUrl:  /tutteli.ch/purchase/web/app_dev.php/

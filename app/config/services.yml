@@ -24,7 +24,7 @@ services:
             
     tutteli.logout_success_handler:
         class: Tutteli\AppBundle\Handler\LogoutSuccessHandler
-        arguments: ["@security.http_utils"]
+        arguments: ["@security.http_utils", 'REMEMBERME_A']
         tags: 
           - {name: 'monolog.logger', channel: 'security' }
             
