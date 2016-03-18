@@ -26,7 +26,7 @@
 				</tr>
     		</thead>
     		<tbody id="purchases_rows" class="hidden">
-            	<tr ng-repeat="purchase in purchasesCtrl.purchases">
+            	<tr ng-repeat="purchase in purchasesCtrl.purchases | orderBy: 'purchaseDate':true">
             		<td ng-bind="purchase.id"></td>
             		<td ng-bind="purchase.purchaseDate"></td>
             		<td ng-bind="purchase.user.username"></td>

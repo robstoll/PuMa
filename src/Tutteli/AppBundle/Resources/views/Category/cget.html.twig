@@ -24,7 +24,7 @@
 				</tr>
     		</thead>
     		<tbody id="categories_rows" class="hidden">
-            	<tr ng-repeat="category in categoriesCtrl.categories">
+            	<tr ng-repeat="category in categoriesCtrl.categories | orderBy:'name'">
             		<td ng-bind="category.id"></td>
             		<td ng-bind="category.name"></td>
             		<td><a href="#" ui-sref="edit_category({categoryId: category.id})"><i class="glyphicon glyphicon-pencil"></i></a></td>

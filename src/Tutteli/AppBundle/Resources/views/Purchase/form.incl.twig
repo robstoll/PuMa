@@ -41,7 +41,7 @@
 </div>
 <div class="form-group last extraMargin">
 	<label class="control-label" for="purchase_user">{{ 'purchase.user'|trans }}</label>
-	<select id="purchase_user" name="user" required="required" ng-model="purchaseCtrl.user" ng-disabled="purchaseCtrl.isDisabled()" ng-options="obj.id as obj.username for obj in purchaseCtrl.getUsers()" class="form-control" > {# {% if not entity and not notXhr %}ng-init="purchaseCtrl.selectUser('{{ app.user.id }}', '{{  app.user.username }}')"{% endif %}> #}
+	<select id="purchase_user" name="user" required="required" ng-model="purchaseCtrl.user" ng-disabled="purchaseCtrl.isDisabled()" ng-options="obj.id as obj.username for obj in purchaseCtrl.getUsers() | orderBy:'username'" class="form-control" > {# {% if not entity and not notXhr %}ng-init="purchaseCtrl.selectUser('{{ app.user.id }}', '{{  app.user.username }}')"{% endif %}> #}
 	    <!-- pre-work-exclude-start -->
 		{% if entity %}
 			<option value="{{ entity.user.id }}">{{ entity.user.username }}</option>		

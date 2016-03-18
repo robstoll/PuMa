@@ -26,7 +26,7 @@
 				</tr>
     		</thead>
     		<tbody id="users_rows" class="hidden">
-            	<tr ng-repeat="user in usersCtrl.users">
+            	<tr ng-repeat="user in usersCtrl.users | orderBy: 'username'">
             		<td ng-bind="user.id"></td>
             		<td ng-bind="user.username"></td>
             		<td ng-bind="user.email"></td>

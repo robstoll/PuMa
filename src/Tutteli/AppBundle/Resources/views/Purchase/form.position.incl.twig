@@ -21,7 +21,7 @@
 
 <div class="form-group">
 	<label class="control-label" for="purchase_category{{ '{{$index}}' }}">{{ 'purchase.category'|trans }}</label>
-	<select id="purchase_category" name="category" required="required" ng-model="{{ modelName }}.category" ng-disabled="purchaseCtrl.isDisabled()" ng-options="obj.id as obj.name for obj in purchaseCtrl.getCategories()" class="form-control">
+	<select id="purchase_category" name="category" required="required" ng-model="{{ modelName }}.category" ng-disabled="purchaseCtrl.isDisabled()" ng-options="obj.id as obj.name for obj in purchaseCtrl.getCategories() | orderBy:'name'" class="form-control">
 		{% if not position %}
 			<option>{{ 'purchase.loadingCategories'|trans }}</option>
 		{% else %}
