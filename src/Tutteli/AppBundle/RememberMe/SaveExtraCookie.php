@@ -21,7 +21,7 @@ use Symfony\Component\HttpKernel\Log\LoggerInterface;
 class SaveExtraCookie extends TokenBasedRememberMeServices 
 {
     private $saltKey;
-
+    
     public function __construct(array $userProviders, $key, $providerKey, array $options = array(), LoggerInterface $logger = null, $saltKey) {
         parent::__construct($userProviders, $key, $providerKey, $options, $logger);
         $this->saltKey = base64_decode($saltKey);
@@ -32,10 +32,15 @@ class SaveExtraCookie extends TokenBasedRememberMeServices
         try {
             $hash = $cookieParts[3];
             $key = $this->createKey($hash);
-            $cookieAppendum = $request->cookies->get($this->options['name'].'_A');
-            $password = Crypto::decrypt($cookieAppendum, $key);
-            AuthSuccessHandler::encryptDataKeyAndPutIntoSession($request, $user, $password, $this->saltKey);
+            if ($cookieAppendum = $request->cookies->get($this->options['name'].'_A')) {
+                $this->logger->debug('cookieAppendum with name '.$this->options['name'].'_A found.');
+                $password = Crypto::decrypt($cookieAppendum, $key);
+                AuthSuccessHandler::encryptDataKeyAndPutIntoSession($request, $user, $password, $this->saltKey);
+            } else {
+                throw new AuthenticationException("Unexpected exception occurred.");
+            }
         } catch(Exception $e) {
+            $this->logger->error('unexpected exception occurred, while decrypting the rememberMe cookie'."\n".$e->getTraceAsString());
             throw new AuthenticationException("Unexpected exception occurred.");
         }
         return $user;
@@ -59,6 +64,7 @@ class SaveExtraCookie extends TokenBasedRememberMeServices
                 $this->options['httponly']
             ));
         } catch(Exception $ex) {
+            $this->logger->error('unexpected exception occurred, while decrypting the rememberMe cookie'."\n".$e->getTraceAsString());
             $request->getSession()->invalidate();
             throw new AccessDeniedException("Unexpected exception occurred.");
         }
