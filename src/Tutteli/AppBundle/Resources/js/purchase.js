@@ -114,6 +114,14 @@ function APurchaseController(
     self.loadCategories();
     self.loadUsers();
     document.getElementById('purchase_add').style.display = 'inline';
+    
+    window.addEventListener('keypress', function(event) {
+        //SHIFT & +
+        if (event.shiftKey && event.keyCode == 43) {
+            event.preventDefault();
+            document.getElementById('purchase_add').click();
+        }
+    }) ;
 }
 
 NewPurchaseController.$inject = [
@@ -179,9 +187,6 @@ EditPurchaseController.$inject = [
 EditPurchaseController.prototype = Object.create(APurchaseController.prototype);
 function EditPurchaseController(
         $stateParams, 
-        $q,
-        $parse,
-        $filter,
         uibDateParser,
         ROUTES, 
         PreWork,  

@@ -51,7 +51,7 @@ class PurchaseRepository extends ARepository
     
     public function getForMonthOfYear($month, $year) {
         return $this->createQueryBuilderPurchasesForMonthOfYear($month, $year)
-            ->orderBy('p.purchaseDate', 'ASC')
+            ->orderBy('p.purchaseDate', 'DESC')
             ->getQuery()
             ->getResult();
     }
