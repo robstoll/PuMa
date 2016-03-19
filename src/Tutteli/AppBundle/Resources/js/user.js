@@ -84,6 +84,7 @@ function NewUserController(ROUTES, PreWork, UserService, alertId, FormHelperFact
 
 EditUserController.$inject = [
     '$stateParams',
+    '$timeout',
     'tutteli.purchase.ROUTES',
     'tutteli.PreWork',
     'tutteli.purchase.UserService',
@@ -93,6 +94,7 @@ EditUserController.$inject = [
     'tutteli.helpers.FormHelperFactory'];
 function EditUserController(
         $stateParams, 
+        $timeout,
         ROUTES, 
         PreWork,  
         UserService, 
@@ -114,6 +116,9 @@ function EditUserController(
             self.updatedAt = user.updatedAt;
             self.updatedBy = user.updatedBy;
             isNotLoaded = false;
+            $timeout(function(){
+                document.getElementById('user_username').focus();  
+            }, 10)
         });
     };
     
@@ -175,10 +180,10 @@ function ChangePasswordController($stateParams, ROUTES, PreWork, ChangePasswordS
     };
     
     this.clearForm = function() {
-        document.getElementById('password_oldPw').focus();
         self.oldPw = '';
         self.newPw = '';
         self.repeatPw = '';
+        document.getElementById('password_oldPw').focus();
     };
     
     // -------------

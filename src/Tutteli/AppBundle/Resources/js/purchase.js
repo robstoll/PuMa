@@ -211,6 +211,7 @@ function EditPurchaseController(
             self.updatedBy = purchase.updatedBy;
             updatePositions(purchase.positions);
             isNotLoaded = false;
+            self.positionManager.focusFirstInput();
         });
     };
     
@@ -310,8 +311,12 @@ function PositionManager ($timeout, $parse, $filter) {
     this.clearForm = function() {
         self.positions = [];
         self.addPosition();
+        self.focusFirstInput();
+    };
+    
+    this.focusFirstInput = function () {
         $timeout(function() {
-            document.getElementById('purchase_expression0').focus();
+            focusIfBigScreen(document.getElementById('purchase_expression0'));
         }, 10);
     };
     

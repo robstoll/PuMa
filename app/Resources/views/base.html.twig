@@ -13,6 +13,14 @@
         {% block stylesheets %}{% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
         <base href="{{ baseUrl }}">
+        <script type="text/javascript">
+        	function focusIfBigScreen(element) {
+        	    var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+	 			if (width > 768) {
+	 				element.focus();
+	 			}
+        	}
+        </script>
     </head>
     <body role="document" ng-app="tutteli.purchase" ng-strict-di>
         {% block body %} {% endblock %}

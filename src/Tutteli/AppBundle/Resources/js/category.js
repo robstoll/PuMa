@@ -70,13 +70,15 @@ function NewCategoryController(ROUTES, PreWork, CategoryService, alertId, FormHe
 
 EditCategoryController.$inject = [
     '$stateParams',
+    '$timeout',
     'tutteli.purchase.ROUTES',
     'tutteli.PreWork',
     'tutteli.purchase.CategoryService',
     'tutteli.purchase.EditCategoryController.alertId',
-    'tutteli.helpers.FormHelperFactory'];
+    'tutteli.helpers.FormHelperFactory',];
 function EditCategoryController(
         $stateParams, 
+        $timeout,
         ROUTES, 
         PreWork,  
         CategoryService,  
@@ -93,6 +95,9 @@ function EditCategoryController(
             self.updatedAt = category.updatedAt;
             self.updatedBy = category.updatedBy;
             isNotLoaded = false;
+            $timeout(function() {
+                document.getElementById('category_name').focus();
+            }, 10);
         });
     };
     
