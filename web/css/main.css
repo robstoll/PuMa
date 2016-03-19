@@ -84,8 +84,9 @@ body {
 .calc div {
     margin-bottom: 8px;
 }
-.calc button {
+.calc div.btn {
     margin-right: 8px;
+    margin-bottom: 0px;
 }
 .calc .op {
     margin-left: 8px;
