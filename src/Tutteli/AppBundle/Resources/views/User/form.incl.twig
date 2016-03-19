@@ -7,6 +7,9 @@
 <div class="form-group">
 	<label class="control-label" for="user_username">{{ 'users.username'|trans }}</label>
 	<input type="text" id="user_username" name="username" required="required" ng-model="userCtrl.username" ng-disabled="userCtrl.isDisabled()" class="form-control" />
+	<script type="text/javascript">
+		document.getElementById('user_username').focus();
+	</script>
 </div>                    
 <div class="form-group">
 	<label class="control-label" for="user_email">{{ 'users.email'|trans }}</label>

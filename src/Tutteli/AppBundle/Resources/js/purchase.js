@@ -21,18 +21,17 @@ angular.module('tutteli.purchase.core', [
     .controller('tutteli.purchase.PurchasesMonthController', PurchasesMonthController)
     .service('tutteli.purchase.PurchaseService', PurchaseService)
     .service('tutteli.purchase.LoaderFactory', LoaderFactory)
+    .service('tutteli.purchase.PositionManagerFactory', PositionManagerFactory)
     .constant('tutteli.purchase.PurchaseService.alertId', 'tutteli-ctrls-Purchase');
 
 function APurchaseController(
-        $q,
-        $parse, 
-        $filter, 
         uibDateParser,
         ROUTES, 
         PreWork,
         PurchaseService,
         alertId,
         LoaderFactory,
+        PositionManagerFactory,
         FormHelperFactory) {
     var self = this;
     
@@ -47,7 +46,7 @@ function APurchaseController(
     this.formHelper = FormHelperFactory.build(self, ROUTES.get_purchase_csrf);
     this.dt = new Date();
     this.datePicker = new DatePicker(this);
-    this.positionManager = new PositionManager($parse, $filter);
+    this.positionManager = PositionManagerFactory.build();
     this.clearForm = self.positionManager.clearForm;
     
     this.parseDateIfNecessary = function() {
@@ -76,7 +75,7 @@ function APurchaseController(
                 categories.push(entry);
             }
         }
-    }
+    };
     
     this.isDisabled = function() {
         return disabled && (!usersLoaded || !categoriesLoaded); 
@@ -119,28 +118,24 @@ function APurchaseController(
 
 NewPurchaseController.$inject = [
     'tutteli.auth.Session',
-    '$q',
-    '$parse',
-    '$filter',
     'uibDateParser',
     'tutteli.purchase.ROUTES',
     'tutteli.PreWork',
     'tutteli.purchase.PurchaseService',
     'tutteli.purchase.PurchaseService.alertId',
     'tutteli.purchase.LoaderFactory',
+    'tutteli.purchase.PositionManagerFactory',
     'tutteli.helpers.FormHelperFactory'];
 NewPurchaseController.prototype = Object.create(APurchaseController.prototype);
 function NewPurchaseController(
         Session,
-        $q,
-        $parse, 
-        $filter, 
         uibDateParser,
         ROUTES, 
         PreWork,
         PurchaseService,
         alertId,
         LoaderFactory,
+        PositionManagerFactory,
         FormHelperFactory) {
     APurchaseController.apply(this, [].slice.call(arguments).slice(1));
     var self = this;
@@ -173,15 +168,13 @@ function NewPurchaseController(
 
 EditPurchaseController.$inject = [
   '$stateParams',
-  '$q',
-  '$parse',
-  '$filter',
   'uibDateParser',
   'tutteli.purchase.ROUTES',
   'tutteli.PreWork',
   'tutteli.purchase.PurchaseService',
   'tutteli.purchase.EditCategoryController.alertId',
   'tutteli.purchase.LoaderFactory',
+  'tutteli.purchase.PositionManagerFactory',
   'tutteli.helpers.FormHelperFactory'];
 EditPurchaseController.prototype = Object.create(APurchaseController.prototype);
 function EditPurchaseController(
@@ -195,6 +188,7 @@ function EditPurchaseController(
         PurchaseService,  
         alertId, 
         LoaderFactory,
+        PositionManagerFactory,
         FormHelperFactory) {
     APurchaseController.apply(this, [].slice.call(arguments).slice(1));
     var self = this;
@@ -288,7 +282,15 @@ function DatePicker(controller) {
 
 }
 
-function PositionManager ($parse, $filter) {
+PositionManagerFactory.$inject = ['$timeout', '$parse', '$filter'];
+function PositionManagerFactory($timeout, $parse, $filter) {
+       
+   this.build = function () {
+       return new PositionManager($timeout, $parse, $filter);
+   };
+}
+
+function PositionManager ($timeout, $parse, $filter) {
     var self = this;
     this.positions = [];
     
@@ -303,7 +305,9 @@ function PositionManager ($parse, $filter) {
     this.clearForm = function() {
         self.positions = [];
         self.addPosition();
-        document.getElementById('purchase_expression0').focus();
+        $timeout(function() {
+            document.getElementById('purchase_expression0').focus();
+        }, 10);
     };
     
     this.getTotal = function() {

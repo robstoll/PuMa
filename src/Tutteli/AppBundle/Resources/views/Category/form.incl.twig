@@ -7,4 +7,7 @@
 <div class="form-group">
 	<label class="control-label" for="category_name">{{ 'categories.name'|trans }}</label>
 	<input type="text" id="category_name" name="username" required="required" ng-model="categoryCtrl.name" ng-disabled="categoryCtrl.isDisabled()" class="form-control" />
+	<script type="text/javascript">
+		document.getElementById('category_name').focus();
+	</script>
 </div>                    	

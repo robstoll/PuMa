@@ -28,6 +28,9 @@
         	<div class="form-group">
             	<label class="control-label" for="password_oldPw">{{ 'password.old'|trans }}</label>
             	<input type="password" id="password_oldPw" name="oldPw" required="required" ng-model="passwordCtrl.oldPw" class="form-control" />
+            	<script type="text/javascript">
+            		document.getElementById('password_oldPw').focus();
+            	</script>
         	</div>   
         	<div class="form-group">
             	<label class="control-label" for="password_newPw">{{ 'password.new'|trans }}</label>

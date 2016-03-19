@@ -60,10 +60,10 @@ function NewUserController(ROUTES, PreWork, UserService, alertId, FormHelperFact
     };
     
     this.clearForm = function() {
-        document.getElementById('user_username').focus();
         self.username = '';
         self.email = '';
         self.role = '';
+        document.getElementById('user_username').focus();
     };
     
     this.isAdmin = function() {

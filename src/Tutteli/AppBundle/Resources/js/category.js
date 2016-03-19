@@ -57,8 +57,8 @@ function NewCategoryController(ROUTES, PreWork, CategoryService, alertId, FormHe
     };
     
     this.clearForm = function() {
-        document.getElementById('category_name').focus();
         self.name = '';
+        document.getElementById('category_name').focus();
     };
     
     // ----------------

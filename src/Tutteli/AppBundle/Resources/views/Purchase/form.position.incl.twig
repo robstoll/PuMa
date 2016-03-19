@@ -12,6 +12,9 @@
 	</div>
 	<div class="input-group">
 	 	<input type="text" id="purchase_expression{{ '{{$index}}' }}" name="expression" required="required" ng-model="{{ modelName }}.expression" ng-disabled="purchaseCtrl.isDisabled()" class="form-control" autocomplete="off"{% if position %} value="{{ position.expression }}"{% endif %}/>
+	 	<script type="text/javascript">
+	 		document.getElementById("purchase_expression{{ '{{$index}}' }}").focus();
+	 	</script>
 	 	<span class="input-group-addon"><span ng-bind="{{ modelName }}.calc()">CHF {% if not position %}0.00{% else %}{{ position.price|number_format(2, '.') }}{% endif %}</span></span>
      </div>
 </div>
