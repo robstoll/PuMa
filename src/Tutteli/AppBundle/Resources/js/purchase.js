@@ -53,7 +53,7 @@ function APurchaseController(
     this.parseDateIfNecessary = function() {
         //necessary since ui.datePicker does not use the format specified during initialisation (month and day are switched)
         if (!(self.dt instanceof Date)) {
-            var result = self.dt.match(/([0-3]?[1-9]).([0-3]?[1-9]).((?:[1-2][0-9])?[0-9][0-9])/);
+            var result = self.dt.match(/((?:0?[1-9])|(?:[1-3][0-9])).((?:0?[1-9])|(?:[1-3][0-9])).((?:[1-2][0-9])?[0-9][0-9])/);
             if (result) {
                 result[3] = result[3].length == 2 ? '20' + result[3] : result[3];
                 self.dt = new Date(result[3], result[2] - 1, result[1]);
