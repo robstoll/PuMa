@@ -463,16 +463,21 @@ function UsersLoader($q, UserService, AlertService, alertId, controller) {
 }
 
 PurchasesMonthController.$inject = [
+    '$state',
     '$stateParams',
     'tutteli.purchase.PurchaseService',
     'tutteli.helpers.InitHelper'];
-function PurchasesMonthController($stateParams, PurchaseService, InitHelper) {
+function PurchasesMonthController($state, $stateParams, PurchaseService, InitHelper) {
     var self = this;
     
     this.purchases = null;
     
     this.initPurchases = function(data) {
         InitHelper.initTableData('purchases', self, data);
+    };
+    
+    this.changeState = function() {
+        $state.transitionTo('purchases_monthAndYear', {month: self.chosenMonth, year: self.chosenYear});
     };
     
     // ----------------
@@ -484,6 +489,10 @@ function PurchasesMonthController($stateParams, PurchaseService, InitHelper) {
            }
        );
     });
+    if (!self.chosenMonth) {
+       self.chosenMonth = $stateParams.month;
+       self.chosenYear =  $stateParams.year;
+    }
 }
 
 PurchaseService.$inject = ['$http', '$q', '$timeout', 'tutteli.purchase.ROUTES', 'tutteli.helpers.ServiceHelper'];

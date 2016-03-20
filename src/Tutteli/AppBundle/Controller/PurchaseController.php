@@ -92,7 +92,7 @@ class PurchaseController extends AEntityController {
         return $this->getHtmlForEntities($request, $ending, 'month', function() use($month, $year) {
             $repository = $this->getRepository();
             return $repository->getForMonthOfYear($month, $year);
-        });
+        }, ['month' => $month, 'year' => $year]);
     }
     
     public function getJsonAction($purchaseId) {

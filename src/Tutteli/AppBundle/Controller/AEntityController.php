@@ -31,16 +31,16 @@ abstract class AEntityController extends ATplController {
         return $this->getHtmlForEntities($request, $ending, 'cget', [$this, 'loadEntities']);
     }
     
-    protected function getHtmlForEntities(Request $request, $ending, $templateName, callable $getEntities=null) {
-        return $this->getHtmlForThing('entities', $request, $ending, $templateName, $getEntities);
+    protected function getHtmlForEntities(Request $request, $ending, $templateName, callable $getEntities=null, array $options = []) {
+        return $this->getHtmlForThing('entities', $request, $ending, $templateName, $getEntities, $options);
     }
     
-    protected function getHtmlForEntity(Request $request, $ending, $templateName, callable $getEntity=null) {
-        return $this->getHtmlForThing('entity', $request, $ending, $templateName, $getEntity);
+    protected function getHtmlForEntity(Request $request, $ending, $templateName, callable $getEntity=null, array $options = []) {
+        return $this->getHtmlForThing('entity', $request, $ending, $templateName, $getEntity, $options);
     }
     
     public function newAction(Request $request, $ending) {
-        return $this->getHtmlForEntity($request, $ending, 'new', function(){ return null; });
+        return $this->getHtmlForEntity($request, $ending, 'new', null);
     }
     
     protected function editEntityAction(Request $request, $entityId, $ending) {
@@ -57,21 +57,21 @@ abstract class AEntityController extends ATplController {
         return $this->getHtmlForEntity($request, '.tpl', 'edit', function(){ return null; });
     }
     
-    private function getHtmlForThing($thingName, Request $request, $ending, $templateName, callable $getThing=null) {
+    private function getHtmlForThing($thingName, Request $request, $ending, $templateName, callable $getThing=null, array $options) {
         $entityNameFirstUpper = $this->getEntityNameFirstUpper();
         $viewPath = '@TutteliAppBundle/Resources/views/'.$entityNameFirstUpper.'/'.$templateName.'.html.twig';
         list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
         
         if (!$response) {
             $thing = null;
-            if ($ending != '.tpl') {
+            if ($ending != '.tpl' && $getThing != null) {
                 $thing = $getThing();
             }
-            $response = $this->render($viewPath, array (
+            $response = $this->render($viewPath, array_merge(array (
                     'notXhr' => $ending == '',
                     'error' => null,
                     $thingName => $thing
-            ));
+            ), $options));
         
             if ($ending == '.tpl') {
                 $response->setETag($etag);
