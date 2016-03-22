@@ -12,17 +12,20 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class DbLastUpdateListener
 {
+    /**
+     * @var \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface
+     */
     private $tokenStorage;
     
     public function __construct(TokenStorageInterface $tokenStorage) {
         $this->tokenStorage = $tokenStorage;
-    }    
+    } 
+    
     public function preUpdate(LifecycleEventArgs $args) {
         $this->preSave($args);
     }
     
-    public function prePersist(LifecycleEventArgs $args)
-    {
+    public function prePersist(LifecycleEventArgs $args) {
         $this->preSave($args);
     }
     

@@ -15,17 +15,32 @@ use Symfony\Component\Security\Http\HttpUtils;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Translation\TranslatorInterface;
 
-class AuthFailureHandler extends DefaultAuthenticationFailureHandler {
+class AuthFailureHandler extends DefaultAuthenticationFailureHandler 
+{
+    /**
+     * @var \Symfony\Component\Translation\TranslatorInterface
+     */
+    private $translator;
+    private $env;
     
-    public function __construct(HttpKernelInterface $httpKernel, HttpUtils $httpUtils, array $options, 
-            LoggerInterface $logger = null) {
+    public function __construct(
+            HttpKernelInterface $httpKernel, HttpUtils $httpUtils,  array $options, LoggerInterface $logger = null, 
+            TranslatorInterface $translator, $env) {
         parent::__construct($httpKernel, $httpUtils, $options, $logger);
+        $this->translator = $translator;
+        $this->env = $env;
     }
     
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception) {
         if ($request->isXmlHttpRequest()) {
-            return new JsonResponse($exception->getMessage(), Response::HTTP_UNAUTHORIZED);
+            if ($this->env != 'dev') {
+                $msg = $this->translator->trans($exception->getMessageKey(),$exception->getMessageData(), 'security');
+            } else {
+                $msg = $exception->getMessage();
+            }
+            return new JsonResponse($msg, Response::HTTP_UNAUTHORIZED);
         }
         return parent::onAuthenticationFailure($request, $exception);
     }

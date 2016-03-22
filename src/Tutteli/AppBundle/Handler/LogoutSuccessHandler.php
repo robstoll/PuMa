@@ -12,8 +12,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\HttpUtils;
 use Symfony\Component\Security\Http\Logout\DefaultLogoutSuccessHandler;
 
-class LogoutSuccessHandler extends DefaultLogoutSuccessHandler {
+class LogoutSuccessHandler extends DefaultLogoutSuccessHandler 
+{    
     private $rememberMeCookieName;
+    
     public function __construct(HttpUtils $httpUtils, $rememberMeCookieName) {
         parent::__construct($httpUtils);
         $this->rememberMeCookieName = $rememberMeCookieName;

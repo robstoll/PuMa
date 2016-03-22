@@ -18,6 +18,7 @@ use Tutteli\AppBundle\Entity\PurchasePosition;
 class DbCryptoListener
 {
     private $key;
+    
     public function __construct(Session $session) {
         $this->key = $session->get(AuthSuccessHandler::SESSION_KEY_DATA_KEY);
     }

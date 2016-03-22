@@ -20,7 +20,8 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 
-class AuthSuccessHandler extends DefaultAuthenticationSuccessHandler {
+class AuthSuccessHandler extends DefaultAuthenticationSuccessHandler 
+{
     const PAGE_BEFORE_LOGIN = '_security.secured_area.target_path';
     const SESSION_KEY_DATA_KEY = '_tutteli.purchase.dataKey';
     private $saltKey;

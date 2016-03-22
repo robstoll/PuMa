@@ -13,13 +13,15 @@ use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 
-class ExceptionListener
+class ExceptionListener 
 {
+    /**
+     * @var \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface
+     */
     private $tokenStorage;
     
-    public function __construct(TokenStorageInterface $token_storage)
-    {
-        $this->tokenStorage = $token_storage;
+    public function __construct(TokenStorageInterface $tokenStorage) {
+        $this->tokenStorage = $tokenStorage;
     }
     
     public function onKernelException(GetResponseForExceptionEvent $event) {
@@ -31,13 +33,10 @@ class ExceptionListener
                 } else {
                     $responseData = array('status' => 403, 'msg' => 'Forbidden');
                 }
-                $response = new JsonResponse();
-                $response->setData($responseData);
-                $response->setStatusCode($responseData['status']);
+                $response = new JsonResponse($responseData, $responseData['status']);
                 $event->setResponse($response);
             }
-        } else {
-            return false;
-        }    
+        }
+        return false;
     }
 }
