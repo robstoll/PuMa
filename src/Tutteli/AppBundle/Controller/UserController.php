@@ -43,6 +43,7 @@ class UserController extends AEntityController {
                 .',"email":"'.$user->getEmail().'"'
                 .',"roleId":"'.$user->getRole().'"'
                 .',"role":"'.$translator->trans('users.roles.'.$user->getRole()).'"'
+                .',"isReal":"'.($user->isReal() ? '1':'0').'"'
                 .$this->getMetaJsonRows($user)
                 .'}';
     }

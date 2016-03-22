@@ -62,7 +62,7 @@ function APurchaseController(
     
     this.preInitUsers = function() {
         if (!usersLoaded && self.user) {
-            users = [{id: self.user, username: self.user_label}];
+            users = [{id: self.user, username: self.user_label, isReal: 1}];
         }
     };
     
@@ -168,8 +168,10 @@ function NewPurchaseController(
     }
     PreWork.merge('purchases/new.tpl', this, 'purchaseCtrl');
     self.parseDateIfNecessary();
-    self.user = Session.user.id;
-    self.user_label = Session.user.username;
+    if (Session.user.isReal) {
+        self.user = Session.user.id;
+        self.user_label = Session.user.username;
+    }
     self.preInitUsers();
 }
 

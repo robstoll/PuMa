@@ -57,6 +57,12 @@ class User implements UserInterface, \Serializable {
      */
     private $dataKey;
     
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isReal;
+    
     /**
      * @ORM\Column(type="datetime")
      */
@@ -67,6 +73,7 @@ class User implements UserInterface, \Serializable {
      * @ORM\JoinColumn(name="updated_by_user", nullable=false)
      */
     private $updatedBy;
+  
     
     public function __construct() {
         // may not be needed, see section on salt below
@@ -278,5 +285,29 @@ class User implements UserInterface, \Serializable {
     public function getDataKey()
     {
         return stream_get_contents($this->dataKey);
+    }
+
+    /**
+     * Set isReal
+     *
+     * @param boolean $isReal
+     *
+     * @return User
+     */
+    public function setIsReal($isReal)
+    {
+        $this->isReal = $isReal;
+
+        return $this;
+    }
+
+    /**
+     * Get isRealUser
+     *
+     * @return boolean
+     */
+    public function isReal()
+    {
+        return $this->isReal;
     }
 }

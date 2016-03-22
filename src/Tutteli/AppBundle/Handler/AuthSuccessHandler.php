@@ -15,9 +15,6 @@ use Symfony\Component\Security\Http\HttpUtils;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Tutteli\AppBundle\Entity\User;
-use Defuse\Crypto\Exception\CryptoException;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 
 class AuthSuccessHandler extends DefaultAuthenticationSuccessHandler 
@@ -48,7 +45,8 @@ class AuthSuccessHandler extends DefaultAuthenticationSuccessHandler
                        .'"user": {'
                        .'"id":"'.$user->getId().'",'
                        .'"role":"'.$user->getRole().'",'
-                       .'"username":"'.$user->getUserName().'"'
+                       .'"username":"'.$user->getUserName().'",'
+                       .'"isReal":"'.($user->isReal() ? '1':'0').'"'
                        .'},' 
                        .'"url":"'.$redirectUrl.'"'
                     .'}');

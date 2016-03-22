@@ -48,6 +48,14 @@
                 <source>general.updatedBy</source>
                 <target>by</target>
             </trans-unit>
+            <trans-unit id="17">
+                <source>general.yes</source>
+                <target>yes</target>
+            </trans-unit>
+            <trans-unit id="18">
+                <source>general.no</source>
+                <target>no</target>
+            </trans-unit>
             
             
             <trans-unit id="100">
@@ -153,6 +161,10 @@
             <trans-unit id="302">
                 <source>users.role</source>
                 <target>Role</target>
+            </trans-unit>
+            <trans-unit id="302b">
+                <source>users.isReal</source>
+                <target>Real</target>
             </trans-unit>
             <trans-unit id="303">
                 <source>users.loading</source>
