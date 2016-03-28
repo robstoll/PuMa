@@ -15,10 +15,12 @@ use Symfony\Component\Security\Http\Logout\DefaultLogoutSuccessHandler;
 class LogoutSuccessHandler extends DefaultLogoutSuccessHandler 
 {    
     private $rememberMeCookieName;
+    private $rememberMeCookiePath;
     
-    public function __construct(HttpUtils $httpUtils, $rememberMeCookieName) {
+    public function __construct(HttpUtils $httpUtils, $rememberMeCookieName, $rememberMeCookiePath) {
         parent::__construct($httpUtils);
         $this->rememberMeCookieName = $rememberMeCookieName;
+        $this->rememberMeCookiePath = $rememberMeCookiePath;
     }
     
     public function onLogoutSuccess(Request $request) {
@@ -27,7 +29,7 @@ class LogoutSuccessHandler extends DefaultLogoutSuccessHandler
         } else {
             $response = parent::onLogoutSuccess($request);
         }
-        $response->headers->clearCookie($this->rememberMeCookieName);
+        $response->headers->clearCookie($this->rememberMeCookieName, $this->rememberMeCookiePath, $_SERVER['HTTP_HOST']);
         return $response;
     }
 }
