@@ -9,8 +9,8 @@
 	<input type="hidden" ng-model="{{ name }}Ctrl.{{ name }}Init" value="{{ json }}"/>
     <!-- pre-work-exclude-end -->
 {% endif %}
+<div id="{{ name }}_load">{{ (name ~'.loading')|trans }}</div>
+<div style="display:none" id="{{ name }}_nothingFound">{{ nothingFound|trans }}</div>
 <div class="notice beforeFooter">
 	{% include 'TutteliAppBundle:tpl:updateBlock.html.twig' with {'controllerName': name ~ 'Ctrl'} only  %}
 </div>
-<div id="{{ name }}_load">{{ (name ~'.loading')|trans }}</div>
-<div style="display:none" id="{{ name }}_nothingFound">{{ nothingFound|trans }}</div>
