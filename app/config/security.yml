@@ -47,7 +47,7 @@ security:
             
             remember_me:
               key: "%secret%"
-              lifetime: 2419200 # 4 weeks in seconds
+              lifetime: 15552000 # half a year in seconds
               path: '%baseUrl%'
               always_remember_me: true
               secure: true
