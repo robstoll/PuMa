@@ -183,12 +183,8 @@ span.monthTotal {
 	  z-index: 2;
 	}
 	
-	.form-group.last,
 	.beforeFooter {
-	   margin-bottom: 85px;
-	}
-	.form-group.last.extraMargin {
-	   margin-bottom: 145px;
+	   margin-bottom: 115px;
 	}
 	
 	div.totalContainer {

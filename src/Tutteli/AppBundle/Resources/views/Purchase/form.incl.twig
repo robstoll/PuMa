@@ -39,7 +39,7 @@
         </div>
     </div>
 </div>
-<div class="form-group last extraMargin">
+<div class="form-group">
 	<label class="control-label" for="purchase_user">{{ 'purchase.user'|trans }}</label>
 	<select id="purchase_user" name="user" required="required" ng-model="purchaseCtrl.user" ng-disabled="purchaseCtrl.isDisabled()" ng-options="obj.id as obj.username for obj in purchaseCtrl.getUsers() | filter: {isReal: 1} | orderBy:'username'" class="form-control"> 
 	    <!-- pre-work-exclude-start -->
