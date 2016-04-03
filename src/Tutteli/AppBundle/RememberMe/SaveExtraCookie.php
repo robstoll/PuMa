@@ -39,8 +39,8 @@ class SaveExtraCookie extends TokenBasedRememberMeServices
             } else {
                 throw new AuthenticationException("Unexpected exception occurred.");
             }
-        } catch(Exception $e) {
-            $this->logger->error('unexpected exception occurred, while decrypting the rememberMe cookie'."\n".$e->getTraceAsString());
+        } catch(Exception $ex) {
+            $this->logger->error('unexpected exception occurred, while decrypting the rememberMe cookie'."\n".$ex->getTraceAsString());
             throw new AuthenticationException("Unexpected exception occurred.");
         }
         return $user;
@@ -64,7 +64,7 @@ class SaveExtraCookie extends TokenBasedRememberMeServices
                 $this->options['httponly']
             ));
         } catch(Exception $ex) {
-            $this->logger->error('unexpected exception occurred, while decrypting the rememberMe cookie'."\n".$e->getTraceAsString());
+            $this->logger->error('unexpected exception occurred, while decrypting the rememberMe cookie'."\n".$ex->getTraceAsString());
             $request->getSession()->invalidate();
             throw new AccessDeniedException("Unexpected exception occurred.");
         }
