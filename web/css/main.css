@@ -1,8 +1,13 @@
 html, body {
 	height: 100%;
 }
+
 body {
 	padding-top: 70px;
+}
+
+hr {
+	border-top: 2px solid #ccc;
 }
 
 .modal-content {
