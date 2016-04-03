@@ -13,6 +13,18 @@
     <div ui-view></div>
     	<div pre-work="purchases/month.tpl">
     {%  endif %}
+    	<div class="overview month">
+			<div class="userTotal" ng-repeat="userTotal in purchasesCtrl.usersTotal | orderBy: 'userTotal.username': 'false'">
+				<span ng-bind="userTotal.username"></span>
+				<span class="pull-right" ng-bind="userTotal.total | currency : 'CHF ' : 2"></span>
+				<div class="clear"></div>
+			</div>
+			<div class="monthTotal">
+    			<label>{{ 'month.totalMonth'|trans }} <span ng-bind="purchasesCtrl.chosenMonth"></span>-<span ng-bind="purchasesCtrl.chosenYear"></span></label>
+    			<span class="monthTotal pull-right" ng-bind="purchasesCtrl.monthTotal | currency : 'CHF ' : 2"></span>
+    			<div class="clear"></div>
+			</div>
+		</div>
     
         {% set json = '' %}
     	<table class="table table-striped">
@@ -30,7 +42,7 @@
             		<td ng-bind="purchase.id"></td>
             		<td ng-bind="purchase.purchaseDate"></td>
             		<td ng-bind="purchase.user.username"></td>
-            		<td ng-bind="purchase.total"></td>
+            		<td ng-bind="purchase.total | number : 2"></td>
             		<td><a href="#" ui-sref="edit_purchase({purchaseId: purchase.id})"><i class="glyphicon glyphicon-pencil"></i></a></td>
         		</tr>
             </tbody> 
@@ -64,22 +76,22 @@
         				<td>{{ purchase.id }} </td>
         				<td>{{ purchaseDate }}</td>
         				<td>{{ purchase.user.username }}
-        				<td>{{ purchase.total }}</td>
+        				<td>{{ purchase.total | number_format(2, '.') }}</td>
         				<td><a href="{{ path('edit_purchase', {'purchaseId': purchase.id}) }}"><i class="glyphicon glyphicon-pencil"></i></a></td>
         			</tr>
         		{% endfor %}	
         		</tbody>
         		<!-- pre-work-exclude-end -->
         	{% endif %}
-        </table>
-         {% include 'TutteliAppBundle:tpl:tableBottom.html.twig' 
+		</table>
+        {% include 'TutteliAppBundle:tpl:tableBottom.html.twig' 
             with {
             	'notXhr': notXhr, 
             	'json': json,
             	'name': 'purchases', 
             	'nothingFound': 'month.noPurchases',
             } only %}
-        
+
         <footer class="footer">
 			<div class="row">
 				<div class="col-xs-6">

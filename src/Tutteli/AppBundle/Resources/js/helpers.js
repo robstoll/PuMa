@@ -81,14 +81,15 @@ function InitHelper(PreWork) {
     this.initTableBasedOnPreWork = function(tplName, name, controller, loadFunc) {
         var initName = name + 'Init';
         var nameUpper = name.substr(0, 1).toUpperCase() + name.substr(1);
+        var initFunc = controller['init' + nameUpper];
         
         PreWork.merge(tplName, controller, name + 'Ctrl');
         if (controller[initName] !== undefined) {
-            self.initTableData(name, controller, JSON.parse(controller[initName]));
+            initFunc(JSON.parse(controller[initName]));
         } else {
             changeDisplay(name + '_load', 'block');
             changeDisplay(name + '_nothingFound', 'none');            
-            loadFunc();
+            loadFunc().then(initFunc);
         }
     };
 }

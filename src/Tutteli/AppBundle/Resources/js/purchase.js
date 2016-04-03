@@ -473,10 +473,40 @@ function PurchasesMonthController($state, $stateParams, PurchaseService, InitHel
     var self = this;
     
     this.purchases = null;
+    this.usersTotal = null;
+    this.monthTotal = 0;
     
     this.initPurchases = function(data) {
         InitHelper.initTableData('purchases', self, data);
+        initUsersTotal();
     };
+    
+    function initUsersTotal() {
+        var totals = getTotalPerUser();
+        if (self.purchases.length > 0) {
+            self.usersTotal = [];
+            self.monthTotal = 0;
+            for (var username in totals) {
+                self.usersTotal.push({username: username, total: totals[username]});
+                self.monthTotal += totals[username];
+            }
+            document.querySelector('.overview.month').style.display = 'block'; 
+        }
+    }
+    
+    function getTotalPerUser() {
+        var totals = {};
+        for (var i = 0; i < self.purchases.length; ++i) {
+            var purchase = self.purchases[i];
+            var username = purchase.user.username;
+            if (!totals[username]) {
+                totals[username] = 0;
+            }
+            var total = parseFloat(purchase.total);
+            totals[username] += total;
+        }
+        return totals;
+    }
     
     this.changeState = function() {
         $state.transitionTo('purchases_monthAndYear', {month: self.chosenMonth, year: self.chosenYear});
@@ -485,11 +515,7 @@ function PurchasesMonthController($state, $stateParams, PurchaseService, InitHel
     // ----------------
     
     InitHelper.initTableBasedOnPreWork('purchases/month.tpl', 'purchases', this, function() {
-       PurchaseService.getPurchases($stateParams.month, $stateParams.year).then(
-           self.initPurchases, function (errorResponse) {
-               var i=0;
-           }
-       );
+       return PurchaseService.getPurchases($stateParams.month, $stateParams.year);
     });
     if (!self.chosenMonth) {
        self.chosenMonth = $stateParams.month;

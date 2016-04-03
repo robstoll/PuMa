@@ -31,7 +31,7 @@ function CategoriesController(CategoryService, InitHelper) {
     // ----------------
     
     InitHelper.initTable('categories', this, function() {
-       CategoryService.getCategories().then(self.initCategories);
+       return CategoryService.getCategories();
     });
 }
 

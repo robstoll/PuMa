@@ -35,7 +35,7 @@ function UsersController(PreWork, UserService, InitHelper) {
     // ----------------
     
     InitHelper.initTable('users', this, function(){
-        UserService.getUsers().then(self.initUsers);
+        return UserService.getUsers();
     });
 }
 

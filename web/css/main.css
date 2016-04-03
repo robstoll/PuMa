@@ -114,7 +114,7 @@ body {
 	clear: both;
 }
 
-.total {
+span.total {
     border: 1px solid #CCC;
     font-weight: 700;
     background-color: #eee;
@@ -139,6 +139,28 @@ body {
 
 .preload .position {
 	display:none;
+}
+
+.overview.month {
+	display: none;
+	margin-bottom: 20px;
+    border: 1px dashed #CCC;
+    padding: 10px;
+    padding-right: 15px;
+    border-radius: 10px;    
+}
+.overview > .userTotal:nth-of-type(even) {
+    background-color: #f9f9f9;
+}
+
+div.monthTotal {
+	margin-top:5px;
+	border-top: 1px solid black;
+	padding-top: 5px;
+}
+
+span.monthTotal {
+	font-weight: bold;
 }
 
 @media (max-width: 768px) {

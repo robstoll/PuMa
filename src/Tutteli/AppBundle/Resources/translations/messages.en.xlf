@@ -259,6 +259,10 @@
             <trans-unit id="503">
                 <source>month.noPurchases</source>
                 <target>No purchases found for the selected month and year.</target>
+            </trans-unit>
+            <trans-unit id="504">
+                <source>month.totalMonth</source>
+                <target>All Expenses for</target>
             </trans-unit>     
         </body>
     </file>
