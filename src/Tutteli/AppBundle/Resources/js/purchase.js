@@ -24,6 +24,23 @@ angular.module('tutteli.purchase.core', [
     .service('tutteli.purchase.PositionManagerFactory', PositionManagerFactory)
     .constant('tutteli.purchase.PurchaseService.alertId', 'tutteli-ctrls-Purchase');
 
+function parseDateIfNecessary(date) {
+    //necessary since ui.datePicker does not use the format specified during initialisation (month and day are switched)
+    if (!(date instanceof Date)) {
+        var result = date.match(/((?:0?[1-9])|(?:[1-3][0-9]))\.((?:0?[1-9])|(?:1[0-2]))\.((?:[1-2][0-9])?[0-9][0-9])/);
+        if (result) {
+            var year = result[3].length == 2 ? '20' + result[3] : result[3];
+            var month = result[2] - 1;
+            var day = result[1];
+            date = new Date(year, month, day);
+            if (date.getFullYear() != year || date.getMonth() != month || date.getDate() != day) {
+                throw "overlapping date";
+            }
+        }
+    }
+    return date;
+}
+
 function APurchaseController(
         uibDateParser,
         ROUTES, 
@@ -49,14 +66,11 @@ function APurchaseController(
     this.positionManager = PositionManagerFactory.build();
     this.clearForm = self.positionManager.clearForm;
     
-    this.parseDateIfNecessary = function() {
-        //necessary since ui.datePicker does not use the format specified during initialisation (month and day are switched)
-        if (!(self.dt instanceof Date)) {
-            var result = self.dt.match(/((?:0?[1-9])|(?:[1-3][0-9])).((?:0?[1-9])|(?:[1-3][0-9])).((?:[1-2][0-9])?[0-9][0-9])/);
-            if (result) {
-                result[3] = result[3].length == 2 ? '20' + result[3] : result[3];
-                self.dt = new Date(result[3], result[2] - 1, result[1]);
-            }
+    this.parseDateIfNecessary = function(dt) {
+        try {
+            self.dt = parseDateIfNecessary(self.dt);
+        } catch(err) {
+            //we ignore an error here, will be throw during save if the user should not realise it.
         }
     };
     
@@ -538,9 +552,41 @@ function PurchaseService($http, $q, $timeout, ROUTES, ServiceHelper) {
     };
     
     function validatePurchase(purchase) {
-        purchase.dt = purchase.dt.toLocaleDateString('de-ch');
-        var errors = '';
+        var errors = validateDate(purchase);
         var positionDtos = [];
+        errors += validateExpressions(purchase, positionDtos);
+        return {errors: errors, positions: positionDtos};
+    }
+    
+    function validateDate(purchase) {
+        var errors = '';
+        
+        var template = 'The <a href="#" onclick="document.getElementById(\'purchase_purchaseDate\').focus(); return false">'
+            + 'purchase date'
+            + '</a> ';
+        
+        if (!purchase.dt) {
+            var date = document.getElementById('purchase_purchaseDate').value;
+            try {
+                purchase.dt = parseDateIfNecessary(date);
+            } catch(err) {
+                errors += template + 'was erroneous, check for mistakes like 30.02.2016<br/>';
+                purchase.dt = new Date();
+            }
+        }
+        
+        if (!(purchase.dt instanceof Date)) {
+            errors +=  template + 'is invalid, please enter a date in the format dd.mm.yyyy<br/>';
+        } else if(purchase.dt > new Date()) {
+            errors += template + 'cannot be in the future.<br/>';
+        } else {
+            purchase.dt = purchase.dt.toLocaleDateString('de-ch');
+        }
+        return errors;
+    }
+    
+    function validateExpressions(purchase, positionDtos) {
+        var errors = '';
         for (var i = 0; i < purchase.positions.length; ++i) {
             var position = purchase.positions[i];
             if (position.expression == '0') {
@@ -560,7 +606,7 @@ function PurchaseService($http, $q, $timeout, ROUTES, ServiceHelper) {
                 };
             }
         }
-        return {errors: errors, positions: positionDtos};
+        return errors;
     }
     
     function createOrUpdate(purchase, callback) {
@@ -572,7 +618,7 @@ function PurchaseService($http, $q, $timeout, ROUTES, ServiceHelper) {
         // delay is necessary in order that alert is removed properly
         var delay = $q.defer();
         $timeout(function() {
-            delay.reject({error: errors});
+            delay.reject({error: result.errors});
         }, 1);
         return delay.promise;
     }
