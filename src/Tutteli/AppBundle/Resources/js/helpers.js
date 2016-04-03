@@ -111,6 +111,7 @@ function FormHelper($q, AlertService, ErrorHandler, CsrfService, controller, url
         return Service['create' + name](obj).then(function() {
             var prop = nameProp != null ? ' &quot;' + obj[nameProp] + '&quot;' : ''; 
             AlertService.add(alertId, name  + prop + ' successfully created.', 'success', 3000);
+            window.scrollTo(0, 0);
             controller.clearForm();
         }, function(errorResponse) {
             ErrorHandler.handle(errorResponse, alertId, self.reloadCsrfToken);
@@ -124,6 +125,7 @@ function FormHelper($q, AlertService, ErrorHandler, CsrfService, controller, url
         return Service['update' + propertyName](obj).then(function() {
             var identifier = propertyIdentifier != null ? ' &quot;' + propertyIdentifier + '&quot;' : '';
             AlertService.add(alertId, propertyName + identifier + ' successfully updated.', 'success', 3000);
+            window.scrollTo(0, 0);
         }, function(errorResponse) {
             ErrorHandler.handle(errorResponse, alertId, self.reloadCsrfToken);
             return $q.reject(errorResponse);
