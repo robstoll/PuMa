@@ -35,6 +35,18 @@ function CategoriesController(CategoryService, InitHelper) {
     });
 }
 
+var ASavingController = tutteliSavingController();
+tutteliExtends(ACategoryController, ASavingController);
+function ACategoryController(ROUTES, FormHelperFactory) {
+    ASavingController.call(this);
+    var self = this;
+    
+    this.formHelper = FormHelperFactory.build(self, ROUTES.get_category_csrf);
+    
+    // ----------------
+    
+    self.formHelper.reloadCsrfIfNecessary();
+}
 
 NewCategoryController.$inject = [
     'tutteli.purchase.ROUTES',
@@ -42,18 +54,16 @@ NewCategoryController.$inject = [
     'tutteli.purchase.CategoryService', 
     'tutteli.purchase.NewCategoryController.alertId',
     'tutteli.helpers.FormHelperFactory'];
+tutteliExtends(NewCategoryController, ACategoryController);
 function NewCategoryController(ROUTES, PreWork, CategoryService, alertId, FormHelperFactory) {
+    ACategoryController.call(this, ROUTES, FormHelperFactory);
     var self = this;
-    var formHelper = FormHelperFactory.build(self, ROUTES.get_category_csrf);
     
     this.createCategory = function($event) {
+        self.startSaving();
         var category = {name: self.name, csrf_token: self.csrf_token};
-        formHelper.create($event, alertId, category, 'Category', 'name', CategoryService);
-    };
-    
-    this.isDisabled = function() {
-        //no need to load data when creating an new category hence can always be enabled
-        return false;
+        self.formHelper.create($event, alertId, category, 'Category', 'name', CategoryService)
+            .then(self.endSaving, self.endSaving);
     };
     
     this.clearForm = function() {
@@ -64,7 +74,6 @@ function NewCategoryController(ROUTES, PreWork, CategoryService, alertId, FormHe
     // ----------------
     
     PreWork.merge('categories/new.tpl', this, 'categoryCtrl');
-    formHelper.reloadCsrfIfNecessary();
 }
 
 
@@ -75,7 +84,8 @@ EditCategoryController.$inject = [
     'tutteli.PreWork',
     'tutteli.purchase.CategoryService',
     'tutteli.purchase.EditCategoryController.alertId',
-    'tutteli.helpers.FormHelperFactory',];
+    'tutteli.helpers.FormHelperFactory'];
+tutteliExtends(EditCategoryController, ACategoryController);
 function EditCategoryController(
         $stateParams, 
         $timeout,
@@ -84,8 +94,8 @@ function EditCategoryController(
         CategoryService,  
         alertId, 
         FormHelperFactory) {
+    ACategoryController.call(this, ROUTES, FormHelperFactory);
     var self = this;
-    var formHelper = FormHelperFactory.build(self, ROUTES.get_category_csrf);
     var isNotLoaded = true;
     
     this.loadCategory = function(categoryId) {
@@ -102,12 +112,19 @@ function EditCategoryController(
     };
     
     this.updateCategory = function($event) {
-        var category = {id: self.id, name: self.name, csrf_token: self.csrf_token};
-        formHelper.update($event, alertId, category, 'Category', category.name, CategoryService);
+        self.startSaving();
+        var category = {
+            id: self.id, 
+            name: self.name, 
+            csrf_token: self.csrf_token
+        };
+        self.formHelper.update($event, alertId, category, 'Category', category.name, CategoryService)
+            .then(self.endSaving, self.endSaving);
     };
     
+    var isDisabledParent = this.isDisabled;
     this.isDisabled = function() {
-        return isNotLoaded;
+        return isNotLoaded || isDisabledParent();
     };
     
     // ----------------
@@ -119,7 +136,6 @@ function EditCategoryController(
         self.loadCategory($stateParams.categoryId);
     }
     
-    formHelper.reloadCsrfIfNecessary();
 }
 
 CategoryService.$inject = ['$http', '$q', 'tutteli.purchase.ROUTES', 'tutteli.helpers.ServiceHelper'];

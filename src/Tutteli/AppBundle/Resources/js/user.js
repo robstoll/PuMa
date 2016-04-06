@@ -39,24 +39,40 @@ function UsersController(PreWork, UserService, InitHelper) {
     });
 }
 
+var ASavingController = tutteliSavingController();
+tutteliExtends(AUserController, ASavingController);
+function AUserController(ROUTES, FormHelperFactory) {
+    ASavingController.call(this);
+    var self = this;
+    
+    this.formHelper = FormHelperFactory.build(self, ROUTES.get_user_csrf);
+    
+    // ----------------
+    
+    self.formHelper.reloadCsrfIfNecessary();
+}
+
 NewUserController.$inject = [
     'tutteli.purchase.ROUTES',
     'tutteli.PreWork',
     'tutteli.purchase.UserService', 
     'tutteli.purchase.NewUserController.alertId',
     'tutteli.helpers.FormHelperFactory'];
+tutteliExtends(NewUserController, AUserController);
 function NewUserController(ROUTES, PreWork, UserService, alertId, FormHelperFactory) {
+    AUserController.call(this, ROUTES, FormHelperFactory);
     var self = this;
-    var formHelper = FormHelperFactory.build(self, ROUTES.get_user_csrf);
     
     this.createUser = function($event) {
+        self.startSaving();
         var user = {
             username: self.username, 
             email: self.email, 
             roleId: self.role, 
             csrf_token: self.csrf_token
         };
-        formHelper.create($event, alertId, user, 'User', 'username', UserService);
+        self.formHelper.create($event, alertId, user, 'User', 'username', UserService)
+            .then(self.endSaving, self.endSaving);
     };
     
     this.clearForm = function() {
@@ -66,20 +82,9 @@ function NewUserController(ROUTES, PreWork, UserService, alertId, FormHelperFact
         document.getElementById('user_username').focus();
     };
     
-    this.isAdmin = function() {
-        //must be admin, is secured via auth routing
-        return true;
-    };
-    
-    this.isDisabled = function() {
-        //no need to load data when creating an new user hence can always be enabled
-        return false;
-    };
-    
     // ----------------
     
     PreWork.merge('users/new.tpl', this, 'userCtrl');    
-    formHelper.reloadCsrfIfNecessary();
 }
 
 EditUserController.$inject = [
@@ -92,6 +97,7 @@ EditUserController.$inject = [
     'tutteli.auth.AuthService', 
     'tutteli.auth.USER_ROLES',
     'tutteli.helpers.FormHelperFactory'];
+tutteliExtends(EditUserController, AUserController);
 function EditUserController(
         $stateParams, 
         $timeout,
@@ -102,8 +108,8 @@ function EditUserController(
         AuthService, 
         USER_ROLES, 
         FormHelperFactory) {
+    AUserController.call(this, ROUTES, FormHelperFactory);
     var self = this;
-    var formHelper = FormHelperFactory.build(self, ROUTES.get_user_csrf);
     var isNotLoaded = true;
     
     this.loadUser = function(userId) {
@@ -118,11 +124,12 @@ function EditUserController(
             isNotLoaded = false;
             $timeout(function(){
                 document.getElementById('user_username').focus();  
-            }, 10)
+            }, 10);
         });
     };
     
     this.updateUser = function($event) {
+        this.startSaving();
         var user = {
             id: self.id,
             username: self.username, 
@@ -132,15 +139,15 @@ function EditUserController(
         };
     
         $event.preventDefault();
-        formHelper.update($event, alertId, user, 'User', user.username, UserService);
+        self.formHelper.update($event, alertId, user, 'User', user.username, UserService)
+            .then(self.endSaving, self.endSaving);
     };
     
+    var isDisabledParent = this.isDisabled;
     this.isDisabled = function() {
-        return isNotLoaded;
-    };
-    
-    this.isAdmin = function() {
-        return AuthService.isAuthorised(USER_ROLES.admin);
+        return isNotLoaded 
+            || !AuthService.isAuthorised(USER_ROLES.admin) 
+            || isDisabledParent();
     };
     
     // ----------------
@@ -151,8 +158,6 @@ function EditUserController(
     if (isNotLoaded) {
         self.loadUser($stateParams.userId);
     }
-    
-    formHelper.reloadCsrfIfNecessary();
 }
 
 ChangePasswordController.$inject = [
@@ -162,11 +167,13 @@ ChangePasswordController.$inject = [
     'tutteli.purchase.ChangePasswordService',
     'tutteli.purchase.ChangePasswordController.alertId',
     'tutteli.helpers.FormHelperFactory'];
+tutteliExtends(ChangePasswordController, AUserController);
 function ChangePasswordController($stateParams, ROUTES, PreWork, ChangePasswordService, alertId, FormHelperFactory) {
+    AUserController.call(this, ROUTES, FormHelperFactory);
     var self = this;
-    var formHelper = FormHelperFactory.build(self, ROUTES.get_user_csrf);
     
     this.changePassword = function($event) {
+        self.startSaving();
         var data = {
             id: self.id,
             oldPw: self.oldPw,
@@ -174,9 +181,8 @@ function ChangePasswordController($stateParams, ROUTES, PreWork, ChangePasswordS
             repeatPw: self.repeatPw,
             csrf_token: self.csrf_token
         };
-        formHelper.update($event, alertId, data, 'Password', null, ChangePasswordService).then(function(){
-           self.clearForm(); 
-        });
+        self.formHelper.update($event, alertId, data, 'Password', null, ChangePasswordService)
+            .then(self.endSaving, self.endSaving);
     };
     
     this.clearForm = function() {
@@ -192,7 +198,6 @@ function ChangePasswordController($stateParams, ROUTES, PreWork, ChangePasswordS
     if (this.id === undefined || this.id == '') {
         this.id = $stateParams.userId;
     }
-    formHelper.reloadCsrfIfNecessary();
 }
 
 ChangePasswordService.$inject = ['$http', '$q', '$timeout', 'tutteli.purchase.ROUTES'];

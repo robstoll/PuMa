@@ -17,7 +17,7 @@
 </div>
 <div class="form-group">
 	<label class="control-label" for="user_role">{{ 'users.role'|trans }}</label>
-	<select id="user_role" name="role" required="required" ng-model="userCtrl.role" ng-disabled="userCtrl.isDisabled() || !userCtrl.isAdmin()" class="form-control">
+	<select id="user_role" name="role" required="required" ng-model="userCtrl.role" ng-disabled="userCtrl.isDisabled()" class="form-control">
 		<option value="" disabled="disabled" selected="selected"></option>
 		<option value="ROLE_USER">{{ 'users.roles.ROLE_USER'|trans }}</option>
 		<option value="ROLE_ADMIN">{{ 'users.roles.ROLE_ADMIN'|trans }}</option>

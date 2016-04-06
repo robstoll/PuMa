@@ -14,6 +14,7 @@ angular.module('tutteli.purchase.core', [
     'tutteli.purchase.category',
     'tutteli.purchase.user',
     'tutteli.helpers',
+    'tutteli.utils',
     'ui.bootstrap',
 ])
     .controller('tutteli.purchase.NewPurchaseController', NewPurchaseController)
@@ -41,6 +42,8 @@ function parseDateIfNecessary(date) {
     return date;
 }
 
+var ASavingController = tutteliSavingController();
+tutteliExtends(APurchaseController, ASavingController);
 function APurchaseController(
         uibDateParser,
         ROUTES, 
@@ -50,6 +53,7 @@ function APurchaseController(
         LoaderFactory,
         PositionManagerFactory,
         FormHelperFactory) {
+    ASavingController.call(this);
     var self = this;
     
     var categories = [{id: 0, name: 'Loading categories...'}];
@@ -57,8 +61,10 @@ function APurchaseController(
     var usersLoaded = false;
     var categoriesLoaded = false;
     var disabled = false;
+    
     var categoriesLoader = LoaderFactory.buildCategoriesLoader(self);
     var usersLoader = LoaderFactory.buildUsersLoader(self);
+    
     
     this.formHelper = FormHelperFactory.build(self, ROUTES.get_purchase_csrf);
     this.dt = new Date();
@@ -91,8 +97,9 @@ function APurchaseController(
         }
     };
     
+    var isDisabledParent = this.isDisabled;
     this.isDisabled = function() {
-        return disabled && (!usersLoaded || !categoriesLoaded); 
+        return (disabled && (!usersLoaded || !categoriesLoaded)) || isDisabledParent(); 
     };
     
     this.loadCategories = function() {
@@ -148,7 +155,7 @@ NewPurchaseController.$inject = [
     'tutteli.purchase.LoaderFactory',
     'tutteli.purchase.PositionManagerFactory',
     'tutteli.helpers.FormHelperFactory'];
-NewPurchaseController.prototype = Object.create(APurchaseController.prototype);
+tutteliExtends(NewPurchaseController, APurchaseController);
 function NewPurchaseController(
         Session,
         uibDateParser,
@@ -163,13 +170,14 @@ function NewPurchaseController(
     var self = this;
    
     this.createPurchase = function($event) {
+        self.startSaving();
         var purchase = {
             userId : self.user,
             dt : self.dt,
             positions :  self.positionManager.positions,
             csrf_token : self.csrf_token
         };
-        self.formHelper.create($event, alertId, purchase, 'Purchase', null, PurchaseService);
+        self.formHelper.create($event, alertId, purchase, 'Purchase', null, PurchaseService).then(self.endSaving, self.endSaving);
     };
 
     // -------------------
@@ -200,7 +208,7 @@ EditPurchaseController.$inject = [
   'tutteli.purchase.LoaderFactory',
   'tutteli.purchase.PositionManagerFactory',
   'tutteli.helpers.FormHelperFactory'];
-EditPurchaseController.prototype = Object.create(APurchaseController.prototype);
+tutteliExtends(EditPurchaseController, APurchaseController);
 function EditPurchaseController(
         $stateParams, 
         uibDateParser,
@@ -237,6 +245,7 @@ function EditPurchaseController(
     };
     
     this.updatePurchase = function($event) {
+        self.startSaving();
         var purchase = {
             id : self.id,
             userId : self.user,
@@ -245,8 +254,8 @@ function EditPurchaseController(
             csrf_token : self.csrf_token
         };
         var select = document.getElementById('purchase_user');
-        var identifier = purchase.dt.toLocaleDateString('de-ch') + ' - ' + select.options[select.selectedIndex].text; 
-        self.formHelper.update($event, alertId, purchase, 'Purchase', identifier, PurchaseService);
+        var identifier = purchase.dt.toLocaleDateString('de-ch') + ' - ' + select.options[select.selectedIndex].text;
+        self.formHelper.update($event, alertId, purchase, 'Purchase', identifier, PurchaseService).then(self.endSaving, self.endSaving);
     };
    
     function updatePositions(positions) {

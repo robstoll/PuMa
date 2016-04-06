@@ -7,6 +7,7 @@
 'use strict';
 
 angular.module('tutteli.purchase', [
+    'tutteli.utils',
     'tutteli.purchase.routing',
     'tutteli.login',
     'tutteli.logout',
@@ -28,7 +29,7 @@ angular.module('tutteli.purchase', [
     'tutteli.loader',
     'tutteli.alert',
     'tutteli.regainFocus',
-    'tutteli.utils'
+    
 ]).config(['$httpProvider', function($httpProvider) {
     
     $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';

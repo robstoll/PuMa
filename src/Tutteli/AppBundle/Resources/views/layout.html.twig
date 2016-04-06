@@ -106,6 +106,7 @@
 {#         <script src="{{ asset_url }}"></script>#}
 {#     {% endjavascripts %}#}
     {% javascripts output="js/app.js" 
+    	'@TutteliAppBundle/Resources/js/tutteli-utils.js'
         '@TutteliAppBundle/Resources/js/*.js'
 	     %}
         <script src="{{ asset_url }}"></script>
