@@ -583,11 +583,12 @@ function PurchaseService($http, $q, $timeout, ROUTES, ServiceHelper) {
                 purchase.dt = new Date();
             }
         }
-        
+        var nowInAYear = new Date();
+        nowInAYear.setFullYear(nowInAYear.getFullYear() + 1);
         if (!(purchase.dt instanceof Date)) {
             errors +=  template + 'is invalid, please enter a date in the format dd.mm.yyyy<br/>';
-        } else if(purchase.dt > new Date()) {
-            errors += template + 'cannot be in the future.<br/>';
+        } else if(purchase.dt > nowInAYear) {
+            errors += template + 'cannot be more than one year in the future.<br/>';
         } else {
             purchase.dt = purchase.dt.toLocaleDateString('de-ch');
         }
