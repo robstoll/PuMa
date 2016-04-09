@@ -6,7 +6,7 @@
  
 <div class="form-group">
 	<div>
-		<div class="closePosition"  ng-class="{show: purchaseCtrl.positionManager.positions.lenght > 1}" ng-click="purchaseCtrl.positionManager.removePosition($index);"><i class="glyphicon glyphicon-trash"></i></div>
+		<div class="closePosition"  ng-class="{show: purchaseCtrl.positionManager.positions.length > 1}" ng-click="purchaseCtrl.positionManager.removePosition($index);"><i class="glyphicon glyphicon-trash"></i></div>
 		<label class="control-label" for="purchase_expression{{ '{{$index}}' }}">{{ 'purchase.price'|trans }}</label>
 		<div style="float:clear"></div>
 	</div>
