@@ -25,5 +25,6 @@
     	document.getElementById('user_username').value = '{{ user.username }}';
     	document.getElementById('user_email').value = '{{ user.email }}';
     	document.getElementById('user_role').value = '{{ user.role }}';
+    	document.getElementById('user_isReal').checked = '{{ user.isReal }}' ? true : false;
     </script>
 {% endblock %}

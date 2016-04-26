@@ -62,6 +62,7 @@ tutteliExtends(NewUserController, AUserController);
 function NewUserController(ROUTES, PreWork, UserService, alertId, FormHelperFactory) {
     AUserController.call(this, ROUTES, FormHelperFactory);
     var self = this;
+    self.isReal = false;
     
     this.createUser = function($event) {
         self.startSaving();
@@ -69,6 +70,7 @@ function NewUserController(ROUTES, PreWork, UserService, alertId, FormHelperFact
             username: self.username, 
             email: self.email, 
             roleId: self.role, 
+            isReal: self.isReal,
             csrf_token: self.csrf_token
         };
         self.formHelper.create($event, alertId, user, 'User', 'username', UserService)
@@ -79,6 +81,7 @@ function NewUserController(ROUTES, PreWork, UserService, alertId, FormHelperFact
         self.username = '';
         self.email = '';
         self.role = '';
+        self.isReal = false;
         document.getElementById('user_username').focus();
     };
     
@@ -118,6 +121,7 @@ function EditUserController(
             self.username = user.username;
             self.email = user.email;
             self.role = user.roleId;
+            self.isReal = user.isReal;
             document.querySelector('#user_role > option').remove();
             self.updatedAt = user.updatedAt;
             self.updatedBy = user.updatedBy;
@@ -135,6 +139,7 @@ function EditUserController(
             username: self.username, 
             email: self.email, 
             roleId: self.role, 
+            isReal: self.isReal,
             csrf_token: self.csrf_token
         };
     

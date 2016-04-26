@@ -188,6 +188,10 @@ class UserController extends AEntityController {
         if (array_key_exists('roleId', $data)) {
             $user->setRole($data['roleId']);
         }
+        
+        if(array_key_exists('isReal', $data)) {
+            $user->setIsReal($data['isReal']);
+        }
     }
     
     public function putAction(Request $request, $userId) {

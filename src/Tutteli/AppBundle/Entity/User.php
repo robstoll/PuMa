@@ -60,6 +60,7 @@ class User implements UserInterface, \Serializable {
 
     /**
      * @ORM\Column(type="boolean")
+     * @Assert\NotNull()
      */
     private $isReal;
     
