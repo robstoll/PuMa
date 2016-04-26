@@ -202,6 +202,10 @@
                 <source>users.noUsers</source>
                 <target>There are not any users defined yet.</target>
             </trans-unit>
+            <trans-unit id="312">
+                <source>users.resetPassword</source>
+                <target>Reset Pw</target>
+            </trans-unit>
             <trans-unit id="350">
                 <source>password.change</source>
                 <target>Change password</target>
@@ -217,6 +221,14 @@
             <trans-unit id="353">
                 <source>password.repeat</source>
                 <target>Repeat new password</target>
+            </trans-unit>
+            <trans-unit id="354">
+                <source>password.reset</source>
+                <target>Reset password</target>
+            </trans-unit>
+            <trans-unit id="355">
+                <source>password.resetForUser</source>
+                <target>Reset password for user</target>
             </trans-unit>
             
             <trans-unit id="400">

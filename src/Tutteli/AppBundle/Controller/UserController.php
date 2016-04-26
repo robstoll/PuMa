@@ -97,22 +97,16 @@ class UserController extends AEntityController {
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($user);
                 $em->flush();
-                try {
-                    $this->sendPassword($user);
-                    $response = $this->getCreateResponse($user->getId());
-                } catch(Exception $e) {
-                    $translator = $this->get('translator');
-                    $response = new Response(
-                            '{'
-                            .'"userId":"'.$user->getId().'",'
-                            .'"error": "'.$translator->trans('user.emailSent').'"'
-                            .'}', 
-                            Response::HTTP_ACCEPTED);
-                }
+                return $this->sendPasswordEmailWithErrorHandling($user,  function() use ($user) {
+                    $this->sendNewUserPasswordEmail($user);
+                }, function() use ($user) {
+                    return $this->getCreateResponse($user->getId());
+                });
             }
         }
         return $response;
     }
+
     
     private function encodePasswordAndChangeDataKey(User $user){
         $plainPassword = $user->getPlainPassword();
@@ -159,11 +153,27 @@ class UserController extends AEntityController {
         return implode('', $pass);
     }
     
+
+    private function sendPasswordEmailWithErrorHandling(User $user, $sendPassword, $successfullResponseCreator) {
+        try {
+            $sendPassword();
+            $response = $successfullResponseCreator();
+        } catch(Exception $e) {
+            $translator = $this->get('translator');
+            $response = new Response(
+                    '{'
+                    .'"userId":"'.$user->getId().'",'
+                    .'"error": "'.$translator->trans('user.emailSent').'"'
+                    .'}',
+                    Response::HTTP_ACCEPTED);
+        }
+        return $response;
+    }
     
-    private function sendPassword(User $user) {
+    private function sendNewUserPasswordEmail(User $user) {
         $lang = $this->get('translator')->getLocale();
         $html = $this->renderView(
-            '@TutteliAppBundle/Resources/views/User/email.'.$lang.'.html.twig', array(
+            '@TutteliAppBundle/Resources/views/User/new-user-email.'.$lang.'.html.twig', array(
                 'user' => $user,
                 'homeUrl' => $this->generateUrl('home', [], true)
             )
@@ -173,6 +183,22 @@ class UserController extends AEntityController {
             ->setFrom('no-reply@'.$_SERVER['HTTP_HOST'])
             ->setTo($user->getEmail())
             ->setBody($html, 'text/html');
+        $this->get('mailer')->send($message);
+    }
+    
+    private function sendResetPasswordEmail(User $user) {
+        $lang = $this->get('translator')->getLocale();
+        $html = $this->renderView(
+                '@TutteliAppBundle/Resources/views/User/reset-password-email.'.$lang.'.html.twig', array(
+                        'user' => $user,
+                        'homeUrl' => $this->generateUrl('home', [], true)
+                )
+                );
+        $message = \Swift_Message::newInstance()
+        ->setSubject('Password Reset')
+        ->setFrom('no-reply@'.$_SERVER['HTTP_HOST'])
+        ->setTo($user->getEmail())
+        ->setBody($html, 'text/html');
         $this->get('mailer')->send($message);
     }
     
@@ -187,6 +213,10 @@ class UserController extends AEntityController {
         
         if (array_key_exists('roleId', $data)) {
             $user->setRole($data['roleId']);
+        }
+        
+        if(array_key_exists('isReal', $data)) {
+            $user->setIsReal($data['isReal']);
         }
         
         if(array_key_exists('isReal', $data)) {
@@ -223,15 +253,15 @@ class UserController extends AEntityController {
         return $response;
     }
 
-    public function editPasswordAction(Request $request, $userId, $ending) {
+    public function changePasswordAction(Request $request, $userId, $ending) {
         if (!$this->isCurrentUser($userId)) {
             throw $this->createAccessDeniedException('Unable to access this page!');
         }
-        return $this->editPassword($request, $userId, $ending);
+        return $this->changePassword($request, $userId, $ending);
     }
         
-    private function editPassword(Request $request, $userId, $ending) {        
-        $viewPath = '@TutteliAppBundle/Resources/views/User/pass.html.twig';
+    private function changePassword(Request $request, $userId, $ending) {        
+        $viewPath = '@TutteliAppBundle/Resources/views/User/change-password.html.twig';
         list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
         
         if (!$response) {
@@ -248,23 +278,23 @@ class UserController extends AEntityController {
         return $response;
     }
     
-    public function editPasswordTplAction(Request $request) {
-        return $this->editPassword($request, 0, '.tpl');
+    public function changePasswordTplAction(Request $request) {
+        return $this->changePassword($request, 0, '.tpl');
     }
     
-    public function putPasswordAction(Request $request, $userId) {
+    public function putChangePasswordAction(Request $request, $userId) {
         if (!$this->isCurrentUser($userId)) {
             throw $this->createAccessDeniedException('Unable to access this page!');
         }
         
         if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
             $user = $this->loadEntity($userId);
-            return $this->changePassword($request, $user);        
+            return $this->updatePassword($request, $user);        
         }
         return new Response('{"msg": "Wrong Content-Type"}', Response::HTTP_BAD_REQUEST);
     }
     
-    public function changePassword(Request $request, User $user) {
+    private function updatePassword(Request $request, User $user) {
         list($data, $response) = $this->decodeDataAndVerifyCsrf($request);
         if (!$response) {
             $changePw = new ChangePasswordDto();
@@ -274,16 +304,21 @@ class UserController extends AEntityController {
             if (count($errors) > 0) {
                 $response = $this->getTranslatedValidationResponse($errors);
             } else {
-                $user->setPlainPassword($data['newPw']);
-                $this->encodePasswordAndChangeDataKey($user);
-                $em = $this->getDoctrine()->getManager();
-                $em->merge($user);
-                $em->flush();
+                $this->updatePasswordInDb($user, $data['newPw']);
                 $response = new Response('', Response::HTTP_NO_CONTENT);
             }
         }
         return $response;       
     }
+    
+    private function updatePasswordInDb(User $user, $newPassword) {
+        $user->setPlainPassword($newPassword);
+        $this->encodePasswordAndChangeDataKey($user);
+        $em = $this->getDoctrine()->getManager();
+        $em->merge($user);
+        $em->flush();
+    }
+
     
     private function mapPw(ChangePasswordDto $dto, $data) {
         if(array_key_exists('oldPw', $data)) {
@@ -298,4 +333,48 @@ class UserController extends AEntityController {
             $dto->repeatPw = $data['repeatPw'];
         }
     }
+    
+    public function resetPasswordAction(Request $request, $userId, $ending) {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
+        return $this->resetPassword($request, $userId, $ending);
+    }
+    
+    private function resetPassword(Request $request, $userId, $ending) {
+        $viewPath = '@TutteliAppBundle/Resources/views/User/reset-password.html.twig';
+        list($etag, $response) = $this->checkEndingAndEtagForView($request, $ending, $viewPath);
+    
+        if (!$response) {
+            $response = $this->render($viewPath, array (
+                    'notXhr' => $ending == '',
+                    'error' => null,
+                    'userId' => $userId
+            ));
+    
+            if ($ending == '.tpl') {
+                $response->setETag($etag);
+            }
+        }
+        return $response;
+    }
+    
+    public function resetPasswordTplAction(Request $request) {
+        return $this->resetPassword($request, 0, '.tpl');
+    }
+    
+ public function putResetPasswordAction(Request $request, $userId) {
+     $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
+
+        if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+            $user = $this->loadEntity($userId);
+            $this->updatePasswordInDb($user, $this->generatePassword());
+            return $this->sendPasswordEmailWithErrorHandling($user, function() use ($user){
+                $this->sendResetPasswordEmail($user);
+            }, function() {
+                return new Response('', Response::HTTP_NO_CONTENT);
+            });
+        }
+        return new Response('{"msg": "Wrong Content-Type"}', Response::HTTP_BAD_REQUEST);
+    }
+    
+    
 }

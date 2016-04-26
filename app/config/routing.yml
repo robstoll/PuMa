@@ -179,17 +179,32 @@ put_user:
     methods: [PUT]    
     
 edit_user_password:
-    path: /users/{userId}/password/edit{ending}
-    defaults: { _controller: "TutteliAppBundle:User:editPassword", ending: ""}
+    path: /users/{userId}/change-password{ending}
+    defaults: { _controller: "TutteliAppBundle:User:changePassword", ending: ""}
     methods: [GET]
 
 edit_user_password_tpl:
-    path: /users/password.tpl
-    defaults: { _controller: "TutteliAppBundle:User:editPasswordTpl" }
+    path: /users/change-password.tpl
+    defaults: { _controller: "TutteliAppBundle:User:changePasswordTpl" }
     methods: [GET]    
-    
+
 put_user_password:
-    path: /users/{userId}/password
-    defaults: { _controller: "TutteliAppBundle:User:putPassword" }
+    path: /users/{userId}/change-password
+    defaults: { _controller: "TutteliAppBundle:User:putChangePassword" }
+    methods: [PUT]
+    
+reset_user_password:
+    path: /users/{userId}/reset-password{ending}
+    defaults: { _controller: "TutteliAppBundle:User:resetPassword", ending: ""}
+    methods: [GET]      
+    
+reset_user_password_tpl:
+    path: /users/reset-password.tpl
+    defaults: { _controller: "TutteliAppBundle:User:resetPasswordTpl" }
+    methods: [GET]        
+    
+put_reset_user_password:
+    path: /users/{userId}/reset-password
+    defaults: { _controller: "TutteliAppBundle:User:putResetPassword" }
     methods: [PUT]
     

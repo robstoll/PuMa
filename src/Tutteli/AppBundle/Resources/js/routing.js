@@ -107,14 +107,23 @@ angular.module('tutteli.purchase.routing', [
             userIdParamName: 'userId'
         }
     }).state('edit_user_password', {
-        url: '/users/:userId/password/edit',
+        url: '/users/:userId/change-password',
         controller: 'tutteli.purchase.ChangePasswordController',
         controllerAs: 'passwordCtrl',
-        templateUrl: 'users/password.tpl',
+        templateUrl: 'users/change-password.tpl',
         data: {
             //force that only current user is allowed
             authRoles: [USER_ROLES.noOne], 
             userIdParamName: 'userId'
+        }
+    })
+    .state('reset_user_password', {
+        url: '/users/:userId/reset-password',
+        controller: 'tutteli.purchase.ResetPasswordController',
+        controllerAs: 'passwordCtrl',
+        templateUrl: 'users/reset-password.tpl',
+        data: {
+            authRoles: [USER_ROLES.admin]
         }
     })
     
@@ -174,7 +183,8 @@ angular.module('tutteli.purchase.routing', [
     get_user_csrf: 'users/new/token',
     post_user: 'users',
     put_user: 'users/:userId',
-    put_user_password: 'users/:userId/password'
+    put_user_password: 'users/:userId/change-password',
+    put_reset_user_password: 'users/:userId/reset-password'
 });
 
 })();

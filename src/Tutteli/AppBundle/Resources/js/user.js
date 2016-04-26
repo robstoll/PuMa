@@ -16,11 +16,14 @@ angular.module('tutteli.purchase.user', [
     .controller('tutteli.purchase.NewUserController', NewUserController)
     .controller('tutteli.purchase.EditUserController', EditUserController)
     .controller('tutteli.purchase.ChangePasswordController', ChangePasswordController)
+    .controller('tutteli.purchase.ResetPasswordController', ResetPasswordController)
     .service('tutteli.purchase.UserService', UserService)
     .service('tutteli.purchase.ChangePasswordService', ChangePasswordService)
+    .service('tutteli.purchase.ResetPasswordService', ResetPasswordService)
     .constant('tutteli.purchase.NewUserController.alertId', 'tutteli-ctrls-NewUserController')
     .constant('tutteli.purchase.EditUserController.alertId', 'tutteli-ctrls-EditUserController')
-    .constant('tutteli.purchase.ChangePasswordController.alertId', 'tutteli-ctrls-ChangePasswordController');
+    .constant('tutteli.purchase.ChangePasswordController.alertId', 'tutteli-ctrls-ChangePasswordController')
+    .constant('tutteli.purchase.ResetPasswordController.alertId', 'tutteli-ctrls-ResetPasswordController');
 
 UsersController.$inject = ['tutteli.PreWork', 'tutteli.purchase.UserService', 'tutteli.helpers.InitHelper'];
 function UsersController(PreWork, UserService, InitHelper) {
@@ -199,10 +202,59 @@ function ChangePasswordController($stateParams, ROUTES, PreWork, ChangePasswordS
     
     // -------------
     
-    PreWork.merge('users/password.tpl', this, 'passwordCtrl');
+    PreWork.merge('users/change-password.tpl', this, 'passwordCtrl');
     if (this.id === undefined || this.id == '') {
         this.id = $stateParams.userId;
     }
+
+}
+
+
+ResetPasswordController.$inject = [
+    '$stateParams',
+    'tutteli.purchase.ROUTES',
+    'tutteli.PreWork',
+    'tutteli.purchase.UserService',
+    'tutteli.purchase.ResetPasswordService',
+    'tutteli.purchase.ResetPasswordController.alertId',
+    'tutteli.helpers.FormHelperFactory'];
+tutteliExtends(ResetPasswordController, AUserController);
+function ResetPasswordController(
+        $stateParams, 
+        ROUTES, 
+        PreWork, 
+        UserService, 
+        ResetPasswordService, 
+        alertId, 
+        FormHelperFactory) {
+    AUserController.call(this, ROUTES, FormHelperFactory);
+    var self = this;
+    
+    var username = null;
+    
+    this.getUsername = function() {
+        return username;
+    };
+    
+    this.resetPassword = function($event) {
+        self.startSaving();
+        var data = {
+            id: self.id,
+            csrf_token: self.csrf_token
+        };
+        self.formHelper.update($event, alertId, data, 'Password', null, ResetPasswordService)
+            .then(self.endSaving, self.endSaving);
+    };
+    
+    // -------------
+    
+    PreWork.merge('users/reset-password.tpl', this, 'passwordCtrl');
+    if (this.id === undefined || this.id == '') {
+        this.id = $stateParams.userId;
+    }
+    UserService.getUser(this.id).then(function(user) {
+        username = user.username;
+    });
 }
 
 ChangePasswordService.$inject = ['$http', '$q', '$timeout', 'tutteli.purchase.ROUTES'];
@@ -241,6 +293,17 @@ function getError($q, $timeout, errors) {
     }, 1);
     return delay.promise;
 }
+
+ResetPasswordService.$inject = ['$http','tutteli.purchase.ROUTES'];
+function ResetPasswordService($http, ROUTES) {
+    
+    this.updatePassword = function(data) {
+        return $http.put(ROUTES.put_reset_user_password.replace(':userId', data.id), data);
+    };
+    
+}
+
+
 
 UserService.$inject = ['$http', '$q', '$timeout', 'tutteli.purchase.ROUTES', 'tutteli.helpers.ServiceHelper'];
 function UserService($http, $q, $timeout, ROUTES, ServiceHelper) {

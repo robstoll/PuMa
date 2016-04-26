@@ -24,6 +24,7 @@
     				<th>{{ 'users.role'|trans }}</th>
     				<th>{{ 'users.isReal'|trans }}</th>
     				<th>{{ 'general.edit'|trans }}</th>
+    				<th>{{ 'users.resetPassword'|trans }}
 				</tr>
     		</thead>
     		<tbody id="users_rows" class="hidden">
@@ -33,7 +34,8 @@
             		<td ng-bind="user.email"></td>
             		<td ng-bind="user.role"></td>
             		<td ng-bind="user.isReal == '1' ? '{{ 'general.yes'|trans }}' : '{{ 'general.no'|trans }}'"></td>
-            		<td><a href="#" ui-sref="edit_user({userId: user.id})"><i class="glyphicon glyphicon-pencil"></i></a></td>
+            		<td><a href="#" ui-sref="edit_user({userId: user.id})" title="edit user"><i class="glyphicon glyphicon-pencil"></i></a></td>
+            		<td><a href="#" ui-sref="reset_user_password({userId: user.id})" title="reset password"><i class="glyphicon glyphicon-plus"></i><i class="glyphicon glyphicon-lock"></i></a></td>
         		</tr>
             </tbody> 
             {% if entities %}
@@ -64,6 +66,7 @@
         				<td>{{ ('users.roles.' ~ user.role)|trans }}</td>
         				<td>{{ ('general.' ~ (user.isReal ? 'yes':'no'))|trans }}</td>
         				<td><a href="{{ path('edit_user', {'userId': user.id}) }}"><i class="glyphicon glyphicon-pencil"></i></a></td>
+        				<td><a href="{{ path('reset_user_password', {'userId': user.id}) }}"><i class="glyphicon glyphicon-plus"></i><i class="glyphicon glyphicon-lock"></i></a></td>
         			</tr>
         		{% endfor %}
         		</tbody>
