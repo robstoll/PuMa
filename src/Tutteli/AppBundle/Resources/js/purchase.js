@@ -42,9 +42,20 @@ function parseDateIfNecessary(date) {
     return date;
 }
 
+// needs to be outside of APurchaseController otherwise it is always a different function 
+// and is thus registered multiple times
+function ShiftPlusKeyEventListener(event) {
+    //SHIFT & +
+    if (event.shiftKey && event.keyCode == 43) {
+        event.preventDefault();
+        document.getElementById('purchase_add').click();
+    }
+}
+
 var ASavingController = tutteliSavingController();
 tutteliExtends(APurchaseController, ASavingController);
 function APurchaseController(
+        $scope,
         uibDateParser,
         ROUTES, 
         PreWork,
@@ -135,18 +146,15 @@ function APurchaseController(
     self.loadCategories();
     self.loadUsers();
     document.getElementById('purchase_add').style.display = 'inline';
-    
-    window.addEventListener('keypress', function(event) {
-        //SHIFT & +
-        if (event.shiftKey && event.keyCode == 43) {
-            event.preventDefault();
-            document.getElementById('purchase_add').click();
-        }
-    }) ;
+    window.addEventListener('keypress', ShiftPlusKeyEventListener);
+    $scope.$on("$destroy", function() {
+       window.removeEventListener('keypress', ShiftPlusKeyEventListener); 
+    });
 }
 
 NewPurchaseController.$inject = [
     'tutteli.auth.Session',
+    '$scope',
     'uibDateParser',
     'tutteli.purchase.ROUTES',
     'tutteli.PreWork',
@@ -158,6 +166,7 @@ NewPurchaseController.$inject = [
 tutteliExtends(NewPurchaseController, APurchaseController);
 function NewPurchaseController(
         Session,
+        $scope,
         uibDateParser,
         ROUTES, 
         PreWork,
@@ -200,6 +209,7 @@ function NewPurchaseController(
 
 EditPurchaseController.$inject = [
   '$stateParams',
+  '$scope',
   'uibDateParser',
   'tutteli.purchase.ROUTES',
   'tutteli.PreWork',
@@ -211,6 +221,7 @@ EditPurchaseController.$inject = [
 tutteliExtends(EditPurchaseController, APurchaseController);
 function EditPurchaseController(
         $stateParams, 
+        $scope,
         uibDateParser,
         ROUTES, 
         PreWork,  
