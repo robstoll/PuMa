@@ -14,11 +14,23 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
         <base href="{{ baseUrl }}">
         <script type="text/javascript">
-        	function focusIfBigScreen(element) {
+        	function focusOrScrollTo(element) {
+        	    function findPos(obj) {
+			        var curtop = 0;
+			        if (obj.offsetParent) {
+			        	do {
+			            	curtop += obj.offsetTop;
+			           	} while (obj = obj.offsetParent);
+			      	}
+			        return [curtop];
+			  	}
+                	
         	    var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 	 			if (width > 768) {
 	 				element.focus();
-	 			}
+	 			} else {
+		 			window.scroll(0, findPos(element));
+		 		}
         	}
         </script>
     </head>

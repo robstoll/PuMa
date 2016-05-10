@@ -352,7 +352,7 @@ function PositionManager ($timeout, $parse, $filter) {
     
     this.focusFirstInput = function () {
         $timeout(function() {
-            focusIfBigScreen(document.getElementById('purchase_expression0'));
+            focusOrScrollTo(document.getElementById('purchase_expression0'));
         }, 10);
     };
     
