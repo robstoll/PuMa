@@ -27,34 +27,36 @@ home:
     defaults: { _controller: "FrameworkBundle:Redirect:redirect", route: "new_purchase"}
     methods: [GET]
 
+
 purchases:
     path:   /purchases/
     defaults: { _controller: "FrameworkBundle:Redirect:redirect", route: "purchases_month"}
     methods: [GET]
 
-purchases_month:
+purchases_currentMonth:
     path:   /purchases/month
-    defaults: { _controller: "TutteliAppBundle:Purchase:month"}
+    defaults: { _controller: "TutteliAppBundle:Purchase:currentMonth"}
     methods: [GET]
 
 purchases_monthTpl:
     path:   /purchases/month.tpl
     defaults: { _controller: "TutteliAppBundle:Purchase:monthTpl"}
+    methods: [GET]
 
 purchases_monthAndYear_json:
     path:   /purchases/month-{month}-{year}.json
     defaults: { _controller: "TutteliAppBundle:Purchase:monthAndYearJson" }
     methods: [GET]
 
-get_purchase_json: 
-    path: /purchases/{purchaseId}.json
-    defaults: { _controller: "TutteliAppBundle:Purchase:getJson"}
-    methods: [GET]  
-
 purchases_monthAndYear:
     path:   /purchases/month-{month}-{year}{ending}
     defaults: { _controller: "TutteliAppBundle:Purchase:monthAndYear", ending: ""}
     methods: [GET]
+
+get_purchase_json: 
+    path: /purchases/{purchaseId}.json
+    defaults: { _controller: "TutteliAppBundle:Purchase:getJson"}
+    methods: [GET]  
       
 new_purchase:
     path:   /purchases/new{ending}
@@ -87,6 +89,27 @@ put_purchase:
     methods: [PUT]    
     
     
+billing_currentYear:
+    path:   /accounting/billing
+    defaults: { _controller: "TutteliAppBundle:Billing:currentYear"}
+    methods: [GET]
+
+billing_yearTpl:
+    path:   /accounting/billing.tpl
+    defaults: { _controller: "TutteliAppBundle:Billing:yearTpl"}
+    methods: [GET]
+
+billing_year_json:
+    path:   /accounting/billing-{year}.json
+    defaults: { _controller: "TutteliAppBundle:Billing:yearJson" }
+    methods: [GET]
+
+billing_year:
+    path:   /accounting/billing-{year}{ending}
+    defaults: { _controller: "TutteliAppBundle:Billing:year", ending: ""}
+    methods: [GET]
+
+
 get_categories_json:
     path:   /categories.json
     defaults: { _controller: "TutteliAppBundle:Category:cgetJson" }

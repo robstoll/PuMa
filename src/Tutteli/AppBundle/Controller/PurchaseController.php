@@ -65,7 +65,7 @@ class PurchaseController extends AEntityController {
                 .'}';
     }
     
-    public function monthAction() {
+    public function currentMonthAction() {
         return new RedirectResponse($this->container->get('router')->generate(
                 'purchases_monthAndYear', 
                 ['month' => date('m'), 'year' => date('Y')],
@@ -186,8 +186,6 @@ class PurchaseController extends AEntityController {
             $errors->addAll($newErrors);
         }
     }
-
-    
     
     private function translateErrors(ConstraintViolationList $errorList, $posNumber){
         $list = new ConstraintViolationList();

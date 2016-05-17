@@ -30,7 +30,6 @@
 {% endblock %}    
 
 {% block body %}
-    <!-- Fixed navbar -->
     <nav class="navbar navbar-inverse navbar-fixed-top" ng-controller="tutteli.NavigationController as naviCtrl">
         <div class="container">
             <div class="navbar-header">
@@ -46,14 +45,20 @@
             <div id="navbar" class="navbar-collapse collapse{% if app.user == null or not is_granted('IS_AUTHENTICATED_REMEMBERED') %} hidden{% endif %}" ng-class="naviCtrl.isAuthenticated() ? 'showBlock' : 'hidden'" >
                 <ul class="nav navbar-nav">
                  	<li class="dropdown">
-                        <a  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ 'nav.views'|trans }} <span class="caret"></span></a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ 'nav.views'|trans }} <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a ui-sref="new_purchase" href="{{ path('new_purchase') }}" >{{ 'nav.views.new_purchase'|trans }}</a></li>
-                            <li><a ui-sref="purchases_month" href="{{ path('purchases_month') }}" >{{ 'nav.views.purchases_month'|trans }}</a></li>
+                            <li><a ui-sref="purchases_currentMonth" href="{{ path('purchases_currentMonth') }}" >{{ 'nav.views.purchases_month'|trans }}</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                    	<a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ 'nav.accounting'|trans }} <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                    		<li><a ui-sref="billing_currentYear" href="{{ path('billing_currentYear') }}" >{{ 'nav.accounting.billing_year'|trans }}</a></li>
                         </ul>
                     </li>
                     <li class="dropdown{% if app.user == null or not is_granted('ROLE_ADMIN') %} hidden {% endif %}" ng-class="naviCtrl.isAdmin() ? 'showList' : 'hidden'">
-                        <a  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ 'nav.settings'|trans }} <span class="caret"></span></a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ 'nav.settings'|trans }} <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a ui-sref="users" href="{{ path('get_users') }}">{{ 'nav.users'|trans }}</a></li>
                             <li><a ui-sref="categories" href="{{ path('get_categories') }}">{{ 'nav.categories'|trans }}</a></li>

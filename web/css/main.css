@@ -146,7 +146,8 @@ span.total {
 	display:none;
 }
 
-.overview.month {
+.overview.month,
+.overview.billing {
 	display: none;
 	margin-bottom: 20px;
     border: 1px dashed #CCC;
@@ -166,6 +167,11 @@ div.monthTotal {
 
 span.monthTotal {
 	font-weight: bold;
+}
+
+.openAmounts {
+	font-weight: bold;
+	padding-bottom: 2px;
 }
 
 @media (max-width: 768px) {

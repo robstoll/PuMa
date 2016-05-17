@@ -57,10 +57,10 @@
                 		{% set updatedAt = purchase.updatedAt %}
                 		{% set updatedBy = purchase.updatedBy %}
                 	{% endif %}
-                    {%  if not json == '' %}
+                    {% if not json == '' %}
                 		{% set json = json ~ ',' %}
-                	{%  endif %}
-            	    {%  set purchaseDate = purchase.purchaseDate|date('general.dateFormat.php'|trans) %}
+                	{% endif %}
+            	    {% set purchaseDate = purchase.purchaseDate|date('general.dateFormat.php'|trans) %}
                 	{% set json = json ~ '{' 
                 	    ~ '"id":"' ~ purchase.id ~ '",' 
                 	    ~ '"user":'

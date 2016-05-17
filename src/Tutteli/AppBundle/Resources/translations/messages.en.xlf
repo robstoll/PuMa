@@ -102,6 +102,15 @@
                 <source>nav.views.purchases_month</source>
                 <target>Overview per Month</target>
             </trans-unit>
+            <trans-unit id="126">
+                <source>nav.accounting</source>
+                <target>Accounting</target>
+            </trans-unit>
+            <trans-unit id="127">
+                <source>nav.accounting.billing_year</source>
+                <target>Billing per Year</target>
+            </trans-unit>
+            
             
             <trans-unit id="200">
                 <source>purchase.price</source>
@@ -275,7 +284,42 @@
             <trans-unit id="504">
                 <source>month.totalMonth</source>
                 <target>All Expenses for</target>
-            </trans-unit>     
+            </trans-unit>
+            
+           <trans-unit id="600">
+                <source>billing.month</source>
+                <target>Month</target>
+            </trans-unit>
+            <trans-unit id="601">
+                <source>billing.debtor</source>
+                <target>Debtor</target>
+            </trans-unit>
+            <trans-unit id="602">
+                <source>billing.creditor</source>
+                <target>Creditor</target>
+            </trans-unit>
+            <trans-unit id="603">
+                <source>billing.amount</source>
+                <target>Amount</target>
+            </trans-unit>
+            <trans-unit id="604">
+                <source>billing.paid</source>
+                <target>Paid</target>
+            </trans-unit>
+            <trans-unit id="605">
+                <source>billing.openAmounts</source>
+                <target>Open Amounts</target>
+            </trans-unit>
+            
+            
+            <trans-unit id="620">
+                 <source>billings.loading</source>
+                <target>Loading billings...</target>
+            </trans-unit>
+            <trans-unit id="621">
+                <source>billings.noBillings</source>
+                <target>No month is closed for the given year yet.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
