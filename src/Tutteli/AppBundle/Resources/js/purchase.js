@@ -43,10 +43,10 @@ function parseDateIfNecessary(date) {
 }
 
 // needs to be outside of APurchaseController otherwise it is always a different function 
-// and is thus registered multiple times
+// and thus is registered multiple times
 function ShiftPlusKeyEventListener(event) {
     //SHIFT & +
-    if (event.shiftKey && event.keyCode == 43) {
+    if (event.shiftKey && event.keyCode == 107) {
         event.preventDefault();
         document.getElementById('purchase_add').click();
     }
@@ -146,9 +146,9 @@ function APurchaseController(
     self.loadCategories();
     self.loadUsers();
     document.getElementById('purchase_add').style.display = 'inline';
-    window.addEventListener('keypress', ShiftPlusKeyEventListener);
+    window.addEventListener('keydown', ShiftPlusKeyEventListener);
     $scope.$on("$destroy", function() {
-       window.removeEventListener('keypress', ShiftPlusKeyEventListener); 
+       window.removeEventListener('keydown', ShiftPlusKeyEventListener); 
     });
 }
 
