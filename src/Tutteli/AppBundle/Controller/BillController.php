@@ -10,57 +10,57 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-class BillingController extends AEntityController {
+class BillController extends AEntityController {
     protected function getCsrfTokenDomain() {
-        return 'billing';
+        return 'bill';
     }
     
     protected function getSingularEntityName() {
-        return 'billing';
+        return 'bill';
     }
     
     protected function getPluralEntityName() {
-        return 'billings';
+        return 'bills';
     }
     
     protected function getRepository() {
-        return $this->getDoctrine()->getRepository('TutteliAppBundle:Billing');
+        return $this->getDoctrine()->getRepository('TutteliAppBundle:Bill');
     }
     
-    protected function getJson($billing) {
-        /*@var $billing \Tutteli\AppBundle\Entity\Billing */
+    protected function getJson($bill) {
+        /*@var $bill \Tutteli\AppBundle\Entity\Bill */
         return  '{'
-                .'"id": "'.$billing->getId().'"'
-                .',"month": "'.$this->getFormattedDate($billing->getMonth()).'"'
+                .'"id": "'.$bill->getId().'"'
+                .',"month": "'.$this->getFormattedDate($bill->getMonth()).'"'
                  .'"debtor":"'
                     .'{'
-                    .'"id":"'.$billing->getUserDebtor()->getId().'"'
-                    .',"username": "'.$billing->getUserDebtor()->getUsername().'"'
+                    .'"id":"'.$bill->getUserDebtor()->getId().'"'
+                    .',"username": "'.$bill->getUserDebtor()->getUsername().'"'
                     .'}'
                 .'"creditor":"'
                     .'{'
-                    .'"id":"'.$billing->getUserCreditor()->getId().'"'
-                    .',"username": "'.$billing->getUserCreditor()->getUsername().'"'
+                    .'"id":"'.$bill->getUserCreditor()->getId().'"'
+                    .',"username": "'.$bill->getUserCreditor()->getUsername().'"'
                     .'}'
-                .'"amount":"'.$billing->getAmount().'"'
-                .'"isPayed":"'.$billing->isPayed() ? '1':'0'.'"'
-                .$this->getMetaJsonRows($billing)
+                .'"amount":"'.$bill->getAmount().'"'
+                .'"isPayed":"'.$bill->isPayed() ? '1':'0'.'"'
+                .$this->getMetaJsonRows($bill)
                 .'}';
     }
     
     public function currentYearAction() {
         return new RedirectResponse($this->container->get('router')->generate(
-                'billing_year',
+                'bills_year',
                 ['year' => date('Y')],
                 UrlGeneratorInterface::ABSOLUTE_URL));
     }
     
-    public function billingTplAction(Request $request) {
-        return $this->getHtmlForEntities($request, '.tpl', 'billing', null);
+    public function yearTplAction(Request $request) {
+        return $this->getHtmlForEntities($request, '.tpl', 'bill', null);
     }
     
     public function yearJsonAction(Request $request, $year) {
-        /*@var $repository \Tutteli\AppBundle\Entity\BillingRepository */
+        /*@var $repository \Tutteli\AppBundle\Entity\BillRepository */
         $repository = $this->getRepository();
         return $this->getJsonForEntities($request,
                 function() use($repository, $year) {
@@ -72,19 +72,19 @@ class BillingController extends AEntityController {
     }
     
     public function yearAction(Request $request, $year, $ending) {
-        return $this->getHtmlForEntities($request, $ending, 'billing', function() use($year) {
+        return $this->getHtmlForEntities($request, $ending, 'bill', function() use($year) {
             $repository = $this->getRepository();
             return $repository->getForYear($year);
         }, ['year' => $year]);
     }
     
 
-    public function getJsonAction($billingId) {
-        return $this->getJsonForEntityAction($billingId);
+    public function getJsonAction($billId) {
+        return $this->getJsonForEntityAction($billId);
     }
     
-    public function editAction(Request $request, $billingId, $ending) {
-        return $this->editEntityAction($request, $billingId, $ending);
+    public function editAction(Request $request, $billId, $ending) {
+        return $this->editEntityAction($request, $billId, $ending);
     }
     
     public function postAction(Request $request) {

@@ -8,14 +8,14 @@
 
 namespace Tutteli\AppBundle\Entity;
 
-class BillingRepository extends ARepository
+class BillRepository extends ARepository
 {
     protected function getEntityIdentifier() {
-        return 'TutteliAppBundle:Billing';
+        return 'TutteliAppBundle:Bill';
     }
     
     public function getLastUpdatedForYear($year) {
-        $result = $this->createQueryBuilderBillingsForYear($year)
+        $result = $this->createQueryBuilderBillsForYear($year)
         ->orderBy('b.updatedAt', 'DESC')
         ->getQuery()
         ->setMaxResults(1)
@@ -29,7 +29,7 @@ class BillingRepository extends ARepository
     /**
      * @return \Doctrine\ORM\QueryBuilder
      */
-    private function createQueryBuilderBillingsForYear($year) {
+    private function createQueryBuilderBillsForYear($year) {
         $from = new \DateTime($year.'-01-01T00:00:00');
         $to = new \DateTime($year.'-01-01T00:00:00');
         $to->add(new \DateInterval('P1Y'));
@@ -45,7 +45,7 @@ class BillingRepository extends ARepository
     }
     
     public function getForYear($year) {
-        return $this->createQueryBuilderBillingsForYear($year)
+        return $this->createQueryBuilderBillsForYear($year)
         ->orderBy('b.month', 'DESC')
         ->getQuery()
         ->getResult();

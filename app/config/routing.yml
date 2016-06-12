@@ -89,24 +89,24 @@ put_purchase:
     methods: [PUT]    
     
     
-billing_currentYear:
-    path:   /accounting/billing
-    defaults: { _controller: "TutteliAppBundle:Billing:currentYear"}
+bills_currentYear:
+    path:   /accounting/bills
+    defaults: { _controller: "TutteliAppBundle:Bill:currentYear"}
     methods: [GET]
 
-billing_yearTpl:
-    path:   /accounting/billing.tpl
-    defaults: { _controller: "TutteliAppBundle:Billing:yearTpl"}
+bills_yearTpl:
+    path:   /accounting/bills.tpl
+    defaults: { _controller: "TutteliAppBundle:Bill:yearTpl"}
     methods: [GET]
 
-billing_year_json:
-    path:   /accounting/billing-{year}.json
-    defaults: { _controller: "TutteliAppBundle:Billing:yearJson" }
+bills_year_json:
+    path:   /accounting/bills-{year}.json
+    defaults: { _controller: "TutteliAppBundle:Bill:yearJson" }
     methods: [GET]
 
-billing_year:
-    path:   /accounting/billing-{year}{ending}
-    defaults: { _controller: "TutteliAppBundle:Billing:year", ending: ""}
+bills_year:
+    path:   /accounting/bills-{year}{ending}
+    defaults: { _controller: "TutteliAppBundle:Bill:year", ending: ""}
     methods: [GET]
 
 

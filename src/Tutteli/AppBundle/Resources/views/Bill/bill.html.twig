@@ -1,0 +1,142 @@
+{#
+ * This file is part of the project tutteli/purchase published under the Apache License 2.0
+ * For the full copyright and license information, please have a look at LICENSE in the
+ * root folder or visit https://github.com/robstoll/purchase
+ #}
+ {% extends notXhr ? 'TutteliAppBundle::layout.html.twig' : 'xhr.twig' %}
+
+{% block title %} {{ 'nav.accounting.bills_year'|trans }} | {{ parent() }}{% endblock %}
+
+
+{% block content %}
+    {% if notXhr %}
+    <div ui-view></div>
+    	<div pre-work="accounting/bills.tpl">
+    {%  endif %}
+    	<div class="overview bill">
+			<div class="openAmounts">{{ 'bill.openAmounts' | trans }} <span ng-bind="billsCtrl.chosenYear"></span></div>
+			<table>
+				<tr ng-repeat="openAmount in billsCtrl.openAmounts | orderBy: 'openAmount.debtor.username': 'false'">
+					<td ng-bind="openAmount.debtor.username"></td>
+					<td class="arrow"></td>
+					<td ng-bind="openAmount.creditor.username"></td>
+					<td ng-bind="openAmount.amount | currency : 'CHF ' : 2"></td>
+					<td><a href="#" ui-sref="create_payment({debtorId: openAmount.debtor.id, creditorId: openAmount.creditor.id, amount: openAmount.amount})"><i class="glyphicon glyphicon-pencil"></i></a></td>		
+				</tr>
+			</table>
+			<div class="hidden" ng-class="{'showBlock': !billsCtrl.openAmounts}">There aren't any outstanding amounts at the moment.</div>
+		</div>
+    
+    	{% set json = '' %}
+    	<table class="table table-striped">
+    		<thead>
+    			<tr>
+    				<th>#</th>
+    				<th>{{ 'bill.month'|trans }}</th>
+    				<th>{{ 'bill.debtor'|trans }}</th>
+    				<th>{{ 'bill.creditor'|trans }}</th>
+    				<th>{{ 'bill.amount'|trans }}</th>
+    				<th>{{ 'bill.paid'|trans }}</th>
+				</tr>
+    		</thead>
+    		<tbody id="bills_rows" class="hidden">
+            	<tr ng-repeat="bill in billsCtrl.bills | orderBy: 'purchaseDate':true">
+            		<td ng-bind="bill.id"></td>
+            		<td ng-bind="bill.month | date('mm')"></td>
+            		<td ng-bind="bill.debtor.username"></td>
+            		<td ng-bind="bill.creditor.username"></td>
+            		<td ng-bind="bill.amount | number : 2"></td>
+            		<td><a href="#" ui-sref="create_payment({debtorId: bill.debtor.id, creditorId: bill.creditor.id, amount: bill.amount})"><i class="glyphicon glyphicon-pencil"></i></a></td>
+        		</tr>
+            </tbody> 
+            {% if entities %}
+            	<!-- pre-work-exclude-start -->
+            	<tbody id="bills_rows_preload">
+            	{% set updatedAt = date('0000-00-00') %}
+            	{% set updatedBy = {username:''} %}
+                {% for bill in entities %}
+                	{% if (updatedAt < bill.updatedAt) %}
+                		{% set updatedAt = bill.updatedAt %}
+                		{% set updatedBy = bill.updatedBy %}
+                	{% endif %}
+                    {% if not json == '' %}
+                		{% set json = json ~ ',' %}
+                	{% endif %}
+            	    {% set month = bill.month|date('general.dateFormat.php'|trans) %}
+                	{% set json = json ~ '{' 
+                	    ~ '"id":"' ~ bill.id ~ '",'
+                	    ~ '"month":"' ~ month ~'",' 
+                	    ~ '"debtor":'
+                	        ~ '{' 
+                	        ~ '"id":"' ~ bill.debtor.id ~ '",'
+                	        ~ '"username":"' ~ bill.debtor.username ~ '"'
+                	        ~ '},'
+                	    ~ '"creditor":'
+                	        ~ '{' 
+                	        ~ '"id":"' ~ bill.creditor.id ~ '",'
+                	        ~ '"username":"' ~ bill.creditor.username ~ '"'
+                	        ~ '},'
+                	    ~ '"amount":"' ~ bill.amount|number_format(2, '.') ~ '",'
+                	    ~ '"isPaid":"' ~ (bill.isPaid ? '1' : '0') ~ '"' 
+                	    ~ '}' 
+            	    %}
+        			<tr>
+        				<td>{{ bill.id }} </td>
+        				<td>{{ month }}</td>
+        				<td>{{ bill.debtor.username }}
+        				<td>{{ bill.creditor.username }}
+        				<td>{{ bill.amount | number_format(2, '.') }}</td>
+        				<td>{{ bill.isPaid ? '0' : '1' }}
+        				<td><a href="{{ path('create_payment', {'debtorId': bill.debtor.id, 'creditorId': bill.creditor.id, 'amount': bill.amount}) }}"><i class="glyphicon glyphicon-pencil"></i></a></td>
+        			</tr>
+        		{% endfor %}	
+        		</tbody>
+        		<!-- pre-work-exclude-end -->
+        	{% endif %}
+		</table>
+        {% include 'TutteliAppBundle:tpl:tableBottom.html.twig' 
+            with {
+            	'notXhr': notXhr, 
+            	'json': json,
+            	'name': 'bills', 
+            	'nothingFound': 'bills.noBills',
+            } only %}
+    
+        <footer class="footer">
+			<div class="row">
+				<div class="col-xs-6">
+				</div>
+      			<div class="col-xs-6">
+                  <select class="form-control" id="chosenYear" ng-model="billsCtrl.chosenYear" ng-change="billsCtrl.changeState()">
+                  	<option>2015</option>
+                  	<option>2016</option>
+                  	<option>2017</option>
+                  	<option>2018</option>
+                  	<option>2019</option>
+                  	<option>2020</option>
+                  </select>
+				</div>                  
+          	</div>
+        </footer> 
+        
+    {% if notXhr %}
+        </div>
+        
+        {% if entities %}
+            {%  include 'TutteliAppBundle:tpl:updateBlock.js.twig' 
+                with {
+                	'controllerName': 'billsCtrl',
+                    'updatedAt': updatedAt, 
+                    'updatedBy': updatedBy
+                } only %}             	
+        {% endif %}
+        
+        <script type="text/javascript">
+        	document.getElementById('bills_load').style.display = 'none';
+            {% if not entities %}
+            	document.getElementById('bills_nothingFound').style.display = 'block';	
+			{% endif %}
+			document.getElementById('chosenYear').value =  '{{ year }}';
+		</script>
+    {%  endif %}
+{% endblock %}

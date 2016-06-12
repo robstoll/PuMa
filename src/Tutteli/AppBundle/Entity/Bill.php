@@ -12,10 +12,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Table(name="billing")
- * @ORM\Entity(repositoryClass="Tutteli\AppBundle\Entity\BillingRepository")
+ * @ORM\Table(name="bill")
+ * @ORM\Entity(repositoryClass="Tutteli\AppBundle\Entity\BillRepository")
  */
-class Billing 
+class Bill 
 {
     /**
      * @ORM\Column(type="integer")
@@ -86,7 +86,7 @@ class Billing
      *
      * @param binary $amount
      *
-     * @return BillingPosition
+     * @return Bill
      */
     public function setAmount($amount)
     {
@@ -110,7 +110,7 @@ class Billing
      *
      * @param \DateTime $month
      *
-     * @return Billing
+     * @return Bill
      */
     public function setMonth($month)
     {
@@ -134,7 +134,7 @@ class Billing
      *
      * @param boolean $payed
      *
-     * @return BillingPosition
+     * @return Bill
      */
     public function setPayed($payed)
     {
@@ -160,7 +160,7 @@ class Billing
      *
      * @param \Tutteli\AppBundle\Entity\User $userDebtor
      *
-     * @return BillingPosition
+     * @return Bill
      */
     public function setUserDebtor(\Tutteli\AppBundle\Entity\User $userDebtor)
     {
@@ -184,7 +184,7 @@ class Billing
      *
      * @param \Tutteli\AppBundle\Entity\User $userCreditor
      *
-     * @return BillingPosition
+     * @return Bill
      */
     public function setUserCreditor(\Tutteli\AppBundle\Entity\User $userCreditor)
     {
@@ -208,7 +208,7 @@ class Billing
      *
      * @param \DateTime $updatedAt
      *
-     * @return Billing
+     * @return Bill
      */
     public function setUpdatedAt($updatedAt)
     {
@@ -233,7 +233,7 @@ class Billing
      *
      * @param \Tutteli\AppBundle\Entity\User $updatedBy
      *
-     * @return Billing
+     * @return Bill
      */
     public function setUpdatedBy(\Tutteli\AppBundle\Entity\User $updatedBy)
     {

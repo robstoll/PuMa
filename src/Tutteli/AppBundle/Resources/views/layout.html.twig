@@ -54,7 +54,7 @@
                     <li class="dropdown">
                     	<a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ 'nav.accounting'|trans }} <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                    		<li><a ui-sref="billing_currentYear" href="{{ path('billing_currentYear') }}" >{{ 'nav.accounting.billing_year'|trans }}</a></li>
+                    		<li><a ui-sref="bills_currentYear" href="{{ path('bills_currentYear') }}" >{{ 'nav.accounting.bills_year'|trans }}</a></li>
                         </ul>
                     </li>
                     <li class="dropdown{% if app.user == null or not is_granted('ROLE_ADMIN') %} hidden {% endif %}" ng-class="naviCtrl.isAdmin() ? 'showList' : 'hidden'">

@@ -153,16 +153,16 @@ angular.module('tutteli.purchase.routing', [
         }
     })
     
-    .state('billings_currentYear', {
-        url: '/accounting/billing',
-        redirectTo: 'billing_year',
+    .state('bills_currentYear', {
+        url: '/accounting/bills',
+        redirectTo: 'bills_year',
         redirectParams:  {year: getCurrentYear()}    
     })
-    .state('billings_year', {
-        url: '/accounting/billing-:year',
-        controller: 'tutteli.purchase.BillingsController',
-        controllerAs: 'billingsCtrl',
-        templateUrl: 'accounting/billing.tpl',
+    .state('bills_year', {
+        url: '/accounting/bills-:year',
+        controller: 'tutteli.purchase.BillsController',
+        controllerAs: 'billsCtrl',
+        templateUrl: 'accounting/bills.tpl',
         data: {
             authRoles: [USER_ROLES.authenticated]
         }
@@ -200,7 +200,7 @@ angular.module('tutteli.purchase.routing', [
     put_user: 'users/:userId',
     put_user_password: 'users/:userId/change-password',
     put_reset_user_password: 'users/:userId/reset-password',
-    get_billings_year_json: 'accounting/billing-:year.json',
+    get_bills_year_json: 'accounting/bills-:year.json',
 });
 
 })();
