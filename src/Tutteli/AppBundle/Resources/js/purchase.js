@@ -502,13 +502,16 @@ PurchasesMonthController.$inject = [
     '$state',
     '$stateParams',
     'tutteli.purchase.PurchaseService',
+    'tutteli.purchase.UserService',
+    '$filter',
     'tutteli.helpers.InitHelper'];
-function PurchasesMonthController($state, $stateParams, PurchaseService, InitHelper) {
+function PurchasesMonthController($state, $stateParams, PurchaseService, UserService, $filter, InitHelper) {
     var self = this;
     
     this.purchases = null;
     this.usersTotal = null;
     this.monthTotal = 0;
+    this.numberOfUsers = -1;
     
     this.initPurchases = function(data) {
         InitHelper.initTableData('purchases', self, data);
@@ -555,6 +558,11 @@ function PurchasesMonthController($state, $stateParams, PurchaseService, InitHel
        self.chosenMonth = $stateParams.month;
        self.chosenYear =  $stateParams.year;
     }
+    
+    UserService.getUsers().then(function(users) {
+        var filteredUsers = $filter('filter')(users.users, {isReal:'1'}, true);
+        self.numberOfUsers = filteredUsers.length;
+    });
 }
 
 PurchaseService.$inject = ['$http', '$q', '$timeout', 'tutteli.purchase.ROUTES', 'tutteli.helpers.ServiceHelper'];

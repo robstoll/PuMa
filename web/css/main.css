@@ -81,6 +81,9 @@ hr {
 .hidden.showList {
     display: list-item !important;
 }
+.hidden.showInline {
+	display: inline !important;
+}
 
 .calc {
 	display:none;
@@ -163,9 +166,6 @@ div.monthTotal {
 	margin-top:5px;
 	border-top: 1px solid black;
 	padding-top: 5px;
-}
-
-span.monthTotal {
 	font-weight: bold;
 }
 

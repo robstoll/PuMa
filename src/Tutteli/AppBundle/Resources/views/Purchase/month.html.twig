@@ -21,7 +21,14 @@
 			</div>
 			<div class="monthTotal">
     			<label>{{ 'month.totalMonth'|trans }} <span ng-bind="purchasesCtrl.chosenMonth"></span>-<span ng-bind="purchasesCtrl.chosenYear"></span></label>
-    			<span class="monthTotal pull-right" ng-bind="purchasesCtrl.monthTotal | currency : 'CHF ' : 2"></span>
+    			<div class="pull-right">
+    				<span ng-bind="purchasesCtrl.monthTotal | currency : 'CHF ' : 2"></span> 
+    				<span class="hidden" ng-class="{showInline: purchasesCtrl.numberOfUsers > 1}">
+    					<span ng-bind="'/ ' + purchasesCtrl.numberOfUsers"></span> 
+    					<span ng-bind="'= ' + ((purchasesCtrl.monthTotal / purchasesCtrl.numberOfUsers) | number : 2)"></span>
+    					<span>{{ 'month.totalPerPerson'|trans }}</span>
+    				</span>
+				</div>    				
     			<div class="clear"></div>
 			</div>
 		</div>

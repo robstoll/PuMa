@@ -285,6 +285,10 @@
                 <source>month.totalMonth</source>
                 <target>All Expenses for</target>
             </trans-unit>
+             <trans-unit id="505">
+                <source>month.totalPerPerson</source>
+                <target>each</target>
+            </trans-unit>
             
            <trans-unit id="600">
                 <source>billing.month</source>
