@@ -23,6 +23,17 @@ hr {
 
 .waiting *{ cursor: wait !important; }
 
+#headerLink {
+	background-image: url(../images/grey_puma.png);
+    background-repeat: no-repeat;
+    padding-left: 50px;
+    background-position-y: 5px;
+}
+
+#headerLink:hover {
+	background-image: url(../images/white_puma.png);
+}
+
 #loader {
 	visibility: hidden;
     background-image: url(../images/loader.gif);
