@@ -1,6 +1,6 @@
 # PuMa
 
-_Pu_rchase _Ma_nager is a small PHP application (based on symfony) to manage purchases among multiple persons. Perfectly suited for shared flats and collective shopping (or e.g., to account electricity bills).
+**Pu**rchase **Ma**nager is a small PHP application (based on symfony) to manage purchases among multiple persons. Perfectly suited for shared flats and collective shopping (or e.g., to account electricity bills).
 Requires PHP 5.4 and a MySQL database.
 
 <br/>
