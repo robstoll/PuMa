@@ -8,10 +8,10 @@ imports:
     - { resource: config.yml }
 
 assetic:
-    read_from: "%kernel.root_dir%/../../../httpdocs/purchase/"
+    read_from: "%kernel.root_dir%/../../../httpdocs/puma/"
 
 parameters:
-    baseUrl: '/purchase/'   
+    baseUrl: '/puma/'   
 
 #framework:
 #    validation:

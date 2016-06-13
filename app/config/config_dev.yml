@@ -8,7 +8,7 @@ imports:
     - { resource: config.yml }
 
 parameters:
-    baseUrl: '/tutteli.ch/purchase/web/app_dev.php/'       
+    baseUrl: '/tutteli.ch/puma/web/app_dev.php/'       
 
 framework:
     router:

@@ -11,4 +11,4 @@ assetic:
     read_from: "%kernel.root_dir%/../web/"
 
 parameters:
-    baseUrl: '/tutteli.ch/purchase/web/'       
+    baseUrl: '/tutteli.ch/puma/web/'       

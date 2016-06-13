@@ -60,7 +60,7 @@
             
             <trans-unit id="100">
                 <source>nav.purchase</source>
-                <target>Purchase</target>
+                <target>PuMa</target>
             </trans-unit>
             <trans-unit id="101">
                 <source>nav.home</source>
@@ -92,11 +92,11 @@
             </trans-unit>
              <trans-unit id="123">
                 <source>nav.views</source>
-                <target>Views</target>
+                <target>Purchase</target>
             </trans-unit>
             <trans-unit id="124">
                 <source>nav.views.new_purchase</source>
-                <target>Add Purchase</target>
+                <target>Add a Purchase</target>
             </trans-unit>
             <trans-unit id="125">
                 <source>nav.views.purchases_month</source>
@@ -107,8 +107,8 @@
                 <target>Accounting</target>
             </trans-unit>
             <trans-unit id="127">
-                <source>nav.accounting.billing_year</source>
-                <target>Billing per Year</target>
+                <source>nav.accounting.bills_year</source>
+                <target>Bills per Year</target>
             </trans-unit>
             
             
@@ -285,43 +285,48 @@
                 <source>month.totalMonth</source>
                 <target>All Expenses for</target>
             </trans-unit>
-             <trans-unit id="505">
+            <trans-unit id="505">
                 <source>month.totalPerPerson</source>
                 <target>each</target>
             </trans-unit>
+            <trans-unit id="506">
+                <source>month.terminateMonth</source>
+                <target>Terminate Month</target>
+            </trans-unit>
+            
             
            <trans-unit id="600">
-                <source>billing.month</source>
+                <source>bill.month</source>
                 <target>Month</target>
             </trans-unit>
             <trans-unit id="601">
-                <source>billing.debtor</source>
+                <source>bill.debtor</source>
                 <target>Debtor</target>
             </trans-unit>
             <trans-unit id="602">
-                <source>billing.creditor</source>
+                <source>bill.creditor</source>
                 <target>Creditor</target>
             </trans-unit>
             <trans-unit id="603">
-                <source>billing.amount</source>
+                <source>bill.amount</source>
                 <target>Amount</target>
             </trans-unit>
             <trans-unit id="604">
-                <source>billing.paid</source>
+                <source>bill.paid</source>
                 <target>Paid</target>
             </trans-unit>
             <trans-unit id="605">
-                <source>billing.openAmounts</source>
+                <source>bill.openAmounts</source>
                 <target>Open Amounts</target>
             </trans-unit>
             
             
             <trans-unit id="620">
-                 <source>billings.loading</source>
-                <target>Loading billings...</target>
+                 <source>bills.loading</source>
+                <target>Loading bills...</target>
             </trans-unit>
             <trans-unit id="621">
-                <source>billings.noBillings</source>
+                <source>bills.noBills</source>
                 <target>No month is closed for the given year yet.</target>
             </trans-unit>
         </body>

@@ -37,6 +37,8 @@ framework:
     fragments:       ~
     http_method_override: true
     translator: { fallbacks: [en] }
+    assets:
+        version: 'v0.0.2'
 
 # Twig Configuration
 twig:
