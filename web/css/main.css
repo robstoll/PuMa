@@ -27,6 +27,7 @@ hr {
 	background-image: url(../images/grey_puma.png);
     background-repeat: no-repeat;
     padding-left: 50px;
+    background-position-x: 5px;
     background-position-y: 5px;
 }
 
