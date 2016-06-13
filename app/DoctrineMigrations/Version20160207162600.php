@@ -30,7 +30,7 @@ class Version20160207162600 extends AbstractMigration implements ContainerAwareI
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
         
-        $password = 'tutteli-purchase';
+        $password = 'tutteli-puma';
         $hash = password_hash($password, PASSWORD_BCRYPT);
         
         $salt = base64_decode($this->container->getParameter('salt_key'));

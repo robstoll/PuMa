@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of the project tutteli/purchase published under the Apache License 2.0
+ * This file is part of the project tutteli/puma published under the Apache License 2.0
  * For the full copyright and license information, please have a look at LICENSE in the
- * root folder or visit https://github.com/robstoll/purchase
+ * root folder or visit https://github.com/robstoll/PuMa
  */
 namespace Tutteli\AppBundle\Handler;
 
@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 class AuthSuccessHandler extends DefaultAuthenticationSuccessHandler 
 {
     const PAGE_BEFORE_LOGIN = '_security.secured_area.target_path';
-    const SESSION_KEY_DATA_KEY = '_tutteli.purchase.dataKey';
+    const SESSION_KEY_DATA_KEY = '_tutteli.puma.dataKey';
     private $saltKey;
     
     public function __construct($saltKey, HttpUtils $httpUtils, array $options) {

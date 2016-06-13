@@ -59,7 +59,7 @@
             
             
             <trans-unit id="100">
-                <source>nav.purchase</source>
+                <source>nav.puma</source>
                 <target>PuMa</target>
             </trans-unit>
             <trans-unit id="101">

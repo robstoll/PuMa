@@ -1,29 +1,29 @@
 /* 
- * This file is part of the project tutteli-purchase published under the Apache License 2.0
+ * This file is part of the project tutteli-puma published under the Apache License 2.0
  * For the full copyright and license information, please have a look at LICENSE in the
- * root folder or visit https://github.com/robstoll/purchase
+ * root folder or visit https://github.com/robstoll/PuMa
  */
 (function(){
 'use strict';
 
-angular.module('tutteli.purchase.core', [
-    'tutteli.purchase.routing', 
+angular.module('tutteli.puma.core', [
+    'tutteli.puma.routing', 
     'tutteli.preWork',
     'tutteli.alert',
     'tutteli.csrf',
-    'tutteli.purchase.category',
-    'tutteli.purchase.user',
+    'tutteli.puma.category',
+    'tutteli.puma.user',
     'tutteli.helpers',
     'tutteli.utils',
     'ui.bootstrap',
 ])
-    .controller('tutteli.purchase.NewPurchaseController', NewPurchaseController)
-    .controller('tutteli.purchase.EditPurchaseController', EditPurchaseController)
-    .controller('tutteli.purchase.PurchasesMonthController', PurchasesMonthController)
-    .service('tutteli.purchase.PurchaseService', PurchaseService)
-    .service('tutteli.purchase.LoaderFactory', LoaderFactory)
-    .service('tutteli.purchase.PositionManagerFactory', PositionManagerFactory)
-    .constant('tutteli.purchase.PurchaseService.alertId', 'tutteli-ctrls-Purchase');
+    .controller('tutteli.puma.NewPurchaseController', NewPurchaseController)
+    .controller('tutteli.puma.EditPurchaseController', EditPurchaseController)
+    .controller('tutteli.puma.PurchasesMonthController', PurchasesMonthController)
+    .service('tutteli.puma.PurchaseService', PurchaseService)
+    .service('tutteli.puma.LoaderFactory', LoaderFactory)
+    .service('tutteli.puma.PositionManagerFactory', PositionManagerFactory)
+    .constant('tutteli.puma.PurchaseService.alertId', 'tutteli-ctrls-Purchase');
 
 function parseDateIfNecessary(date) {
     //necessary since ui.datePicker does not use the format specified during initialisation (month and day are switched)
@@ -48,7 +48,7 @@ function ShiftPlusKeyEventListener(event) {
     //SHIFT & +
     if (event.shiftKey && event.keyCode == 107) {
         event.preventDefault();
-        document.getElementById('purchase_add').click();
+        document.getElementById('puma_add').click();
     }
 }
 
@@ -77,7 +77,7 @@ function APurchaseController(
     var usersLoader = LoaderFactory.buildUsersLoader(self);
     
     
-    this.formHelper = FormHelperFactory.build(self, ROUTES.get_purchase_csrf);
+    this.formHelper = FormHelperFactory.build(self, ROUTES.get_puma_csrf);
     this.dt = new Date();
     this.datePicker = new DatePicker(this);
     this.positionManager = PositionManagerFactory.build();
@@ -145,7 +145,7 @@ function APurchaseController(
 
     self.loadCategories();
     self.loadUsers();
-    document.getElementById('purchase_add').style.display = 'inline';
+    document.getElementById('puma_add').style.display = 'inline';
     window.addEventListener('keydown', ShiftPlusKeyEventListener);
     $scope.$on("$destroy", function() {
        window.removeEventListener('keydown', ShiftPlusKeyEventListener); 
@@ -156,12 +156,12 @@ NewPurchaseController.$inject = [
     'tutteli.auth.Session',
     '$scope',
     'uibDateParser',
-    'tutteli.purchase.ROUTES',
+    'tutteli.puma.ROUTES',
     'tutteli.PreWork',
-    'tutteli.purchase.PurchaseService',
-    'tutteli.purchase.PurchaseService.alertId',
-    'tutteli.purchase.LoaderFactory',
-    'tutteli.purchase.PositionManagerFactory',
+    'tutteli.puma.PurchaseService',
+    'tutteli.puma.PurchaseService.alertId',
+    'tutteli.puma.LoaderFactory',
+    'tutteli.puma.PositionManagerFactory',
     'tutteli.helpers.FormHelperFactory'];
 tutteliExtends(NewPurchaseController, APurchaseController);
 function NewPurchaseController(
@@ -180,24 +180,24 @@ function NewPurchaseController(
    
     this.createPurchase = function($event) {
         self.startSaving();
-        var purchase = {
+        var puma = {
             userId : self.user,
             dt : self.dt,
             positions :  self.positionManager.positions,
             csrf_token : self.csrf_token
         };
-        self.formHelper.create($event, alertId, purchase, 'Purchase', null, PurchaseService).then(self.endSaving, self.endSaving);
+        self.formHelper.create($event, alertId, puma, 'Purchase', null, PurchaseService).then(self.endSaving, self.endSaving);
     };
 
     // -------------------
 
     self.positionManager.addPosition();
     var position = {};
-    if (PreWork.merge('purchases/new.tpl', position, 'position')) {
+    if (PreWork.merge('pumas/new.tpl', position, 'position')) {
         self.positionManager.positions[0].expression = position.expression;
         self.positionManager.positions[0].notice = position.notice;
     }
-    PreWork.merge('purchases/new.tpl', this, 'purchaseCtrl');
+    PreWork.merge('pumas/new.tpl', this, 'pumaCtrl');
     self.parseDateIfNecessary();
     if (Session.user.isReal) {
         self.user = Session.user.id;
@@ -211,12 +211,12 @@ EditPurchaseController.$inject = [
   '$stateParams',
   '$scope',
   'uibDateParser',
-  'tutteli.purchase.ROUTES',
+  'tutteli.puma.ROUTES',
   'tutteli.PreWork',
-  'tutteli.purchase.PurchaseService',
-  'tutteli.purchase.EditCategoryController.alertId',
-  'tutteli.purchase.LoaderFactory',
-  'tutteli.purchase.PositionManagerFactory',
+  'tutteli.puma.PurchaseService',
+  'tutteli.puma.EditCategoryController.alertId',
+  'tutteli.puma.LoaderFactory',
+  'tutteli.puma.PositionManagerFactory',
   'tutteli.helpers.FormHelperFactory'];
 tutteliExtends(EditPurchaseController, APurchaseController);
 function EditPurchaseController(
@@ -234,17 +234,17 @@ function EditPurchaseController(
     var self = this;
     var isNotLoaded = true;
     
-    this.loadPurchase = function (purchaseId) {
-        PurchaseService.getPurchase(purchaseId).then(function(purchase) {
-            self.id = purchase.id;
-            self.dt = purchase.purchaseDate;
+    this.loadPurchase = function (pumaId) {
+        PurchaseService.getPurchase(pumaId).then(function(puma) {
+            self.id = puma.id;
+            self.dt = puma.pumaDate;
             self.parseDateIfNecessary();
-            self.user = purchase.user.id;
-            self.user_label = purchase.user.username;
+            self.user = puma.user.id;
+            self.user_label = puma.user.username;
             self.preInitUsers();
-            self.updatedAt = purchase.updatedAt;
-            self.updatedBy = purchase.updatedBy;
-            updatePositions(purchase.positions);
+            self.updatedAt = puma.updatedAt;
+            self.updatedBy = puma.updatedBy;
+            updatePositions(puma.positions);
             isNotLoaded = false;
             self.positionManager.focusFirstInput();
         });
@@ -257,16 +257,16 @@ function EditPurchaseController(
     
     this.updatePurchase = function($event) {
         self.startSaving();
-        var purchase = {
+        var puma = {
             id : self.id,
             userId : self.user,
             dt : self.dt,
             positions :  self.positionManager.positions,
             csrf_token : self.csrf_token
         };
-        var select = document.getElementById('purchase_user');
-        var identifier = purchase.dt.toLocaleDateString('de-ch') + ' - ' + select.options[select.selectedIndex].text;
-        self.formHelper.update($event, alertId, purchase, 'Purchase', identifier, PurchaseService).then(self.endSaving, self.endSaving);
+        var select = document.getElementById('puma_user');
+        var identifier = puma.dt.toLocaleDateString('de-ch') + ' - ' + select.options[select.selectedIndex].text;
+        self.formHelper.update($event, alertId, puma, 'Purchase', identifier, PurchaseService).then(self.endSaving, self.endSaving);
     };
    
     function updatePositions(positions) {
@@ -290,16 +290,16 @@ function EditPurchaseController(
     
     self.dt = "";
     var positions = {};
-    if (PreWork.merge('purchases/edit.tpl', positions, 'positions')) {
+    if (PreWork.merge('pumas/edit.tpl', positions, 'positions')) {
         updatePositions(positions);
     }
-    PreWork.merge('purchases/edit.tpl', this, 'purchaseCtrl');
+    PreWork.merge('pumas/edit.tpl', this, 'pumaCtrl');
     self.parseDateIfNecessary();
     self.preInitUsers();
     
     isNotLoaded = self.positionManager.positions.length == 0;
     if (isNotLoaded) {
-        self.loadPurchase($stateParams.purchaseId);
+        self.loadPurchase($stateParams.pumaId);
     }
 }
 
@@ -352,7 +352,7 @@ function PositionManager ($timeout, $parse, $filter) {
     
     this.focusFirstInput = function () {
         $timeout(function() {
-            focusOrScrollTo(document.getElementById('purchase_expression0'));
+            focusOrScrollTo(document.getElementById('puma_expression0'));
         }, 10);
     };
     
@@ -406,10 +406,10 @@ function closeAlertAndCall(alertId, methodName) {
 
 LoaderFactory.$inject = [
   '$q',
-  'tutteli.purchase.CategoryService',
-  'tutteli.purchase.UserService',
+  'tutteli.puma.CategoryService',
+  'tutteli.puma.UserService',
   'tutteli.alert.AlertService',
-  'tutteli.purchase.PurchaseService.alertId'];
+  'tutteli.puma.PurchaseService.alertId'];
 function LoaderFactory($q, CategoryService, UserService, AlertService, alertId) {
     
     this.buildCategoriesLoader = function (controller) {
@@ -428,7 +428,7 @@ function CategoriesLoader($q, CategoryService, AlertService, alertId, controller
             if (data.categories.length == 0) {
                 var alertIdCategories = alertId + '-categories';
                 AlertService.add(alertIdCategories,
-                        'No categories are defined yet, adding/updating purchases is not yet possible. '
+                        'No categories are defined yet, adding/updating pumas is not yet possible. '
                         + 'Please inform your administrator. '
                         + '<a '+ closeAlertAndCall(alertIdCategories, 'loadCategories') + '>'
                             + 'Click then here once the categories have been created'
@@ -438,10 +438,10 @@ function CategoriesLoader($q, CategoryService, AlertService, alertId, controller
             return $q.resolve(data);
         }, function(errorResponse) {
             var alertIdUsers = alertId + '-users';
-            var reportId = '_purchase_categories_report';
+            var reportId = '_puma_categories_report';
             var report = AlertService.getHttpErrorReport(errorResponse);
             if (errorResponse.status == 404) {
-                var msg = 'Categories could not been loaded, adding/updating purchases is thus not possible at the moment. '
+                var msg = 'Categories could not been loaded, adding/updating pumas is thus not possible at the moment. '
                         + 'Please verify you have internet connection and '
                         + '<a ' + closeAlertAndCall(alertIdUsers, 'loadCategories') + '>'
                             + 'click here to load the categories again'
@@ -471,10 +471,10 @@ function UsersLoader($q, UserService, AlertService, alertId, controller) {
         return UserService.getUsers().then(null, function(errorResponse) {
             controller.disabled = true;
             var alertIdUsers = alertId + '-users';
-            var reportId = '_purchase_categories_report';
+            var reportId = '_puma_categories_report';
             var report = AlertService.getHttpErrorReport(errorResponse);
             if (errorResponse.status == 404) {
-                var msg = 'Users could not been loaded, gathering purchases is thus not possible at the moment. '
+                var msg = 'Users could not been loaded, gathering pumas is thus not possible at the moment. '
                         + 'Please verify you have internet connection and '
                         + '<a ' + closeAlertAndCall(alertIdUsers, 'loadUsers') + '>'
                             + 'click here to load the users again'
@@ -501,26 +501,26 @@ function UsersLoader($q, UserService, AlertService, alertId, controller) {
 PurchasesMonthController.$inject = [
     '$state',
     '$stateParams',
-    'tutteli.purchase.PurchaseService',
-    'tutteli.purchase.UserService',
+    'tutteli.puma.PurchaseService',
+    'tutteli.puma.UserService',
     '$filter',
     'tutteli.helpers.InitHelper'];
 function PurchasesMonthController($state, $stateParams, PurchaseService, UserService, $filter, InitHelper) {
     var self = this;
     
-    this.purchases = null;
+    this.pumas = null;
     this.usersTotal = null;
     this.monthTotal = 0;
     this.numberOfUsers = -1;
     
     this.initPurchases = function(data) {
-        InitHelper.initTableData('purchases', self, data);
+        InitHelper.initTableData('pumas', self, data);
         initUsersTotal();
     };
     
     function initUsersTotal() {
         var totals = getTotalPerUser();
-        if (self.purchases.length > 0) {
+        if (self.pumas.length > 0) {
             self.usersTotal = [];
             self.monthTotal = 0;
             for (var username in totals) {
@@ -533,25 +533,25 @@ function PurchasesMonthController($state, $stateParams, PurchaseService, UserSer
     
     function getTotalPerUser() {
         var totals = {};
-        for (var i = 0; i < self.purchases.length; ++i) {
-            var purchase = self.purchases[i];
-            var username = purchase.user.username;
+        for (var i = 0; i < self.pumas.length; ++i) {
+            var puma = self.pumas[i];
+            var username = puma.user.username;
             if (!totals[username]) {
                 totals[username] = 0;
             }
-            var total = parseFloat(purchase.total);
+            var total = parseFloat(puma.total);
             totals[username] += total;
         }
         return totals;
     }
     
     this.changeState = function() {
-        $state.transitionTo('purchases_monthAndYear', {month: self.chosenMonth, year: self.chosenYear});
+        $state.transitionTo('pumas_monthAndYear', {month: self.chosenMonth, year: self.chosenYear});
     };
     
     // ----------------
     
-    InitHelper.initTableBasedOnPreWork('purchases/month.tpl', 'purchases', this, function() {
+    InitHelper.initTableBasedOnPreWork('pumas/month.tpl', 'pumas', this, function() {
        return PurchaseService.getPurchases($stateParams.month, $stateParams.year);
     });
     if (!self.chosenMonth) {
@@ -565,65 +565,65 @@ function PurchasesMonthController($state, $stateParams, PurchaseService, UserSer
     });
 }
 
-PurchaseService.$inject = ['$http', '$q', '$timeout', 'tutteli.purchase.ROUTES', 'tutteli.helpers.ServiceHelper'];
+PurchaseService.$inject = ['$http', '$q', '$timeout', 'tutteli.puma.ROUTES', 'tutteli.helpers.ServiceHelper'];
 function PurchaseService($http, $q, $timeout, ROUTES, ServiceHelper) {
     
     this.getPurchases = function(month, year) {
-        var url = ROUTES.get_purchases_monthAndYear_json
+        var url = ROUTES.get_pumas_monthAndYear_json
             .replace(':month', month)
             .replace(':year', year);
-        return ServiceHelper.cget(url, 'purchases');
+        return ServiceHelper.cget(url, 'pumas');
     };
     
-    this.getPurchase = function(purchaseId) {
-        return ServiceHelper.get(ROUTES.get_purchase_json.replace(':purchaseId', purchaseId), 'purchase');
+    this.getPurchase = function(pumaId) {
+        return ServiceHelper.get(ROUTES.get_puma_json.replace(':pumaId', pumaId), 'puma');
     };
     
-    function validatePurchase(purchase) {
-        var errors = validateDate(purchase);
+    function validatePurchase(puma) {
+        var errors = validateDate(puma);
         var positionDtos = [];
-        errors += validateExpressions(purchase, positionDtos);
+        errors += validateExpressions(puma, positionDtos);
         return {errors: errors, positions: positionDtos};
     }
     
-    function validateDate(purchase) {
+    function validateDate(puma) {
         var errors = '';
         
-        var template = 'The <a href="#" onclick="document.getElementById(\'purchase_purchaseDate\').focus(); return false">'
-            + 'purchase date'
+        var template = 'The <a href="#" onclick="document.getElementById(\'puma_pumaDate\').focus(); return false">'
+            + 'puma date'
             + '</a> ';
         
-        if (!purchase.dt) {
-            var date = document.getElementById('purchase_purchaseDate').value;
+        if (!puma.dt) {
+            var date = document.getElementById('puma_pumaDate').value;
             try {
-                purchase.dt = parseDateIfNecessary(date);
+                puma.dt = parseDateIfNecessary(date);
             } catch(err) {
                 errors += template + 'was erroneous, check for mistakes like 30.02.2016<br/>';
-                purchase.dt = new Date();
+                puma.dt = new Date();
             }
         }
         var nowInAYear = new Date();
         nowInAYear.setFullYear(nowInAYear.getFullYear() + 1);
-        if (!(purchase.dt instanceof Date)) {
+        if (!(puma.dt instanceof Date)) {
             errors +=  template + 'is invalid, please enter a date in the format dd.mm.yyyy<br/>';
-        } else if(purchase.dt > nowInAYear) {
+        } else if(puma.dt > nowInAYear) {
             errors += template + 'cannot be more than one year in the future.<br/>';
         } else {
-            purchase.dt = purchase.dt.toLocaleDateString('de-ch');
+            puma.dt = puma.dt.toLocaleDateString('de-ch');
         }
         return errors;
     }
     
-    function validateExpressions(purchase, positionDtos) {
+    function validateExpressions(puma, positionDtos) {
         var errors = '';
-        for (var i = 0; i < purchase.positions.length; ++i) {
-            var position = purchase.positions[i];
+        for (var i = 0; i < puma.positions.length; ++i) {
+            var position = puma.positions[i];
             if (position.expression == '0') {
-                errors += 'The <a href="#" onclick="document.getElementById(\'purchase_expression' + i + '\').focus(); return false">'
+                errors += 'The <a href="#" onclick="document.getElementById(\'puma_expression' + i + '\').focus(); return false">'
                             + 'price of position ' + (i + 1) 
                         + '</a> needs to be greater than 0.<br/>';
             } else if (!position.expression.match(/^[0-9]+(.[0-9]{1,2})?(\s*(\+|-|\*)\s*[0-9]+(.[0-9]{1,2})?)*$/)) {
-                errors += 'The <a href="#" onclick="document.getElementById(\'purchase_expression' + i + '\').focus(); return false">'
+                errors += 'The <a href="#" onclick="document.getElementById(\'puma_expression' + i + '\').focus(); return false">'
                             +'price expression of position ' + (i + 1)
                         + '</a> is erroneous. '
                         + 'Only the following operators are allowed: plus (+), minus (-), multiply (*).<br/>';
@@ -638,11 +638,11 @@ function PurchaseService($http, $q, $timeout, ROUTES, ServiceHelper) {
         return errors;
     }
     
-    function createOrUpdate(purchase, callback) {
-        var result = validatePurchase(purchase);
+    function createOrUpdate(puma, callback) {
+        var result = validatePurchase(puma);
         if (result.errors == '') {
-            purchase.positions = result.positions;
-            return callback(purchase);
+            puma.positions = result.positions;
+            return callback(puma);
         }
         // delay is necessary in order that alert is removed properly
         var delay = $q.defer();
@@ -652,15 +652,15 @@ function PurchaseService($http, $q, $timeout, ROUTES, ServiceHelper) {
         return delay.promise;
     }
     
-    this.createPurchase = function(purchase) {
-        return createOrUpdate(purchase, function(purchaseDto) {
-            return $http.post(ROUTES.post_purchase, purchaseDto);
+    this.createPurchase = function(puma) {
+        return createOrUpdate(puma, function(pumaDto) {
+            return $http.post(ROUTES.post_puma, pumaDto);
         });
     };
     
-    this.updatePurchase = function(purchase) {
-        return createOrUpdate(purchase, function(purchaseDto) {
-           return $http.put(ROUTES.put_purchase.replace(':purchaseId', purchaseDto.id), purchaseDto);
+    this.updatePurchase = function(puma) {
+        return createOrUpdate(puma, function(pumaDto) {
+           return $http.put(ROUTES.put_puma.replace(':pumaId', pumaDto.id), pumaDto);
         });
     };
     

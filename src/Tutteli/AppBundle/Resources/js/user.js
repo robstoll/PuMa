@@ -1,31 +1,31 @@
 /* 
- * This file is part of the project tutteli-purchase published under the Apache License 2.0
+ * This file is part of the project tutteli-puma published under the Apache License 2.0
  * For the full copyright and license information, please have a look at LICENSE in the
- * root folder or visit https://github.com/robstoll/purchase
+ * root folder or visit https://github.com/robstoll/PuMa
  */
 (function(){
 'use strict';
 
-angular.module('tutteli.purchase.user', [
+angular.module('tutteli.puma.user', [
     'tutteli.preWork', 
     'tutteli.auth', 
-    'tutteli.purchase.routing', 
+    'tutteli.puma.routing', 
     'tutteli.helpers'
 ])
-    .controller('tutteli.purchase.UsersController', UsersController)
-    .controller('tutteli.purchase.NewUserController', NewUserController)
-    .controller('tutteli.purchase.EditUserController', EditUserController)
-    .controller('tutteli.purchase.ChangePasswordController', ChangePasswordController)
-    .controller('tutteli.purchase.ResetPasswordController', ResetPasswordController)
-    .service('tutteli.purchase.UserService', UserService)
-    .service('tutteli.purchase.ChangePasswordService', ChangePasswordService)
-    .service('tutteli.purchase.ResetPasswordService', ResetPasswordService)
-    .constant('tutteli.purchase.NewUserController.alertId', 'tutteli-ctrls-NewUserController')
-    .constant('tutteli.purchase.EditUserController.alertId', 'tutteli-ctrls-EditUserController')
-    .constant('tutteli.purchase.ChangePasswordController.alertId', 'tutteli-ctrls-ChangePasswordController')
-    .constant('tutteli.purchase.ResetPasswordController.alertId', 'tutteli-ctrls-ResetPasswordController');
+    .controller('tutteli.puma.UsersController', UsersController)
+    .controller('tutteli.puma.NewUserController', NewUserController)
+    .controller('tutteli.puma.EditUserController', EditUserController)
+    .controller('tutteli.puma.ChangePasswordController', ChangePasswordController)
+    .controller('tutteli.puma.ResetPasswordController', ResetPasswordController)
+    .service('tutteli.puma.UserService', UserService)
+    .service('tutteli.puma.ChangePasswordService', ChangePasswordService)
+    .service('tutteli.puma.ResetPasswordService', ResetPasswordService)
+    .constant('tutteli.puma.NewUserController.alertId', 'tutteli-ctrls-NewUserController')
+    .constant('tutteli.puma.EditUserController.alertId', 'tutteli-ctrls-EditUserController')
+    .constant('tutteli.puma.ChangePasswordController.alertId', 'tutteli-ctrls-ChangePasswordController')
+    .constant('tutteli.puma.ResetPasswordController.alertId', 'tutteli-ctrls-ResetPasswordController');
 
-UsersController.$inject = ['tutteli.PreWork', 'tutteli.purchase.UserService', 'tutteli.helpers.InitHelper'];
+UsersController.$inject = ['tutteli.PreWork', 'tutteli.puma.UserService', 'tutteli.helpers.InitHelper'];
 function UsersController(PreWork, UserService, InitHelper) {
     var self = this;
     
@@ -56,10 +56,10 @@ function AUserController(ROUTES, FormHelperFactory) {
 }
 
 NewUserController.$inject = [
-    'tutteli.purchase.ROUTES',
+    'tutteli.puma.ROUTES',
     'tutteli.PreWork',
-    'tutteli.purchase.UserService', 
-    'tutteli.purchase.NewUserController.alertId',
+    'tutteli.puma.UserService', 
+    'tutteli.puma.NewUserController.alertId',
     'tutteli.helpers.FormHelperFactory'];
 tutteliExtends(NewUserController, AUserController);
 function NewUserController(ROUTES, PreWork, UserService, alertId, FormHelperFactory) {
@@ -96,10 +96,10 @@ function NewUserController(ROUTES, PreWork, UserService, alertId, FormHelperFact
 EditUserController.$inject = [
     '$stateParams',
     '$timeout',
-    'tutteli.purchase.ROUTES',
+    'tutteli.puma.ROUTES',
     'tutteli.PreWork',
-    'tutteli.purchase.UserService',
-    'tutteli.purchase.EditUserController.alertId',
+    'tutteli.puma.UserService',
+    'tutteli.puma.EditUserController.alertId',
     'tutteli.auth.AuthService', 
     'tutteli.auth.USER_ROLES',
     'tutteli.helpers.FormHelperFactory'];
@@ -170,10 +170,10 @@ function EditUserController(
 
 ChangePasswordController.$inject = [
     '$stateParams',
-    'tutteli.purchase.ROUTES',
+    'tutteli.puma.ROUTES',
     'tutteli.PreWork',
-    'tutteli.purchase.ChangePasswordService',
-    'tutteli.purchase.ChangePasswordController.alertId',
+    'tutteli.puma.ChangePasswordService',
+    'tutteli.puma.ChangePasswordController.alertId',
     'tutteli.helpers.FormHelperFactory'];
 tutteliExtends(ChangePasswordController, AUserController);
 function ChangePasswordController($stateParams, ROUTES, PreWork, ChangePasswordService, alertId, FormHelperFactory) {
@@ -212,11 +212,11 @@ function ChangePasswordController($stateParams, ROUTES, PreWork, ChangePasswordS
 
 ResetPasswordController.$inject = [
     '$stateParams',
-    'tutteli.purchase.ROUTES',
+    'tutteli.puma.ROUTES',
     'tutteli.PreWork',
-    'tutteli.purchase.UserService',
-    'tutteli.purchase.ResetPasswordService',
-    'tutteli.purchase.ResetPasswordController.alertId',
+    'tutteli.puma.UserService',
+    'tutteli.puma.ResetPasswordService',
+    'tutteli.puma.ResetPasswordController.alertId',
     'tutteli.helpers.FormHelperFactory'];
 tutteliExtends(ResetPasswordController, AUserController);
 function ResetPasswordController(
@@ -257,7 +257,7 @@ function ResetPasswordController(
     });
 }
 
-ChangePasswordService.$inject = ['$http', '$q', '$timeout', 'tutteli.purchase.ROUTES'];
+ChangePasswordService.$inject = ['$http', '$q', '$timeout', 'tutteli.puma.ROUTES'];
 function ChangePasswordService($http, $q, $timeout, ROUTES) {
     
     this.updatePassword = function(data) {
@@ -294,7 +294,7 @@ function getError($q, $timeout, errors) {
     return delay.promise;
 }
 
-ResetPasswordService.$inject = ['$http','tutteli.purchase.ROUTES'];
+ResetPasswordService.$inject = ['$http','tutteli.puma.ROUTES'];
 function ResetPasswordService($http, ROUTES) {
     
     this.updatePassword = function(data) {
@@ -305,7 +305,7 @@ function ResetPasswordService($http, ROUTES) {
 
 
 
-UserService.$inject = ['$http', '$q', '$timeout', 'tutteli.purchase.ROUTES', 'tutteli.helpers.ServiceHelper'];
+UserService.$inject = ['$http', '$q', '$timeout', 'tutteli.puma.ROUTES', 'tutteli.helpers.ServiceHelper'];
 function UserService($http, $q, $timeout, ROUTES, ServiceHelper) {
     
     this.getUsers = function() {

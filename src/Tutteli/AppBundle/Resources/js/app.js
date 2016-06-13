@@ -1,23 +1,23 @@
 /* 
- * This file is part of the project tutteli/purchase published under the Apache License 2.0
+ * This file is part of the project tutteli/puma published under the Apache License 2.0
  * For the full copyright and license information, please have a look at LICENSE in the
- * root folder or visit https://github.com/robstoll/purchase
+ * root folder or visit https://github.com/robstoll/PuMa
  */
 (function(){
 'use strict';
 
-angular.module('tutteli.purchase', [
+angular.module('tutteli.puma', [
     'tutteli.utils',
-    'tutteli.purchase.routing',
+    'tutteli.puma.routing',
     'tutteli.login',
     'tutteli.logout',
     'tutteli.csrf',
     'tutteli.navigation',
     'tutteli.calc',
-    'tutteli.purchase.core',
-    'tutteli.purchase.billing',
-    'tutteli.purchase.category',
-    'tutteli.purchase.user',
+    'tutteli.puma.core',
+    'tutteli.puma.billing',
+    'tutteli.puma.category',
+    'tutteli.puma.user',
     'tutteli.helpers',
     
     'ui.router',
@@ -71,7 +71,7 @@ function authEventHandler(
         baseHref) {
       
     $rootScope.$on(AUTH_EVENTS.notAuthorised, function(event, response) {
-        AlertService.add('tutteli.purchase.notAuthorised', 
+        AlertService.add('tutteli.puma.notAuthorised', 
                 'You are not authorised to visit ' + response.url, 'danger');
     });   
     
@@ -94,7 +94,7 @@ function authEventHandler(
     });   
     
     $rootScope.$on(AUTH_EVENTS.loginSuccess, function(event, result) {
-        AlertService.add('tutteli.purchase.loginSuccess', 
+        AlertService.add('tutteli.puma.loginSuccess', 
                 'Login was successfull... loading new state...', 'success', 3000);
         
         var baseUrl = $location.protocol() + '://' + $location.host() + baseHref;
@@ -104,7 +104,7 @@ function authEventHandler(
             if (baseUrl == url.substr(0, baseUrl.length)) {
                 $location.path(url.substr(baseUrl.length));
             } else {
-                AlertService.add('tutteli.purchase.hijack', 
+                AlertService.add('tutteli.puma.hijack', 
                         'Possible attempt of haijacking detected. Loading "' + url + '" was aborted.<br/>'
                         + 'Please log out if this seems suspicious to you, close your browser and restart again.',
                         'warning');
@@ -116,7 +116,7 @@ function authEventHandler(
     });
     
     $rootScope.$on(AUTH_EVENTS.logoutSuccess, function(event, result) {
-        AlertService.add('tutteli.purchase.logoutSuccess', 
+        AlertService.add('tutteli.puma.logoutSuccess', 
                 'Logout was successfull... redirecting to the login page...', 'success', 3000);
         $state.go('login');
     });
@@ -132,7 +132,7 @@ function routingErrorHandler($rootScope, $state, AlertService) {
         if (error.status == 404) {
             msg += 'could not load "' + error.config.url + '".<br/>'
                 + 'Please check your internet-connection and {{repeatLink}}.';
-            AlertService.addNoConnection('tutteli.purchase.404', msg, 'danger',
+            AlertService.addNoConnection('tutteli.puma.404', msg, 'danger',
                     url, 'click here to repeat the action');
         } else if(error.status != 403 && error.status != 401) {
             
@@ -148,7 +148,7 @@ function routingErrorHandler($rootScope, $state, AlertService) {
                 + 'If it should occurr again (this message does not disappear), '
                 + 'then please {{reportLink}} and report the shown error to the admin.<br/>'
                 + '{{reportContent}}';
-            AlertService.addErrorReport('tutteli.purchase.500', msg, 'danger', 
+            AlertService.addErrorReport('tutteli.puma.500', msg, 'danger', 
                     url, 'click here to repeat the action', 
                     '_stateChange_report', 'click here', errorMsg);
         }

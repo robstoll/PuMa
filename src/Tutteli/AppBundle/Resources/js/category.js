@@ -1,24 +1,24 @@
 /* 
- * This file is part of the project tutteli-purchase published under the Apache License 2.0
+ * This file is part of the project tutteli-puma published under the Apache License 2.0
  * For the full copyright and license information, please have a look at LICENSE in the
- * root folder or visit https://github.com/robstoll/purchase
+ * root folder or visit https://github.com/robstoll/PuMa
  */
 (function(){
 'use strict';
 
-angular.module('tutteli.purchase.category', [
+angular.module('tutteli.puma.category', [
     'tutteli.preWork', 
-    'tutteli.purchase.routing',
+    'tutteli.puma.routing',
     'tutteli.helpers'
 ])
-    .controller('tutteli.purchase.CategoriesController', CategoriesController)
-    .controller('tutteli.purchase.NewCategoryController', NewCategoryController)
-    .controller('tutteli.purchase.EditCategoryController', EditCategoryController)
-    .service('tutteli.purchase.CategoryService', CategoryService)
-    .constant('tutteli.purchase.NewCategoryController.alertId', 'tutteli-ctrls-NewCategoryController')
-    .constant('tutteli.purchase.EditCategoryController.alertId', 'tutteli-ctrls-EditCategoryController');
+    .controller('tutteli.puma.CategoriesController', CategoriesController)
+    .controller('tutteli.puma.NewCategoryController', NewCategoryController)
+    .controller('tutteli.puma.EditCategoryController', EditCategoryController)
+    .service('tutteli.puma.CategoryService', CategoryService)
+    .constant('tutteli.puma.NewCategoryController.alertId', 'tutteli-ctrls-NewCategoryController')
+    .constant('tutteli.puma.EditCategoryController.alertId', 'tutteli-ctrls-EditCategoryController');
 
-CategoriesController.$inject = ['tutteli.purchase.CategoryService', 'tutteli.helpers.InitHelper'];
+CategoriesController.$inject = ['tutteli.puma.CategoryService', 'tutteli.helpers.InitHelper'];
 function CategoriesController(CategoryService, InitHelper) {
     var self = this;
     
@@ -49,10 +49,10 @@ function ACategoryController(ROUTES, FormHelperFactory) {
 }
 
 NewCategoryController.$inject = [
-    'tutteli.purchase.ROUTES',
+    'tutteli.puma.ROUTES',
     'tutteli.PreWork',
-    'tutteli.purchase.CategoryService', 
-    'tutteli.purchase.NewCategoryController.alertId',
+    'tutteli.puma.CategoryService', 
+    'tutteli.puma.NewCategoryController.alertId',
     'tutteli.helpers.FormHelperFactory'];
 tutteliExtends(NewCategoryController, ACategoryController);
 function NewCategoryController(ROUTES, PreWork, CategoryService, alertId, FormHelperFactory) {
@@ -80,10 +80,10 @@ function NewCategoryController(ROUTES, PreWork, CategoryService, alertId, FormHe
 EditCategoryController.$inject = [
     '$stateParams',
     '$timeout',
-    'tutteli.purchase.ROUTES',
+    'tutteli.puma.ROUTES',
     'tutteli.PreWork',
-    'tutteli.purchase.CategoryService',
-    'tutteli.purchase.EditCategoryController.alertId',
+    'tutteli.puma.CategoryService',
+    'tutteli.puma.EditCategoryController.alertId',
     'tutteli.helpers.FormHelperFactory'];
 tutteliExtends(EditCategoryController, ACategoryController);
 function EditCategoryController(
@@ -138,7 +138,7 @@ function EditCategoryController(
     
 }
 
-CategoryService.$inject = ['$http', '$q', 'tutteli.purchase.ROUTES', 'tutteli.helpers.ServiceHelper'];
+CategoryService.$inject = ['$http', '$q', 'tutteli.puma.ROUTES', 'tutteli.helpers.ServiceHelper'];
 function CategoryService($http, $q, ROUTES, ServiceHelper) {
     
     this.getCategories = function() {

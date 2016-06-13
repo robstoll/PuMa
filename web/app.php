@@ -4,7 +4,7 @@ use Symfony\Component\ClassLoader\ApcClassLoader;
 use Symfony\Component\HttpFoundation\Request;
 
 if ($_SERVER['HTTP_HOST'] != 'localhost') {
-    $appDir = __DIR__.'/../../private/purchase/app/';
+    $appDir = __DIR__.'/../../private/puma/app/';
 } else {
     $appDir = __DIR__.'/../app/';
 }

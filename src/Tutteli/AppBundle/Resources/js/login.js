@@ -1,7 +1,7 @@
 /* 
- * This file is part of the project tutteli-purchase published under the Apache License 2.0
+ * This file is part of the project tutteli-puma published under the Apache License 2.0
  * For the full copyright and license information, please have a look at LICENSE in the
- * root folder or visit https://github.com/robstoll/purchase
+ * root folder or visit https://github.com/robstoll/PuMa
  */
 (function(){
 'use strict';
@@ -20,7 +20,7 @@ angular.module('tutteli.login', [
 
 LoginController.$inject = [
     '$http', 
-    'tutteli.purchase.ROUTES',
+    'tutteli.puma.ROUTES',
     'tutteli.PreWork', 
     'tutteli.auth.AuthService',
     'tutteli.alert.AlertService', 
@@ -63,7 +63,7 @@ function login(self, $event, formHelper, AuthService, AlertService, alertId) {
 
 LoginModalController.$inject = [
     '$scope', 
-    'tutteli.purchase.ROUTES',
+    'tutteli.puma.ROUTES',
     'tutteli.PreWork', 
     'tutteli.auth.AuthService', 
     'tutteli.alert.AlertService', 

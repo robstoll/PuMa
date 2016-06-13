@@ -1,8 +1,8 @@
 <?php
 /*
- * This file is part of the project tutteli/purchase published under the Apache License 2.0
+ * This file is part of the project tutteli/puma published under the Apache License 2.0
  * For the full copyright and license information, please have a look at LICENSE in the
- * root folder or visit https://github.com/robstoll/purchase
+ * root folder or visit https://github.com/robstoll/PuMa
  */
 
 namespace Tutteli\AppBundle\Entity;
@@ -36,8 +36,8 @@ class PurchaseRepository extends ARepository
         return $queryBuilder->select('p')
                 ->from($this->getEntityIdentifier(), 'p')
                 ->where($queryBuilder->expr()->andX(
-                        $queryBuilder->expr()->gte('p.purchaseDate', ':from'),
-                        $queryBuilder->expr()->lt('p.purchaseDate', ':to')
+                        $queryBuilder->expr()->gte('p.pumaDate', ':from'),
+                        $queryBuilder->expr()->lt('p.pumaDate', ':to')
                 ))          
                 ->setParameter('from', $from)
                 ->setParameter('to', $to);
@@ -45,7 +45,7 @@ class PurchaseRepository extends ARepository
     
     public function getForMonthOfYear($month, $year) {
         return $this->createQueryBuilderPurchasesForMonthOfYear($month, $year)
-            ->orderBy('p.purchaseDate', 'DESC')
+            ->orderBy('p.pumaDate', 'DESC')
             ->getQuery()
             ->getResult();
     }

@@ -1,29 +1,29 @@
 /* 
- * This file is part of the project tutteli-purchase published under the Apache License 2.0
+ * This file is part of the project tutteli-puma published under the Apache License 2.0
  * For the full copyright and license information, please have a look at LICENSE in the
- * root folder or visit https://github.com/robstoll/purchase
+ * root folder or visit https://github.com/robstoll/PuMa
  */
 (function(){
 'use strict';
 
-angular.module('tutteli.purchase.bill', [
-    'tutteli.purchase.routing', 
+angular.module('tutteli.puma.bill', [
+    'tutteli.puma.routing', 
     'tutteli.preWork',
     'tutteli.alert',
     'tutteli.csrf',
-    'tutteli.purchase.category',
-    'tutteli.purchase.user',
+    'tutteli.puma.category',
+    'tutteli.puma.user',
     'tutteli.helpers',
     'tutteli.utils',
     'ui.bootstrap',
 ])
-    .controller('tutteli.purchase.BillsController', BillsController)
-    .service('tutteli.purchase.BillService', BillService);
+    .controller('tutteli.puma.BillsController', BillsController)
+    .service('tutteli.puma.BillService', BillService);
 
 BillsController.$inject = [
     '$state',
     '$stateParams',
-    'tutteli.purchase.BillService',
+    'tutteli.puma.BillService',
     'tutteli.helpers.InitHelper'];
 function BillsController($state, $stateParams, BillService, InitHelper) {
     var self = this;
@@ -50,7 +50,7 @@ function BillsController($state, $stateParams, BillService, InitHelper) {
     }
 }
 
-BillService.$inject = ['$http', '$q', '$timeout', 'tutteli.purchase.ROUTES', 'tutteli.helpers.ServiceHelper'];
+BillService.$inject = ['$http', '$q', '$timeout', 'tutteli.puma.ROUTES', 'tutteli.helpers.ServiceHelper'];
 function BillService($http, $q, $timeout, ROUTES, ServiceHelper) {
     
     this.getBills = function(year) {
