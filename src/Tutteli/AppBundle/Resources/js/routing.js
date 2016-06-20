@@ -31,7 +31,7 @@ angular.module('tutteli.puma.routing', [
     $locationProvider.html5Mode(true);
     $stateProvider.state('home', {
         url: '/',
-        redirectTo: 'new_puma'
+        redirectTo: 'new_purchase'
     })
     
     .state('login', {
@@ -44,38 +44,38 @@ angular.module('tutteli.puma.routing', [
         controller: 'tutteli.LogoutController'
     })
     
-    .state('pumas', {
-        url: '/pumas',
-        redirectTo: 'pumas_month',
+    .state('purchases', {
+        url: '/purchases',
+        redirectTo: 'purchases_month',
     })
-    .state('pumas_currentMonth', {
-        url: '/pumas/month',
-        redirectTo: 'pumas_monthAndYear',
+    .state('purchases_currentMonth', {
+        url: '/purchases/month',
+        redirectTo: 'purchases_monthAndYear',
         redirectParams: {month: getCurrentMonth(), year: getCurrentYear()}            
     })
-    .state('pumas_monthAndYear', {
-        url: '/pumas/month-:month-:year',
+    .state('purchases_monthAndYear', {
+        url: '/purchases/month-:month-:year',
         controller: 'tutteli.puma.PurchasesMonthController',
-        controllerAs: 'pumasCtrl',
-        templateUrl: 'pumas/month.tpl',
+        controllerAs: 'purchasesCtrl',
+        templateUrl: 'purchases/month.tpl',
         data: {
             authRoles: [USER_ROLES.authenticated]
         }
     })
-    .state('new_puma', {
-        url: '/pumas/new',
+    .state('new_purchase', {
+        url: '/purchases/new',
         controller: 'tutteli.puma.NewPurchaseController',
-        controllerAs: 'pumaCtrl',
-        templateUrl: 'pumas/new.tpl',
+        controllerAs: 'purchaseCtrl',
+        templateUrl: 'purchases/new.tpl',
         data: {
             authRoles: [USER_ROLES.authenticated]
         }
     })
-    .state('edit_puma', {
-        url: '/pumas/:pumaId/edit',
+    .state('edit_purchase', {
+        url: '/purchases/:purchaseId/edit',
         controller: 'tutteli.puma.EditPurchaseController',
-        controllerAs: 'pumaCtrl',
-        templateUrl: 'pumas/edit.tpl',
+        controllerAs: 'purchaseCtrl',
+        templateUrl: 'purchases/edit.tpl',
         data: {
             authRoles: [USER_ROLES.authenticated]
         }
@@ -183,11 +183,11 @@ angular.module('tutteli.puma.routing', [
     });
 }]).constant('tutteli.puma.ROUTES', {
     get_login_csrf: 'login/token',
-    get_pumas_monthAndYear_json: 'pumas/month-:month-:year.json',
-    get_puma_json: 'pumas/:pumaId.json',
-    post_puma : 'pumas',
-    put_puma : 'pumas/:pumaId',
-    get_puma_csrf: 'pumas/new/token',    
+    get_purchases_monthAndYear_json: 'purchases/month-:month-:year.json',
+    get_purchase_json: 'purchases/:purchaseId.json',
+    post_purchase : 'purchases',
+    put_purchase : 'purchases/:purchaseId',
+    get_purchase_csrf: 'purchases/new/token',    
     get_categories_json: 'categories.json',
     get_category_json: 'categories/:categoryId.json',
     get_category_csrf: 'categories/new/token',

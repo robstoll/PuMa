@@ -48,7 +48,7 @@ function ShiftPlusKeyEventListener(event) {
     //SHIFT & +
     if (event.shiftKey && event.keyCode == 107) {
         event.preventDefault();
-        document.getElementById('puma_add').click();
+        document.getElementById('purchase_add').click();
     }
 }
 
@@ -77,7 +77,7 @@ function APurchaseController(
     var usersLoader = LoaderFactory.buildUsersLoader(self);
     
     
-    this.formHelper = FormHelperFactory.build(self, ROUTES.get_puma_csrf);
+    this.formHelper = FormHelperFactory.build(self, ROUTES.get_purchase_csrf);
     this.dt = new Date();
     this.datePicker = new DatePicker(this);
     this.positionManager = PositionManagerFactory.build();
@@ -145,7 +145,7 @@ function APurchaseController(
 
     self.loadCategories();
     self.loadUsers();
-    document.getElementById('puma_add').style.display = 'inline';
+    document.getElementById('purchase_add').style.display = 'inline';
     window.addEventListener('keydown', ShiftPlusKeyEventListener);
     $scope.$on("$destroy", function() {
        window.removeEventListener('keydown', ShiftPlusKeyEventListener); 
@@ -180,24 +180,24 @@ function NewPurchaseController(
    
     this.createPurchase = function($event) {
         self.startSaving();
-        var puma = {
+        var purchase = {
             userId : self.user,
             dt : self.dt,
             positions :  self.positionManager.positions,
             csrf_token : self.csrf_token
         };
-        self.formHelper.create($event, alertId, puma, 'Purchase', null, PurchaseService).then(self.endSaving, self.endSaving);
+        self.formHelper.create($event, alertId, purchase, 'Purchase', null, PurchaseService).then(self.endSaving, self.endSaving);
     };
 
     // -------------------
 
     self.positionManager.addPosition();
     var position = {};
-    if (PreWork.merge('pumas/new.tpl', position, 'position')) {
+    if (PreWork.merge('purchases/new.tpl', position, 'position')) {
         self.positionManager.positions[0].expression = position.expression;
         self.positionManager.positions[0].notice = position.notice;
     }
-    PreWork.merge('pumas/new.tpl', this, 'pumaCtrl');
+    PreWork.merge('purchases/new.tpl', this, 'purchaseCtrl');
     self.parseDateIfNecessary();
     if (Session.user.isReal) {
         self.user = Session.user.id;
@@ -234,17 +234,17 @@ function EditPurchaseController(
     var self = this;
     var isNotLoaded = true;
     
-    this.loadPurchase = function (pumaId) {
-        PurchaseService.getPurchase(pumaId).then(function(puma) {
-            self.id = puma.id;
-            self.dt = puma.pumaDate;
+    this.loadPurchase = function (purchaseId) {
+        PurchaseService.getPurchase(purchaseId).then(function(purchase) {
+            self.id = purchase.id;
+            self.dt = purchase.purchaseDate;
             self.parseDateIfNecessary();
-            self.user = puma.user.id;
-            self.user_label = puma.user.username;
+            self.user = purchase.user.id;
+            self.user_label = purchase.user.username;
             self.preInitUsers();
-            self.updatedAt = puma.updatedAt;
-            self.updatedBy = puma.updatedBy;
-            updatePositions(puma.positions);
+            self.updatedAt = purchase.updatedAt;
+            self.updatedBy = purchase.updatedBy;
+            updatePositions(purchase.positions);
             isNotLoaded = false;
             self.positionManager.focusFirstInput();
         });
@@ -257,16 +257,16 @@ function EditPurchaseController(
     
     this.updatePurchase = function($event) {
         self.startSaving();
-        var puma = {
+        var purchase = {
             id : self.id,
             userId : self.user,
             dt : self.dt,
             positions :  self.positionManager.positions,
             csrf_token : self.csrf_token
         };
-        var select = document.getElementById('puma_user');
-        var identifier = puma.dt.toLocaleDateString('de-ch') + ' - ' + select.options[select.selectedIndex].text;
-        self.formHelper.update($event, alertId, puma, 'Purchase', identifier, PurchaseService).then(self.endSaving, self.endSaving);
+        var select = document.getElementById('purchase_user');
+        var identifier = purchase.dt.toLocaleDateString('de-ch') + ' - ' + select.options[select.selectedIndex].text;
+        self.formHelper.update($event, alertId, purchase, 'Purchase', identifier, PurchaseService).then(self.endSaving, self.endSaving);
     };
    
     function updatePositions(positions) {
@@ -290,16 +290,16 @@ function EditPurchaseController(
     
     self.dt = "";
     var positions = {};
-    if (PreWork.merge('pumas/edit.tpl', positions, 'positions')) {
+    if (PreWork.merge('purchases/edit.tpl', positions, 'positions')) {
         updatePositions(positions);
     }
-    PreWork.merge('pumas/edit.tpl', this, 'pumaCtrl');
+    PreWork.merge('purchases/edit.tpl', this, 'purchaseCtrl');
     self.parseDateIfNecessary();
     self.preInitUsers();
     
     isNotLoaded = self.positionManager.positions.length == 0;
     if (isNotLoaded) {
-        self.loadPurchase($stateParams.pumaId);
+        self.loadPurchase($stateParams.purchaseId);
     }
 }
 
@@ -352,7 +352,7 @@ function PositionManager ($timeout, $parse, $filter) {
     
     this.focusFirstInput = function () {
         $timeout(function() {
-            focusOrScrollTo(document.getElementById('puma_expression0'));
+            focusOrScrollTo(document.getElementById('purchase_expression0'));
         }, 10);
     };
     
@@ -428,7 +428,7 @@ function CategoriesLoader($q, CategoryService, AlertService, alertId, controller
             if (data.categories.length == 0) {
                 var alertIdCategories = alertId + '-categories';
                 AlertService.add(alertIdCategories,
-                        'No categories are defined yet, adding/updating pumas is not yet possible. '
+                        'No categories are defined yet, adding/updating purchases is not yet possible. '
                         + 'Please inform your administrator. '
                         + '<a '+ closeAlertAndCall(alertIdCategories, 'loadCategories') + '>'
                             + 'Click then here once the categories have been created'
@@ -438,10 +438,10 @@ function CategoriesLoader($q, CategoryService, AlertService, alertId, controller
             return $q.resolve(data);
         }, function(errorResponse) {
             var alertIdUsers = alertId + '-users';
-            var reportId = '_puma_categories_report';
+            var reportId = '_purchase_categories_report';
             var report = AlertService.getHttpErrorReport(errorResponse);
             if (errorResponse.status == 404) {
-                var msg = 'Categories could not been loaded, adding/updating pumas is thus not possible at the moment. '
+                var msg = 'Categories could not been loaded, adding/updating purchases is thus not possible at the moment. '
                         + 'Please verify you have internet connection and '
                         + '<a ' + closeAlertAndCall(alertIdUsers, 'loadCategories') + '>'
                             + 'click here to load the categories again'
@@ -471,10 +471,10 @@ function UsersLoader($q, UserService, AlertService, alertId, controller) {
         return UserService.getUsers().then(null, function(errorResponse) {
             controller.disabled = true;
             var alertIdUsers = alertId + '-users';
-            var reportId = '_puma_categories_report';
+            var reportId = '_purchase_categories_report';
             var report = AlertService.getHttpErrorReport(errorResponse);
             if (errorResponse.status == 404) {
-                var msg = 'Users could not been loaded, gathering pumas is thus not possible at the moment. '
+                var msg = 'Users could not been loaded, gathering purchases is thus not possible at the moment. '
                         + 'Please verify you have internet connection and '
                         + '<a ' + closeAlertAndCall(alertIdUsers, 'loadUsers') + '>'
                             + 'click here to load the users again'
@@ -508,19 +508,19 @@ PurchasesMonthController.$inject = [
 function PurchasesMonthController($state, $stateParams, PurchaseService, UserService, $filter, InitHelper) {
     var self = this;
     
-    this.pumas = null;
+    this.purchases = null;
     this.usersTotal = null;
     this.monthTotal = 0;
     this.numberOfUsers = -1;
     
     this.initPurchases = function(data) {
-        InitHelper.initTableData('pumas', self, data);
+        InitHelper.initTableData('purchases', self, data);
         initUsersTotal();
     };
     
     function initUsersTotal() {
         var totals = getTotalPerUser();
-        if (self.pumas.length > 0) {
+        if (self.purchases.length > 0) {
             self.usersTotal = [];
             self.monthTotal = 0;
             for (var username in totals) {
@@ -533,25 +533,25 @@ function PurchasesMonthController($state, $stateParams, PurchaseService, UserSer
     
     function getTotalPerUser() {
         var totals = {};
-        for (var i = 0; i < self.pumas.length; ++i) {
-            var puma = self.pumas[i];
-            var username = puma.user.username;
+        for (var i = 0; i < self.purchases.length; ++i) {
+            var purchase = self.purchases[i];
+            var username = purchase.user.username;
             if (!totals[username]) {
                 totals[username] = 0;
             }
-            var total = parseFloat(puma.total);
+            var total = parseFloat(purchase.total);
             totals[username] += total;
         }
         return totals;
     }
     
     this.changeState = function() {
-        $state.transitionTo('pumas_monthAndYear', {month: self.chosenMonth, year: self.chosenYear});
+        $state.transitionTo('purchases_monthAndYear', {month: self.chosenMonth, year: self.chosenYear});
     };
     
     // ----------------
     
-    InitHelper.initTableBasedOnPreWork('pumas/month.tpl', 'pumas', this, function() {
+    InitHelper.initTableBasedOnPreWork('purchases/month.tpl', 'purchases', this, function() {
        return PurchaseService.getPurchases($stateParams.month, $stateParams.year);
     });
     if (!self.chosenMonth) {
@@ -569,61 +569,61 @@ PurchaseService.$inject = ['$http', '$q', '$timeout', 'tutteli.puma.ROUTES', 'tu
 function PurchaseService($http, $q, $timeout, ROUTES, ServiceHelper) {
     
     this.getPurchases = function(month, year) {
-        var url = ROUTES.get_pumas_monthAndYear_json
+        var url = ROUTES.get_purchases_monthAndYear_json
             .replace(':month', month)
             .replace(':year', year);
-        return ServiceHelper.cget(url, 'pumas');
+        return ServiceHelper.cget(url, 'purchases');
     };
     
-    this.getPurchase = function(pumaId) {
-        return ServiceHelper.get(ROUTES.get_puma_json.replace(':pumaId', pumaId), 'puma');
+    this.getPurchase = function(purchaseId) {
+        return ServiceHelper.get(ROUTES.get_purchase_json.replace(':purchaseId', purchaseId), 'purchase');
     };
     
-    function validatePurchase(puma) {
-        var errors = validateDate(puma);
+    function validatePurchase(purchase) {
+        var errors = validateDate(purchase);
         var positionDtos = [];
-        errors += validateExpressions(puma, positionDtos);
+        errors += validateExpressions(purchase, positionDtos);
         return {errors: errors, positions: positionDtos};
     }
     
-    function validateDate(puma) {
+    function validateDate(purchase) {
         var errors = '';
         
-        var template = 'The <a href="#" onclick="document.getElementById(\'puma_pumaDate\').focus(); return false">'
-            + 'puma date'
+        var template = 'The <a href="#" onclick="document.getElementById(\'purchase_purchaseDate\').focus(); return false">'
+            + 'purchase date'
             + '</a> ';
         
-        if (!puma.dt) {
-            var date = document.getElementById('puma_pumaDate').value;
+        if (!purchase.dt) {
+            var date = document.getElementById('purchase_purchaseDate').value;
             try {
-                puma.dt = parseDateIfNecessary(date);
+                purchase.dt = parseDateIfNecessary(date);
             } catch(err) {
                 errors += template + 'was erroneous, check for mistakes like 30.02.2016<br/>';
-                puma.dt = new Date();
+                purchase.dt = new Date();
             }
         }
         var nowInAYear = new Date();
         nowInAYear.setFullYear(nowInAYear.getFullYear() + 1);
-        if (!(puma.dt instanceof Date)) {
+        if (!(purchase.dt instanceof Date)) {
             errors +=  template + 'is invalid, please enter a date in the format dd.mm.yyyy<br/>';
-        } else if(puma.dt > nowInAYear) {
+        } else if(purchase.dt > nowInAYear) {
             errors += template + 'cannot be more than one year in the future.<br/>';
         } else {
-            puma.dt = puma.dt.toLocaleDateString('de-ch');
+            purchase.dt = purchase.dt.toLocaleDateString('de-ch');
         }
         return errors;
     }
     
-    function validateExpressions(puma, positionDtos) {
+    function validateExpressions(purchase, positionDtos) {
         var errors = '';
-        for (var i = 0; i < puma.positions.length; ++i) {
-            var position = puma.positions[i];
+        for (var i = 0; i < purchase.positions.length; ++i) {
+            var position = purchase.positions[i];
             if (position.expression == '0') {
-                errors += 'The <a href="#" onclick="document.getElementById(\'puma_expression' + i + '\').focus(); return false">'
+                errors += 'The <a href="#" onclick="document.getElementById(\'purchase_expression' + i + '\').focus(); return false">'
                             + 'price of position ' + (i + 1) 
                         + '</a> needs to be greater than 0.<br/>';
             } else if (!position.expression.match(/^[0-9]+(.[0-9]{1,2})?(\s*(\+|-|\*)\s*[0-9]+(.[0-9]{1,2})?)*$/)) {
-                errors += 'The <a href="#" onclick="document.getElementById(\'puma_expression' + i + '\').focus(); return false">'
+                errors += 'The <a href="#" onclick="document.getElementById(\'purchase_expression' + i + '\').focus(); return false">'
                             +'price expression of position ' + (i + 1)
                         + '</a> is erroneous. '
                         + 'Only the following operators are allowed: plus (+), minus (-), multiply (*).<br/>';
@@ -638,11 +638,11 @@ function PurchaseService($http, $q, $timeout, ROUTES, ServiceHelper) {
         return errors;
     }
     
-    function createOrUpdate(puma, callback) {
-        var result = validatePurchase(puma);
+    function createOrUpdate(purchase, callback) {
+        var result = validatePurchase(purchase);
         if (result.errors == '') {
-            puma.positions = result.positions;
-            return callback(puma);
+            purchase.positions = result.positions;
+            return callback(purchase);
         }
         // delay is necessary in order that alert is removed properly
         var delay = $q.defer();
@@ -652,15 +652,15 @@ function PurchaseService($http, $q, $timeout, ROUTES, ServiceHelper) {
         return delay.promise;
     }
     
-    this.createPurchase = function(puma) {
-        return createOrUpdate(puma, function(pumaDto) {
-            return $http.post(ROUTES.post_puma, pumaDto);
+    this.createPurchase = function(purchase) {
+        return createOrUpdate(purchase, function(purchaseDto) {
+            return $http.post(ROUTES.post_purchase, purchaseDto);
         });
     };
     
-    this.updatePurchase = function(puma) {
-        return createOrUpdate(puma, function(pumaDto) {
-           return $http.put(ROUTES.put_puma.replace(':pumaId', pumaDto.id), pumaDto);
+    this.updatePurchase = function(purchase) {
+        return createOrUpdate(purchase, function(purchaseDto) {
+           return $http.put(ROUTES.put_purchase.replace(':purchaseId', purchaseDto.id), purchaseDto);
         });
     };
     

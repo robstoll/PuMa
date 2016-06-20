@@ -36,8 +36,8 @@ class PurchaseRepository extends ARepository
         return $queryBuilder->select('p')
                 ->from($this->getEntityIdentifier(), 'p')
                 ->where($queryBuilder->expr()->andX(
-                        $queryBuilder->expr()->gte('p.pumaDate', ':from'),
-                        $queryBuilder->expr()->lt('p.pumaDate', ':to')
+                        $queryBuilder->expr()->gte('p.purchaseDate', ':from'),
+                        $queryBuilder->expr()->lt('p.purchaseDate', ':to')
                 ))          
                 ->setParameter('from', $from)
                 ->setParameter('to', $to);
@@ -45,7 +45,7 @@ class PurchaseRepository extends ARepository
     
     public function getForMonthOfYear($month, $year) {
         return $this->createQueryBuilderPurchasesForMonthOfYear($month, $year)
-            ->orderBy('p.pumaDate', 'DESC')
+            ->orderBy('p.purchaseDate', 'DESC')
             ->getQuery()
             ->getResult();
     }
