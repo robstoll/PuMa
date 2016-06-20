@@ -28,10 +28,18 @@
     					<span ng-bind="'= ' + ((purchasesCtrl.monthTotal / purchasesCtrl.numberOfUsers) | number : 2)"></span>
     					<span>{{ 'month.totalPerPerson'|trans }}</span>
     				</span>
-				</div>    				
+				</div>
     			<div class="clear"></div>
 			</div>
 		</div>
+		
+		<form ng-controller="tutteli.puma.TerminateMonthController as accountingCtrl" id="terminateMonth_form" name="accounting_form" method="post" action="path('post_accounting_terminateMonth') }}" ng-submit="accountingCtrl.terminate($event, purchasesCtrl.chosenMonth, purchasesCtrl.chosenYear)" class="hidden" ng-class="{'showBlock': accountingCtrl.showButton(purchasesCtrl.chosenMonth, purchasesCtrl.chosenYear)}">
+			<input type="hidden" id="csrf_token" ng-model="accountingCtrl.csrf_token" name="csrf_token" value="{{ csrf_token('accounting') }}">
+			<div class="pull-right">
+				<button class="btn-default btn" ng-disabled="accountingCtrl.isButtonDisabled()">{{ 'month.terminateMonth'|trans }}</button>
+			</div>
+			<div class="clear"></div>
+		</form>
     
         {% set json = '' %}
     	<table class="table table-striped">

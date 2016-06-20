@@ -8,29 +8,17 @@ namespace Tutteli\AppBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 abstract class ATplController extends Controller {
     
     protected abstract function getCsrfTokenDomain();
     
     public function csrfTokenAction() {
-        $csrf = $this->get('security.csrf.token_manager');
-        return new Response('{"csrf_token": "'.$csrf->getToken($this->getCsrfTokenDomain()).'"}');
+        return $this->get('tutteli.csrf_service')->getCsrfToken($this->getCsrfTokenDomain());
     }
     
     protected function decodeDataAndVerifyCsrf(Request $request) {
-        $response = null;
-        $data = json_decode($request->getContent(), true);
-        if ($data != null) {
-            if (!array_key_exists('csrf_token', $data)
-                    || !$this->isCsrfTokenValid($this->getCsrfTokenDomain(), $data['csrf_token'])) {
-                        $response = new JsonResponse('Invalid CSRF token.', Response::HTTP_UNAUTHORIZED);
-                    }
-        } else {
-            $response = new JsonResponse('No data provided.', Response::HTTP_BAD_REQUEST);
-        }
-        return [$data, $response];
+        return $this->get('tutteli.csrf_service')->decodeDataAndVerifyCsrf($request, $this->getCsrfTokenDomain());
     }
     
     protected function checkEndingAndEtagForView(Request $request, $ending, $viewPath) {

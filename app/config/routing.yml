@@ -65,7 +65,7 @@ new_purchase:
     
 new_purchase_csrf:
     path:   /purchases/new/token
-    defaults: { _controller: "TutteliAppBundle:Purchase:csrfToken", ending: ""}
+    defaults: { _controller: "TutteliAppBundle:Purchase:csrfToken" }
     methods: [GET]
 
 post_purchase:
@@ -87,16 +87,27 @@ put_purchase:
     path: /purchases/{purchaseId}
     defaults: { _controller: "TutteliAppBundle:Purchase:put" }
     methods: [PUT]    
-    
+
+
+accounting_csrf:
+    path:   /accounting/token
+    defaults: { _controller: "TutteliAppBundle:Accounting:csrfToken" }
+    methods: [GET]    
+
+accounting_terminateMonth:
+    path:   /accounting/terminate-{month}-{year}
+    defaults: { _controller: "TutteliAppBundle:Accounting:terminateMonth" }
+    methods: [PUT]    
+
     
 bills_currentYear:
     path:   /accounting/bills
-    defaults: { _controller: "TutteliAppBundle:Bill:currentYear"}
+    defaults: { _controller: "TutteliAppBundle:Bill:currentYear" }
     methods: [GET]
 
 bills_yearTpl:
     path:   /accounting/bills.tpl
-    defaults: { _controller: "TutteliAppBundle:Bill:yearTpl"}
+    defaults: { _controller: "TutteliAppBundle:Bill:yearTpl" }
     methods: [GET]
 
 bills_year_json:
@@ -109,6 +120,12 @@ bills_year:
     defaults: { _controller: "TutteliAppBundle:Bill:year", ending: ""}
     methods: [GET]
 
+
+put_accounting_terminate:
+    path:   /accounting/terminate-{month}-{year}
+    defaults: { _controller: "TutteliAppBundle:Accounting:terminate" }
+    methods: [PUT]
+    
 
 get_categories_json:
     path:   /categories.json
@@ -132,7 +149,7 @@ new_category:
     
 new_category_csrf:
     path:   /categories/new/token
-    defaults: { _controller: "TutteliAppBundle:Category:csrfToken", ending: ""}
+    defaults: { _controller: "TutteliAppBundle:Category:csrfToken" }
     methods: [GET]
 
 post_category:
@@ -178,7 +195,7 @@ new_user:
 
 new_user_csrf:
     path:   /users/new/token
-    defaults: { _controller: "TutteliAppBundle:User:csrfToken", ending: ""}
+    defaults: { _controller: "TutteliAppBundle:User:csrfToken" }
     methods: [GET]
 
 post_user:

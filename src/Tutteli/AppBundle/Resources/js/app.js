@@ -15,6 +15,7 @@ angular.module('tutteli.puma', [
     'tutteli.navigation',
     'tutteli.calc',
     'tutteli.puma.core',
+    'tutteli.puma.accounting',
     'tutteli.puma.bill',
     'tutteli.puma.category',
     'tutteli.puma.user',
