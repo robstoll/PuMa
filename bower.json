@@ -1,12 +1,12 @@
 {
-  "name": "tutteli-purchase",
-  "homepage": "https://github.com/robstoll/purchase",
+  "name": "tutteli-puma",
+  "homepage": "https://github.com/robstoll/PuMa",
   "authors": [
     "Robert Stoll <rstoll@tutteli.ch>"
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/robstoll/purchase"
+    "url": "git://github.com/robstoll/PuMa"
   },
   "description": "Small web app to manage purchases among multiple persons",
   "main": "",

@@ -168,7 +168,7 @@ span.total {
 }
 
 .overview.month,
-.overview.billing {
+.overview.bill {
 	display: none;
 	margin-bottom: 20px;
     border: 1px dashed #CCC;

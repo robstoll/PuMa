@@ -26,7 +26,7 @@
     {% stylesheets output="fonts/glyphicons-halflings-regular.woff2" 
 		'../bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2' %}
     {% endstylesheets %}
-    <link rel="stylesheet" href="{{ asset('css/main.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/main.css') }}?v=0.2.0" />
 {% endblock %}    
 
 {% block body %}
@@ -110,7 +110,7 @@
 {#     	 %}#}
 {#         <script src="{{ asset_url }}"></script>#}
 {#     {% endjavascripts %}#}
-    {% javascripts output="js/app.js" 
+    {% javascripts output="js/app.js?v=0.2.0" 
     	'@TutteliAppBundle/Resources/js/tutteli-utils.js'
         '@TutteliAppBundle/Resources/js/*.js'
 	     %}

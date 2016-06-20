@@ -1,5 +1,5 @@
 {
-  "name": "tutteli-purchase",
+  "name": "tutteli-puma",
   "version": "0.0.1",
   "description": "Small web app to manage purchases among multiple persons",
   "keywords": [
@@ -7,11 +7,11 @@
   ],
   "author": "Robert Stoll <rstoll@tutteli.ch>",
   "license": "Apache-2.0",
-  "repository": "https://robstoll@github.com/robstoll/purchase.git",
+  "repository": "https://robstoll@github.com/robstoll/PuMa.git",
   "bugs": {
-    "url": "https://github.com/robstoll/purchase/issues"
+    "url": "https://github.com/robstoll/PuMa/issues"
   },
-  "homepage": "https://github.com/robstoll/purchase#readme",
+  "homepage": "https://github.com/robstoll/PuMa#Readme",
   "dependencies": {},
   "devDependencies": {
     "bower": "^1.6.9",
