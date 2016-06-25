@@ -101,7 +101,7 @@ class Accounting
      *
      * @return boolean
      */
-    public function getReopened()
+    public function isReopened()
     {
         return $this->reopened;
     }

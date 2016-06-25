@@ -37,6 +37,15 @@
                 <source>password.notSame</source>
                 <target>The two passwords do not match.</target>
             </trans-unit>
+            
+            <trans-unit id="30">
+                <source>accounting.previousMonthNotTerminated</source>
+                <target>The previous month (%prev) is not terminated and thus %current cannot be terminated.</target>
+            </trans-unit>
+            <trans-unit id="31">
+                <source>'accounting.givenMonthAlreadyTerminated'</source>
+                <target>The month %month is already terminated.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -8,8 +8,8 @@ namespace Tutteli\AppBundle\Controller;
 
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\BrowserKit\Response;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 class ErrorService {
     
@@ -26,7 +26,7 @@ class ErrorService {
         return $this->getResponse(
             $errorList, 
             function($error) { 
-                return $this->translator->trans($error->getMessage(), [], 'validators'); 
+                return $this->translator->trans($error->getMessage(), $error->getParameters(), 'validators'); 
             }
         );
     }

@@ -9,6 +9,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Tutteli\AppBundle\Entity\Accounting;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 class AccountingController extends Controller {
     
@@ -34,7 +36,14 @@ class AccountingController extends Controller {
     }
     
     private function getJson(Accounting $entity) {
-        // TODO 
+        /* @var $jsonService \Tutteli\AppBundle\Controller\JsonService */
+        $jsonService = $this->get('tutteli.json_service');
+        return '{'
+                    .'"id":"'.$entity->getId().'"'
+                    .',"month":"'.$jsonService->getFormattedDate($entity->getMonth()).'"'
+                    .',"reopened":"'.($entity->isReopened() ? '1':'0').'"'
+                    .$jsonService->getMetaJsonRows($entity)
+                .'}';
     }
     
     /**
@@ -54,11 +63,32 @@ class AccountingController extends Controller {
     private function terminateMonth(Request $request, $month, $year) {
         list($noData, $response) = $this->get('tutteli.csrf_service')->decodeDataAndVerifyCsrf($request, AccountingController::CSRF_TOKEN_DOMAIN);
         if (!$response) {
-            // TODO check whether an accounting entity already exists for the corresponding month and year
-            // TODO check whether the previous month is already terminated
-            // TODO create the corresponding bill entities
+            $repository = $this->getRepository();
+            /* @var $accountingMonth \Tutteli\AppBundle\Entity\Accounting */
+            $months = $repository->getForMonthAndPrevious($month, $year);
+            $errors = $this->validate($month, $months);
+            if(count($errors) > 0) {
+                $response = $this->get('tutteli.error_service')->getTranslatedValidationResponse($errors);
+            } else {
+                // TODO create the corresponding accounting entity, update reopened respectivel
+                // TODO create the bill entities
+            }            
         }
         return $response;
+    }
+    
+    private function validate($month, array $months) {
+        $errors = new ConstraintViolationList();
+        if (count($months) == 0) {
+            
+            //TODO check if this is the first month which is terminated => there does not exist a purchase which is done in an earlier month
+            $errors->add(new ConstraintViolation(
+                    'accounting.previousMonthNotTerminated', 'accounting.previousMonthNotTerminated', ['%prev' => $month-1, '%current' => $month], $month, 'month', null));
+        } else if (count($months) == 2 && !$months[0]->isReopened()) {
+            $errors->add(new ConstraintViolation(
+                    'accounting.givenMonthAlreadyTerminated', 'accounting.givenMonthAlreadyTerminated', ['%month' => $month], $month, 'month', null));
+        }
+        return $errors;
     }
     
 }
