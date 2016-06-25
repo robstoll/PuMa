@@ -94,6 +94,11 @@ accounting_csrf:
     defaults: { _controller: "TutteliAppBundle:Accounting:csrfToken" }
     methods: [GET]    
 
+accountings_year_json:
+    path:   /accounting/year-{year}.json
+    defaults: { _controller: "TutteliAppBundle:Accounting:cgetJson" }
+    methods: [GET]
+
 accounting_terminateMonth:
     path:   /accounting/terminate-{month}-{year}
     defaults: { _controller: "TutteliAppBundle:Accounting:terminateMonth" }

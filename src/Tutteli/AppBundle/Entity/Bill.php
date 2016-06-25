@@ -153,8 +153,6 @@ class Bill
         return $this->payed;
     }
     
-    
-    
     /**
      * Set userDebtor
      *

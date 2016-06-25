@@ -8,6 +8,7 @@ namespace Tutteli\AppBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Tutteli\AppBundle\Entity\Accounting;
 
 class AccountingController extends Controller {
     
@@ -15,6 +16,32 @@ class AccountingController extends Controller {
     
     public function csrfTokenAction() {
         return $this->get('tutteli.csrf_service')->getCsrfToken(AccountingController::CSRF_TOKEN_DOMAIN);
+    }
+    
+    public function cgetJsonAction(Request $request, $year) {
+        $repository = $this->getRepository();
+        return $this->get('tutteli.json_service')->getJsonForEntities(
+                $request, 
+                function() use($repository, $year) {
+                    return $repository->getLastUpdatedForYear($year);
+                },
+                function() use($repository, $year) {
+                    return $repository->getForYear($year);
+                },
+                function($entity) { return $this->getJson($entity);},
+                'accountings'
+        );
+    }
+    
+    private function getJson(Accounting $entity) {
+        // TODO 
+    }
+    
+    /**
+     * @return \Tutteli\AppBundle\Entity\AccountingRepository
+     */
+    private function getRepository() {
+        return $this->getDoctrine()->getRepository('TutteliAppBundle:Accounting');
     }
     
     public function terminateMonthAction(Request $request, $month, $year) {
@@ -27,9 +54,9 @@ class AccountingController extends Controller {
     private function terminateMonth(Request $request, $month, $year) {
         list($noData, $response) = $this->get('tutteli.csrf_service')->decodeDataAndVerifyCsrf($request, AccountingController::CSRF_TOKEN_DOMAIN);
         if (!$response) {
-            
-            // TODO create an Accounting entity. In this case this controller might well be a subclass of AEntityController as well. 
-            // Well, maybe not, we do not have post actions tpl etc.
+            // TODO check whether an accounting entity already exists for the corresponding month and year
+            // TODO check whether the previous month is already terminated
+            // TODO create the corresponding bill entities
         }
         return $response;
     }

@@ -202,6 +202,7 @@ angular.module('tutteli.puma.routing', [
     put_reset_user_password: 'users/:userId/reset-password',
     get_bills_year_json: 'accounting/bills-:year.json',
     get_accounting_csrf: 'accounting/token',
+    get_accountings_year_json: 'accounting/year-:year.json',
     put_accounting_terminateMonth: 'accounting/terminate-:month-:year',
 });
 
