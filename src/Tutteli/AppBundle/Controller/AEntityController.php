@@ -133,20 +133,11 @@ abstract class AEntityController extends ATplController {
     }
     
     protected function getTranslatedValidationResponse(ConstraintViolationList $errorList) {
-        $translator = $this->get('translator');
-        $errors = array();
-        foreach ($errorList as $error) {
-            $errors[$error->getPropertyPath()] = $translator->trans($error->getMessage(), [], 'validators');
-        }
-        return new JsonResponse($errors, Response::HTTP_BAD_REQUEST);
+        return $this->get('tutteli.error_service')->getTranslatedValidationResponse($errorList);
     }
     
     protected function getValidationResponse(ConstraintViolationList $errorList) {
-        $errors = array();
-        foreach ($errorList as $error) {
-            $errors[$error->getPropertyPath()] = $error->getMessage();
-        }
-        return new JsonResponse($errors, Response::HTTP_BAD_REQUEST);
+        return $this->get('tutteli.error_service')->getValidationResponse($errorList);
     }
     
     protected function getCreateResponse($id){

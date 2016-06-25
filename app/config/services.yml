@@ -56,4 +56,8 @@ services:
     tutteli.json_service:
         class: Tutteli\AppBundle\Controller\JsonService
         arguments: ['@translator']
-      
+
+    tutteli.error_service:
+        class: Tutteli\AppBundle\Controller\ErrorService
+        arguments: ['@translator']
+        
