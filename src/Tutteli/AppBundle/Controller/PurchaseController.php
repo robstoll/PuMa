@@ -45,12 +45,12 @@ class PurchaseController extends AEntityController {
                     .'"id":"'.$purchase->getUser()->getId().'"'
                     .',"username": "'.$purchase->getUser()->getUsername().'"'
                     .'}'
-                .',"positions":'.$this->getJsonArray($purchase->getPositions(), [$this, 'getJsonForPosition'])
+                .',"positions":'.$this->getJsonArray($purchase->getPositions(), function($position) { return $this->getJsonForPosition($position); })
                 .$this->getMetaJsonRows($purchase)
                 .'}';
     }
     
-    protected function getJsonForPosition(PurchasePosition $position) {
+    private function getJsonForPosition(PurchasePosition $position) {
         return '{'
                 .'"id":"'.$position->getId().'"'
                 .',"expression":"'.$position->getExpression().'"'

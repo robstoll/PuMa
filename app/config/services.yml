@@ -52,3 +52,8 @@ services:
     tutteli.csrf_service:
         class: Tutteli\AppBundle\Controller\CsrfService
         arguments: ['@security.csrf.token_manager']
+        
+    tutteli.json_service:
+        class: Tutteli\AppBundle\Controller\JsonService
+        arguments: ['@translator']
+      

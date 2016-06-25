@@ -105,41 +105,17 @@ abstract class AEntityController extends ATplController {
     }
     
     protected function getJsonForEntities(Request $request, callable $getLastUpdated, callable $getEntities) {
-        $lastUpdatedEntity = $getLastUpdated();
-        if ($lastUpdatedEntity == null) {
-            return new Response('{"'.$this->getPluralEntityName().'":[]}');
-        }
-        
-        $updatedAt = $lastUpdatedEntity->getUpdatedAt();
-        $response = $this->checkUpdatedAt($request, $updatedAt);
-        if ($response === null) {
-            $data = $getEntities();
-            $jsonArray = $this->getJsonArray($data, [$this, 'getJson']);
-            $response = new Response(
-                    '{'
-                    .'"'.$this->getPluralEntityName().'":'.$jsonArray.','
-                    .'"updatedAt":"'.$this->getFormattedDateTime($updatedAt).'",'
-                    .'"updatedBy":"'.$lastUpdatedEntity->getUpdatedBy()->getUsername().'"'
-                    .'}');
-            $response->setLastModified($updatedAt);
-        }
-        return $response;
-    }
+        return $this->get('tutteli.json_service')->getJsonForEntities(
+                $request, 
+                $getLastUpdated, 
+                $getEntities, 
+                function($entity) { return $this->getJson($entity); },
+                $this->getPluralEntityName());
+    }   
     
     protected function getJsonArray($data, callable $getJsonForEntry) {
-        $list = '';
-        $count = count($data);
-        if ($count > 0) {
-            for ($i = 0; $i < $count; ++$i) {
-                if ($i != 0) {
-                    $list .= ',';
-                }
-                $list .= $getJsonForEntry($data[$i]);
-            }
-        }
-        return '['.$list.']';
+        return  $this->get('tutteli.json_service')->getJsonArray($data, $getJsonForEntry);
     }
-    
 
     protected function getJsonForEntityAction($entityId) {
         $entity = $this->loadEntity($entityId);
@@ -155,16 +131,6 @@ abstract class AEntityController extends ATplController {
         $repository = $this->getRepository();
         return $repository->findAll();
     }
-    
-    protected function checkUpdatedAt(Request $request, \DateTime $updatedAt){
-        $response = new Response();
-        $response->setLastModified($updatedAt);
-        if (!$response->isNotModified($request)) {
-            //is newer, need to generate a new response and cannot use the old one
-            $response = null;
-        }
-        return $response;
-    }  
     
     protected function getTranslatedValidationResponse(ConstraintViolationList $errorList) {
         $translator = $this->get('translator');
@@ -188,18 +154,15 @@ abstract class AEntityController extends ATplController {
     }
     
     protected function getFormattedDateTime($date) {
-        $format = $this->get('translator')->trans('general.dateTimeFormat.php');
-        return $date->format($format);
+        return $this->get('tutteli.json_service')->getFormattedDateTime($date);
     }
     
     protected function getFormattedDate($date) {
-        $format = $this->get('translator')->trans('general.dateFormat.php');
-        return $date->format($format);
+        return $this->get('tutteli.json_service')->getFormattedDate($date);
     }
     
     protected function getMetaJsonRows($entity) {
-        return ',"updatedAt":"'.$this->getFormattedDateTime($entity->getUpdatedAt()).'"'
-              .',"updatedBy": "'.$entity->getUpdatedBy()->getUsername().'"';
+        return $this->get('tutteli.json_service')->getMetaJsonRows($entity);
     }
     
 }
