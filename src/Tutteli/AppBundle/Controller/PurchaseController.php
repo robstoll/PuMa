@@ -22,11 +22,11 @@ class PurchaseController extends AEntityController {
         return 'purchase';
     }
     
-    protected function getSingularEntityName() {
+    protected function getEntityNameSingular() {
         return 'purchase';
     }
     
-    protected function getPluralEntityName() {
+    protected function getEntityNamePlural() {
         return 'purchases';
     }
     

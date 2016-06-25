@@ -15,11 +15,11 @@ class BillController extends AEntityController {
         return 'bill';
     }
     
-    protected function getSingularEntityName() {
+    protected function getEntityNameSingular() {
         return 'bill';
     }
     
-    protected function getPluralEntityName() {
+    protected function getEntityNamePlural() {
         return 'bills';
     }
     

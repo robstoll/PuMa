@@ -15,8 +15,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 abstract class AEntityController extends ATplController {
     
     
-    protected abstract function getSingularEntityName();
-    protected abstract function getPluralEntityName();
+    protected abstract function getEntityNameSingular();
+    protected abstract function getEntityNamePlural();
     /**
      * @return \Tutteli\AppBundle\Entity\ARepository
      */
@@ -24,7 +24,7 @@ abstract class AEntityController extends ATplController {
     protected abstract function getJson($entity);
     
     protected function getEntitynameFirstUpper() {
-        return \ucfirst($this->getSingularEntityName());
+        return \ucfirst($this->getEntityNameSingular());
     }
 
     public function cgetAction(Request $request, $ending) {
@@ -110,7 +110,7 @@ abstract class AEntityController extends ATplController {
                 $getLastUpdated, 
                 $getEntities, 
                 function($entity) { return $this->getJson($entity); },
-                $this->getPluralEntityName());
+                $this->getEntityNamePlural());
     }   
     
     protected function getJsonArray($data, callable $getJsonForEntry) {
@@ -119,7 +119,7 @@ abstract class AEntityController extends ATplController {
 
     protected function getJsonForEntityAction($entityId) {
         $entity = $this->loadEntity($entityId);
-        return new Response('{"'.$this->getSingularEntityName().'":'.$this->getJson($entity).'}');
+        return new Response('{"'.$this->getEntityNameSingular().'":'.$this->getJson($entity).'}');
     }
     
     protected function loadEntity($id) {

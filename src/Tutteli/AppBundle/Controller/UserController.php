@@ -22,11 +22,11 @@ class UserController extends AEntityController {
         return 'user';
     }
 
-    protected function getSingularEntityName() {
+    protected function getEntityNameSingular() {
         return 'user';
     }
     
-    protected function getPluralEntityName() {
+    protected function getEntityNamePlural() {
         return 'users';
     }
     

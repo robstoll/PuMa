@@ -15,11 +15,11 @@ class CategoryController extends AEntityController {
         return 'category';
     }
     
-    protected function getSingularEntityName() {
+    protected function getEntityNameSingular() {
         return 'category';
     }
     
-    protected function getPluralEntityName() {
+    protected function getEntityNamePlural() {
         return 'categories';
     }
     
