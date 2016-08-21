@@ -33,12 +33,12 @@
             
             <footer class="footer">
                 <div class="form-group">
-                    {% block footer_left_button %}{% endblock %}
-                	{% block footer_right_button %}
+                    {% block footer_right_button %}
                 		<span class="pull-right"><button type="submit" id="{{ name }}_form_submit" class="btn-default btn" ng-disabled="{{ name }}Ctrl.isDisabled()">
                 			{% block form_submit_icon %}<i class="glyphicon glyphicon-floppy-disk"></i>{% endblock %} {{ btnText }}
             			</button></span>
-            		{% endblock %}
+            		{% endblock %}    
+                    {% block footer_left_button %}{% endblock %}
                 	<div class="clear"></div>
             	</div>
             </footer> 
