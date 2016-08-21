@@ -57,7 +57,7 @@ function login(self, $event, formHelper, AuthService, AlertService, alertId) {
         AlertService.addErrorReport(alertId, msg, 'warning', 
                 null, null, 
                 '_login_report', 'click here', report);                            
-    
+        window.scroll(0, 0);
     });
 }
 
