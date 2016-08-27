@@ -103,6 +103,12 @@ hr {
 	display: inline !important;
 }
 
+textarea[name="expression"] {
+	resize: none;
+	overflow: hidden;
+	word-wrap: break-word;
+}
+
 .calc {
 	display:none;
 }
