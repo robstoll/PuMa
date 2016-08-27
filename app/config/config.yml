@@ -45,7 +45,8 @@ twig:
     form:
         resources: ['bootstrap_3_layout.html.twig']
     globals:
-      baseUrl:  '%baseUrl%'        
+      baseUrl: '%baseUrl%'
+      version: 0.4.0     
 
 # Assetic Configuration
 assetic:
