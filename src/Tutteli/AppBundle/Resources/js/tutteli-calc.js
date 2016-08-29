@@ -42,12 +42,14 @@ function CalculatorDirective($parse, $timeout) {
                 return parseInt(px.substring(0, px.length - 2));
             }
             
-            price = document.getElementById($scope.id);
-            var computedStyle = getComputedStyle(price, null);
-            var borderTopWidth = computedStyle.getPropertyValue("border-top-width");
-            var borderBottomWidth = computedStyle.getPropertyValue("border-top-width");
-            additionalHeight = pxToInt(borderTopWidth) + pxToInt(borderBottomWidth);
-            price.onkeyup = autoResize;
+            $timeout(function() {
+                price = document.getElementById($scope.id);
+                var computedStyle = getComputedStyle(price, null);
+                var borderTopWidth = computedStyle.getPropertyValue("border-top-width");
+                var borderBottomWidth = computedStyle.getPropertyValue("border-top-width");
+                additionalHeight = pxToInt(borderTopWidth) + pxToInt(borderBottomWidth);
+                price.onkeyup = autoResize;
+            }, 1);
             
             $scope.press = function($event, text) {
                 $event.preventDefault();
