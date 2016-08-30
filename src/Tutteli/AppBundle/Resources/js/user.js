@@ -154,8 +154,12 @@ function EditUserController(
     var isDisabledParent = this.isDisabled;
     this.isDisabled = function() {
         return isNotLoaded 
-            || !AuthService.isAuthorised(USER_ROLES.admin) 
+            || !self.isAdmin() 
             || isDisabledParent();
+    };
+    
+    this.isAdmin = function() {
+        return AuthService.isAuthorised(USER_ROLES.admin);
     };
     
     // ----------------
