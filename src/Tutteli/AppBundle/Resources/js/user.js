@@ -124,7 +124,7 @@ function EditUserController(
             self.username = user.username;
             self.email = user.email;
             self.role = user.roleId;
-            self.isReal = user.isReal;
+            self.isReal = user.isReal == "1";
             document.querySelector('#user_role > option').remove();
             self.updatedAt = user.updatedAt;
             self.updatedBy = user.updatedBy;
