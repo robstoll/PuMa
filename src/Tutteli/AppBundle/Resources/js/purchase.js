@@ -380,7 +380,7 @@ function Position($parse, $filter) {
     this.expression = null;
     this.category = null;
     this.notice = '';
-    this.calc = function() {
+    this.evalExpression = function() {
         var val = 0;
         if (self.expression) {
             try {
@@ -393,8 +393,11 @@ function Position($parse, $filter) {
         if (!val) {
             val = 0;
         }
-
-        return $filter('currency')(val, 'CHF ');
+        return val;
+    };
+    
+    this.evalExpressionWithCurrency = function() {
+        return $filter('currency')(self.evalExpression(), 'CHF ');
     };
 }
 
@@ -618,7 +621,7 @@ function PurchaseService($http, $q, $timeout, ROUTES, ServiceHelper) {
         var errors = '';
         for (var i = 0; i < purchase.positions.length; ++i) {
             var position = purchase.positions[i];
-            if (position.expression == '0') {
+            if (position.evalExpression() <= 0) {
                 errors += 'The <a href="#" onclick="document.getElementById(\'purchase_expression' + i + '\').focus(); return false">'
                             + 'price of position ' + (i + 1) 
                         + '</a> needs to be greater than 0.<br/>';

@@ -15,7 +15,7 @@
 	 	<script type="text/javascript">
 	 		focusOrScrollTo(document.getElementById("purchase_expression_label{{ '{{$index}}' }}"));
 	 	</script>
-	 	<span class="input-group-addon"><span ng-bind="{{ modelName }}.calc()">CHF {% if not position %}0.00{% else %}{{ position.price|number_format(2, '.') }}{% endif %}</span></span>
+	 	<span class="input-group-addon"><span ng-bind="{{ modelName }}.evalExpressionWithCurrency()">CHF {% if not position %}0.00{% else %}{{ position.price|number_format(2, '.') }}{% endif %}</span></span>
      </div>
 </div>
 <div class="form-group calc">
