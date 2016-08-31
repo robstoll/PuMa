@@ -11,6 +11,12 @@
         <meta name="author" content="Robert Stoll" />
         <title>{% block title %}PuMa v. {{ version }}{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
+{#         {% javascripts output="js/focusOrScroll.js" #}
+{#     		'../app/Resources/js/focusOrScroll.js'#}
+{# 		%}#}
+{# 			<script src="{{ asset_url }}"></script>#}
+{#         {% endjavascripts %}#}
+        <script src="{{ asset('js/focusOrScroll.js') }}"></script>
         
         <link href="{{ asset('favicon.ico') }}" rel="icon" type="image/x-icon" />
        	<link rel="apple-touch-icon" sizes="57x57" href="{{ asset('apple-touch-icon-57x57.png') }}" />
@@ -36,26 +42,6 @@
         <meta name="theme-color" content="#d1c391" />
         <base href="{{ baseUrl }}" />
         
-        <script type="text/javascript">
-        	function focusOrScrollTo(element) {
-        	    function findPos(obj) {
-			        var curtop = 0;
-			        if (obj.offsetParent) {
-			        	do {
-			            	curtop += obj.offsetTop;
-			           	} while (obj = obj.offsetParent);
-			      	}
-			        return [curtop];
-			  	}
-                	
-        	    var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-	 			if (width > 768) {
-	 				element.focus();
-	 			} else {
-		 			window.scroll(0, findPos(element) - 80);
-		 		}
-        	}
-        </script>
     </head>
     <body role="document" ng-app="tutteli.puma" ng-strict-di>
         {% block body %} {% endblock %}

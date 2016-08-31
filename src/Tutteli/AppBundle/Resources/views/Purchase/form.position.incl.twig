@@ -7,13 +7,13 @@
 <div class="form-group">
 	<div>
 		<div class="closePosition"  ng-class="{show: purchaseCtrl.positionManager.positions.length > 1}" ng-click="purchaseCtrl.positionManager.removePosition($index);"><i class="glyphicon glyphicon-trash"></i></div>
-		<label class="control-label" for="purchase_expression{{ '{{$index}}' }}">{{ 'purchase.price'|trans }}</label>
+		<label id="purchase_expression_label{{ '{{$index}}' }}" class="control-label" for="purchase_expression{{ '{{$index}}' }}">{{ 'purchase.price'|trans }}</label>
 		<div style="float:clear"></div>
 	</div>
 	<div class="input-group">
 	 	<textarea rows="1" type="text" id="purchase_expression{{ '{{$index}}' }}" name="expression" required="required" ng-model="{{ modelName }}.expression" ng-disabled="purchaseCtrl.isDisabled()" class="form-control" autocomplete="off">{% if position %}{{ position.expression }}{% endif %}</textarea>
 	 	<script type="text/javascript">
-	 		focusOrScrollTo(document.getElementById("purchase_expression{{ '{{$index}}' }}"));
+	 		focusOrScrollTo(document.getElementById("purchase_expression_label{{ '{{$index}}' }}"));
 	 	</script>
 	 	<span class="input-group-addon"><span ng-bind="{{ modelName }}.calc()">CHF {% if not position %}0.00{% else %}{{ position.price|number_format(2, '.') }}{% endif %}</span></span>
      </div>
