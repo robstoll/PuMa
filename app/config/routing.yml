@@ -30,7 +30,7 @@ home:
 
 purchases:
     path:   /purchases/
-    defaults: { _controller: "FrameworkBundle:Redirect:redirect", route: "purchases_month"}
+    defaults: { _controller: "FrameworkBundle:Redirect:redirect", route: "purchases_currentMonth"}
     methods: [GET]
 
 purchases_currentMonth:
