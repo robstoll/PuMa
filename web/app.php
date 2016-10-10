@@ -24,8 +24,10 @@ $apcLoader->register(true);
 
 require_once $appDir.'AppKernel.php';
 //require_once  $appDir.'AppCache.php';
-if ($_SERVER['HTTP_HOST'] != 'localhost') {
+if ($_SERVER['HTTP_HOST'] == 'tutteli.ch') {
     $kernel = new AppKernel('prod', false);
+} else if ($_SERVER['HTTP_HOST'] == 'test.tutteli.ch') {
+    $kernel = new AppKernel('test', false);
 } else {
     $kernel = new AppKernel('pre_prod', false);
 }

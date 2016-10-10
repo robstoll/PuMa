@@ -1,0 +1,22 @@
+#
+# This file is part of the project tutteli/puma published under the Apache License 2.0
+# For the full copyright and license information, please have a look at LICENSE in the
+# root folder or visit https://github.com/robstoll/PuMa
+#
+
+imports:
+    - { resource: config_dev.yml }
+
+framework:
+    test: ~
+    session:
+        storage_id: session.storage.mock_file
+    profiler:
+        collect: false
+
+web_profiler:
+    toolbar: false
+    intercept_redirects: false
+
+swiftmailer:
+    disable_delivery: true

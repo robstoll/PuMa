@@ -5,18 +5,37 @@
 #
 
 imports:
-    - { resource: config_dev.yml }
+    - { resource: config.yml }
+    - { resource: parameters_test.yml }
 
-framework:
-    test: ~
-    session:
-        storage_id: session.storage.mock_file
-    profiler:
-        collect: false
+assetic:
+    read_from: "%kernel.root_dir%/../../../test.tutteli.ch/httpdocs/puma/"
 
-web_profiler:
-    toolbar: false
-    intercept_redirects: false
+parameters:
+    baseUrl: '/puma/'   
 
-swiftmailer:
-    disable_delivery: true
+#framework:
+#    validation:
+#        cache: validator.mapping.cache.apc
+#    serializer:
+#        cache: serializer.mapping.cache.apc
+
+#doctrine:
+#    orm:
+#        metadata_cache_driver: apc
+#        result_cache_driver: apc
+#        query_cache_driver: apc
+
+monolog:
+    handlers:
+        main:
+            type:         fingers_crossed
+            action_level: error
+            handler:      nested
+        nested:
+            type:  stream
+            path:  "%kernel.logs_dir%/%kernel.environment%.log"
+            level: debug
+        console:
+            type:  console
+ 
